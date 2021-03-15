@@ -1,3 +1,6 @@
 [submodule "submodules/gularkfilesystem"]
 	path = submodules/gularkfilesystem
 	url = https://github.com/gulrak/filesystem.git
+[submodule "submodules/googletest"]
+	path = submodules/googletest
+	url = https://github.com/google/googletest.git

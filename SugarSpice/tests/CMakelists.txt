@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.10)
+
+# collect all of the test sources
+set (SUGARSPICE_TEST_SOURCE ${CMAKE_SOURCE_DIR}/SugarSpice/tests/CKSearchTests.cpp)
+
+# setup test executable
+add_executable(runSugarSpiceTests ${SUGARSPICE_TEST_SOURCE})
+target_link_libraries(runSugarSpiceTests
+                      PRIVATE
+                      SugarSpice
+                      gtest
+                      gmock
+                      Threads::Threads
+                      )
+
+gtest_discover_tests(runSugarSpiceTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/SugarSpice/tests/)
