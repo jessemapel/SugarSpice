@@ -43,7 +43,7 @@ target_include_directories(SugarSpice
                            $<INSTALL_INTERFACE:include>
                            PRIVATE)
 
-target_link_libraries(SugarSpice ghc_filesystem CSpice::cspice fmt)
+target_link_libraries(SugarSpice ghc_filesystem CSpice::cspice fmt::fmt-header-only)
 
 install(TARGETS SugarSpice LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY ${SUGARSPICE_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

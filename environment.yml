@@ -1,0 +1,18 @@
+channels:
+  - tudat-team
+  - defaults
+  - conda-forge
+  - usgs-astrogeology
+
+dependencies:
+  - cmake 
+  - cspice-cmake
+  - cpp-filesystem
+  - doxygen
+  - fmt
+  - ninja
+  - pip
+  - python
+  - pip:
+    - breathe
+    - sphinx_rtd_theme
