@@ -4,6 +4,8 @@
  *
  **/
 
+#include <exception>
+
 #include "utils.h"
 
 using namespace std; 
@@ -168,6 +170,45 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
     unload_c(sclk.c_str());
     unload_c(lsk.c_str()); 
     return result; 
+}
+
+
+fs::path getKernelDir(fs::path root, string mission, string instrument, KernelType type) {
+  return "";
+}
+
+
+int getFrameCode(string body) {
+  SpiceInt code; 
+  SpiceBoolean found; 
+
+  bodn2c_c(body.c_str(), &code, &found);
+
+  if (!found) {
+    throw "Body Code not Found";
+  }
+
+  return code;
+}
+
+
+string getKernelType(fs::path kernelPath) {
+  SpiceChar type[6]; 
+  SpiceChar source[6]; 
+  SpiceInt handle; 
+  SpiceBoolean found; 
+
+  furnsh_c(kernelPath.c_str());
+
+  kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
+
+  if (!found) {
+    return "Kernel Type not found";
+  }
+
+  unload_c(kernelPath.c_str()); 
+  return string(type);
+
 }
 
 

@@ -7,8 +7,11 @@
   *
  **/
 
+#include <iostream>
+#include <ghc/fs_std.hpp>
 
-class kernel {
+
+class Kernel {
     public: 
 
     /**
@@ -19,7 +22,7 @@ class kernel {
       * @param path path to a kernel. 
       * 
      **/
-    kernel(std::string path);
+    Kernel(fs::path path);
     
 
     /**
@@ -28,6 +31,7 @@ class kernel {
       * Delete a kernel from memory by deleting the object and unfurnshing. 
       * 
      **/
-    ~kernel();    
+    ~Kernel();    
 
-}
+    fs::path path;
+};

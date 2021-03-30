@@ -24,12 +24,15 @@ set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include
 set(SUGARSPICE_INSTALL_INCLUDE_DIR "include/SugarSpice")
 set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/io.cpp
-                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/kernel.cpp)
+                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/kernel.cpp
+                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/query.cpp)
 
 set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/utils.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/io.h
-                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/kernel.h)
+                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/kernel.h, 
+                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h,
+                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/query.h)
 
 add_library(SugarSpice SHARED ${SUGARSPICE_SRC_FILES})
 
