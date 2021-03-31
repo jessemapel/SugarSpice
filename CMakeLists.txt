@@ -14,7 +14,10 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       STRING "Choose the type of build." FORCE)
 endif()
 
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
 add_subdirectory("submodules/gularkfilesystem")
+add_subdirectory("submodules/json")
 
 find_package(CSpice REQUIRED)
 find_package(fmt REQUIRED)
@@ -24,17 +27,18 @@ set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include
 set(SUGARSPICE_INSTALL_INCLUDE_DIR "include/SugarSpice")
 set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/io.cpp
-                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/kernel.cpp
                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/query.cpp)
 
 set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/utils.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/io.h
-                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/kernel.h, 
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h,
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/query.h)
 
 add_library(SugarSpice SHARED ${SUGARSPICE_SRC_FILES})
+
+ADD_DEFINITIONS(-D_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}" -D_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
+
 
 set_target_properties(SugarSpice PROPERTIES
                                  VERSION ${PROJECT_VERSION}
@@ -46,7 +50,13 @@ target_include_directories(SugarSpice
                            $<INSTALL_INTERFACE:include>
                            PRIVATE)
 
-target_link_libraries(SugarSpice ghc_filesystem CSpice::cspice fmt::fmt-header-only)
+target_link_libraries(SugarSpice 
+                      PUBLIC
+                      ghc_filesystem 
+                      fmt::fmt-header-only 
+                      PRIVATE 
+                      CSpice::cspice 
+                      nlohmann_json::nlohmann_json)
 
 install(TARGETS SugarSpice LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY ${SUGARSPICE_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

@@ -11,6 +11,19 @@ TEST(UtilTests, GetKernelType) {
 
 
 TEST(UtilTests, GetFrameCode) { 
-   std::cout << getFrameCode("MERCURY") << std::endl;
+   std::cout << translateFrame("MERCURY") << std::endl;
    EXPECT_TRUE(0); 
+}
+
+
+TEST(UtilTests, GetFrameName) { 
+   translateFrame(199);
+   EXPECT_TRUE(0); 
+}
+
+
+TEST(UtilTests, GetKernelDirs) { 
+    getDbFile("lro"); 
+    getKernelDir("/data/spice/", "lro", "moc", Kernel::Type::CK);
+
 }

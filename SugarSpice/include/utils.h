@@ -1,17 +1,17 @@
 /**
- *
+ * @file
  *
  *
  **/
 
 #include <iostream>
+#include <regex>
 
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <fmt/compile.h>
 
 #include <ghc/fs_std.hpp>
-#include <SpiceUsr.h>
 
 #include "spice_types.h"
 
@@ -26,35 +26,8 @@
   * @returns list of paths matching ext
  **/
 std::vector<fs::path> glob(fs::path const & root, 
-                           std::string const & ext);
-
-
-/**
-  * @brief This is a short description
-  *
-  * This is a long description 
-  *
-  * @param root The root directory to search 
-  * @param ext  File Extension 
-  * 
-  * @returns list of paths matching ext
- **/
-std::vector<std::pair<std::string, std::string>> FormatIntervals(SpiceCell &coverage, std::string type,
-                                     double startOffset, double endOffset);
-
-
-/**
-  * @brief Format interavals into a 
-  *
-  * This is a long description 
-  *
-  * @param coverage a SpiceCell holding coverage values. 
-  * @param ext  File Extension 
-  * 
-  * @returns list of paths matching ext
- **/
-std::vector<std::pair<std::string, std::string>> FormatFirstLastIntervals(SpiceCell &coverage, std::string type,
-                                     double startOffset, double endOffset);
+                           std::regex const & reg = std::regex(".*"), 
+                           bool recursive=false);
 
 
 /**
@@ -79,7 +52,7 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
   * 
   * @returns list of paths matching ext
  **/
-fs::path getKernelDir(fs::path root, std::string mission, std::string instrument, KernelType type);
+fs::path getKernelDir(fs::path root, std::string mission, std::string instrument, Kernel::Type type);
 
 
 /** 
@@ -97,4 +70,22 @@ fs::path getKernelDir(fs::path root, std::string mission, std::string instrument
   *
   *
  **/
- int getFrameCode(std::string body); 
+ int translateFrame(std::string frame); 
+
+
+/** 
+  *
+  *
+  *
+  *
+ **/
+ std::string translateFrame(int frame); 
+
+
+/** 
+  *
+  *
+  *
+  *
+ **/
+ fs::path getDbFile(std::string mission);

@@ -6,20 +6,59 @@
 
 #include <exception>
 
+#include <SpiceUsr.h>
+#include <nlohmann/json.hpp>
+
 #include "utils.h"
 
+using json = nlohmann::json;
 using namespace std; 
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
-vector<fs::path> glob(fs::path const & root, string const & ext) {
+template <>
+struct fmt::formatter<fs::path> {
+  char presentation = 'f'; 
+  
+  constexpr auto parse(format_parse_context& ctx) {
+    // Parse the presentation format and store it in the formatter:
+    auto it = ctx.begin(), end = ctx.end();
+    if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
+
+    // Check if reached the end of the range:
+    if (it != end && *it != '}')
+      throw format_error("invalid format");
+
+    // Return an iterator past the end of the parsed range:
+    return it;
+  }
+    template <typename FormatContext>
+  auto format(const fs::path& p, FormatContext& ctx) {
+  // auto format(const point &p, FormatContext &ctx) -> decltype(ctx.out()) // c++11
+    // ctx.out() is an output iterator to write to.
+    return format_to(
+        ctx.out(),
+        "{}",
+        p.c_str());
+  }
+};
+
+
+vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
     vector<fs::path> paths;
 
     if (fs::exists(root) && fs::is_directory(root)) {
-        for (auto const & entry : fs::recursive_directory_iterator(root)) {
-            if (fs::is_regular_file(entry) && entry.path().extension() == ext)
-                paths.emplace_back(entry.path().filename());
+        for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
+            if (fs::exists(*i) && regex_search(i->path().c_str(), reg)) {
+                paths.emplace_back(i->path());
+            }
+
+            if(!recursive) {
+              // simply disable recursion if recurse flag is off
+              i.disable_recursion_pending();
+            }
         }
+
     }
 
     return paths;
@@ -173,22 +212,74 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
 }
 
 
-fs::path getKernelDir(fs::path root, string mission, string instrument, KernelType type) {
+fs::path getDbFile(string mission) { 
+    // If running tests or debugging locally 
+    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
+    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
+
+    fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
+    fmt::print("{}", dbPath);
+
+    if (!fs::is_directory(dbPath)) {
+       throw "No Valid Path found";
+    }
+
+    std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
+
+    for(auto p : paths) { 
+      if (p.filename() == fmt::format("{}.json", mission)) {
+        return p; 
+      }
+    }
+
+    throw invalid_argument(fmt::format("DB file for \"{}\" not found", mission));
+}
+
+
+fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::Type type) {
+  fs::path dbPath = getDbFile(mission);
+  
+  fmt::print("DB File: {}\n", dbPath);
+  
+  std::ifstream i(dbPath);
+  json db;
+  i >> db;
+
+  std::cout << db << std::endl;
+  std::vector<fs::path> paths = glob(root, basic_regex("kernels"), true);
+
+
+  // fmt::print("{}\n", fmt::join(paths, "\n"));
+
   return "";
 }
 
 
-int getFrameCode(string body) {
+int translateFrame(string frame) {
   SpiceInt code; 
   SpiceBoolean found; 
 
-  bodn2c_c(body.c_str(), &code, &found);
+  bodn2c_c(frame.c_str(), &code, &found);
 
   if (!found) {
-    throw "Body Code not Found";
+    throw "Frame name not Found";
   }
 
   return code;
+}
+
+
+string translateFrame(int frame) { 
+  SpiceChar name[128]; 
+  SpiceBoolean found;
+
+  bodc2n_c(frame, 128, name, &found);
+
+  if(!found) {
+    throw "Frame Code not found";
+  }
+
+  return string(name); 
 }
 
 
@@ -203,12 +294,11 @@ string getKernelType(fs::path kernelPath) {
   kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
 
   if (!found) {
-    return "Kernel Type not found";
+    throw "Kernel Type not found";
   }
 
   unload_c(kernelPath.c_str()); 
   return string(type);
-
 }
 
 

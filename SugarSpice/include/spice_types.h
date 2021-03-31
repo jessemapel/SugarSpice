@@ -3,37 +3,64 @@
   *
  **/
 
+#include <ghc/fs_std.hpp>
+#include <iostream>
 
 
-enum KernelType {
-  CK=0, SPK, TSPK, 
-  LSK, MK, SCLK,
-  IAK, IK, FK, 
-  DSK, PCK, EK 
-}; 
+/**
+  *
+  *
+  *
+  *
+  *
+ **/
+class Kernel {
+    public: 
 
-// enum KernelType {
-//     SPK = 0,
-//     CK,
-//     PCK,
-//     DSK,
-//     EK,
-//     META,
-//     TEXT // this can be LSK, IK, IAK, FK 
-// }
+    enum Type {
+      CK=0, SPK, TSPK, 
+      LSK, MK, SCLK,
+      IAK, IK, FK, 
+      DSK, PCK, EK
+    }; 
+    
+    enum Quality  { 
+        NA = 0,        // Non External Orientation data
+        Predicted,     // Based on predicted location of instrument     
+        Nadir,         // Assumes Nadir pointing   
+        Reconstructed, // 
+        Smithed        // Controlled Kernels
+    };
 
-std::vector<std::string> KernelTypes = {"ck", "spk", "tspk", 
-                                        "lsk", "mk", "sclk", 
-                                        "iak", "ik", "fk", 
-                                        "dsk", "pck", "ek", 
-                                        "text"};
+    const static std::vector<std::string> Qualities;
+    const static std::vector<std::string> Types;
 
-enum KernelQuality  { 
-    Predicted = 0, // Based on predicted location of instrument     
-    Nadir,         // Assumes Nadir pointing   
-    Reconstructed, // 
-    Smithed       
+    static std::string translateType(Type type);
+    static Type translateType(std::string type);
+
+    static std::string translateQuality(Quality qa);
+    static Quality translateQuality(std::string qa);
+
+    /**
+      * @brief Instantiate a kernel from path 
+      *
+      * Load a kernel into memory by opening the kernel and furnishing 
+      *
+      * @param path path to a kernel. 
+      * 
+     **/
+    Kernel(fs::path path);
+    
+
+    /**
+      * @brief unfurnsh the kernel 
+      *
+      * Delete a kernel from memory by deleting the object and unfurnshing. 
+      * 
+     **/
+    ~Kernel();    
+
+    fs::path path;
+    Type type; 
+    Quality quality; 
 };
-
-std::vector<std::string> KernelQualities = {"predicted", "nadir", "reconstructed", "smithed"};
-
