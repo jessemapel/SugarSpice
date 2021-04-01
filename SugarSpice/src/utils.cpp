@@ -16,8 +16,7 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
-template <>
-struct fmt::formatter<fs::path> {
+template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   
   constexpr auto parse(format_parse_context& ctx) {
@@ -42,6 +41,26 @@ struct fmt::formatter<fs::path> {
         p.c_str());
   }
 };
+
+
+vector<string> jsonArrayToVector(json arr) { 
+  vector<string> res; 
+
+  if (arr.is_array()) {
+    for(auto it : arr) { 
+        res.emplace_back(it);
+    }
+  }
+  else if (arr.is_string()) {
+    res.emplace_back(arr);
+  }
+  else { 
+    throw invalid_argument("Input json is not a valid Json array");
+  }
+
+  return res; 
+}
+
 
 
 vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
@@ -241,13 +260,15 @@ fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::
   
   fmt::print("DB File: {}\n", dbPath);
   
-  std::ifstream i(dbPath);
+  ifstream i(dbPath);
   json db;
   i >> db;
+  
+  vector<string> regexes = jsonArrayToVector(db[instrument]["Reconstructed"]);
 
-  std::cout << db << std::endl;
-  std::vector<fs::path> paths = glob(root, basic_regex("kernels"), true);
+  regex reg(fmt::to_string(fmt::join(regexes, "|")));
 
+  std::vector<fs::path> paths = glob(root, reg, true);
 
   // fmt::print("{}\n", fmt::join(paths, "\n"));
 

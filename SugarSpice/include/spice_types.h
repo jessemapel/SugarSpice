@@ -32,8 +32,8 @@ class Kernel {
         Smithed        // Controlled Kernels
     };
 
-    const static std::vector<std::string> Qualities;
-    const static std::vector<std::string> Types;
+    const static std::vector<std::string> QUALITIES;
+    const static std::vector<std::string> TYPES;
 
     static std::string translateType(Type type);
     static Type translateType(std::string type);
