@@ -1,8 +1,8 @@
 {
   "moc" : { 
       "ck" : {
-          "reconstructed" : ["soc31*.bc", "lrolc*.bc"],
-          "deps" : ["lro_clkcor_???????_v00.tsc", "naif????.tls"]
+          "reconstructed" : ["soc31.*.bc", "lrolc.*.bc"],
+          "deps" : ["lro_clkcor_???????_v00.tsc", "naif.????.tls"]
       }
   },
   "lroc" : {}

@@ -45,6 +45,7 @@ template <> struct fmt::formatter<fs::path> {
 
 vector<string> jsonArrayToVector(json arr) { 
   vector<string> res; 
+  std::cout << arr << std::endl;
 
   if (arr.is_array()) {
     for(auto it : arr) { 
@@ -237,7 +238,7 @@ fs::path getDbFile(string mission) {
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
 
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
-    fmt::print("{}", dbPath);
+    fmt::print("{}\n", dbPath);
 
     if (!fs::is_directory(dbPath)) {
        throw "No Valid Path found";
@@ -264,13 +265,14 @@ fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::
   json db;
   i >> db;
   
-  vector<string> regexes = jsonArrayToVector(db[instrument]["Reconstructed"]);
+  string sType = Kernel::translateType(type);
+  vector<string> regexes = jsonArrayToVector(db[instrument][sType]["reconstructed"]);
+  regex reg(fmt::format("({})", fmt::join(regexes, "|")));
 
-  regex reg(fmt::to_string(fmt::join(regexes, "|")));
-
+  fmt::print("{}\n", fmt::join(regexes, "|"));
   std::vector<fs::path> paths = glob(root, reg, true);
 
-  // fmt::print("{}\n", fmt::join(paths, "\n"));
+  fmt::print("{}\n", fmt::join(paths, "\n"));
 
   return "";
 }
