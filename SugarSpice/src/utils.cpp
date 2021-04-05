@@ -10,6 +10,7 @@
 #include <nlohmann/json.hpp>
 
 #include "utils.h"
+#include "spice_types.h"
 
 using json = nlohmann::json;
 using namespace std; 
@@ -237,6 +238,8 @@ fs::path getDbFile(string mission) {
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
 
+    // use anaconda 
+
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
     fmt::print("{}\n", dbPath);
 
@@ -278,34 +281,6 @@ fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::
 }
 
 
-int translateFrame(string frame) {
-  SpiceInt code; 
-  SpiceBoolean found; 
-
-  bodn2c_c(frame.c_str(), &code, &found);
-
-  if (!found) {
-    throw "Frame name not Found";
-  }
-
-  return code;
-}
-
-
-string translateFrame(int frame) { 
-  SpiceChar name[128]; 
-  SpiceBoolean found;
-
-  bodc2n_c(frame, 128, name, &found);
-
-  if(!found) {
-    throw "Frame Code not found";
-  }
-
-  return string(name); 
-}
-
-
 string getKernelType(fs::path kernelPath) {
   SpiceChar type[6]; 
   SpiceChar source[6]; 
@@ -317,7 +292,7 @@ string getKernelType(fs::path kernelPath) {
   kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
 
   if (!found) {
-    throw "Kernel Type not found";
+    throw domain_error("Kernel Type not found");
   }
 
   unload_c(kernelPath.c_str()); 

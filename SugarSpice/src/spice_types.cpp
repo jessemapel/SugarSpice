@@ -60,7 +60,6 @@ string Kernel::translateQuality(Kernel::Quality qa) {
     return Kernel::QUALITIES[qa];
 }
 
-
 Kernel::Quality Kernel::translateQuality(string qa) {
     auto res = findInVector<string>(Kernel::QUALITIES, qa);
     if (res.first) {
@@ -68,6 +67,34 @@ Kernel::Quality Kernel::translateQuality(string qa) {
     }
 
     throw invalid_argument(fmt::format("{} is not a valid kernel type", qa)); 
+}
+
+
+int Kernel::translateFrame(string frame) {
+  SpiceInt code; 
+  SpiceBoolean found; 
+
+  bodn2c_c(frame.c_str(), &code, &found);
+
+  if (!found) {
+    throw "Frame name not Found";
+  }
+
+  return code;
+}
+
+
+string Kernel::translateFrame(int frame) { 
+  SpiceChar name[128]; 
+  SpiceBoolean found;
+
+  bodc2n_c(frame, 128, name, &found);
+
+  if(!found) {
+    throw "Frame Code not found";
+  }
+
+  return string(name); 
 }
 
 

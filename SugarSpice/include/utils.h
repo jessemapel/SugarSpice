@@ -1,3 +1,5 @@
+#pragma once 
+
 /**
  * @file
  *
@@ -62,24 +64,6 @@ fs::path getKernelDir(fs::path root, std::string mission, std::string instrument
   *
  **/
  std::string getKernelType(fs::path kernelPath);
-
-
-/** 
-  *
-  *
-  *
-  *
- **/
- int translateFrame(std::string frame); 
-
-
-/** 
-  *
-  *
-  *
-  *
- **/
- std::string translateFrame(int frame); 
 
 
 /** 

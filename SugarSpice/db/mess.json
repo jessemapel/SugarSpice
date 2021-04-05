@@ -1,0 +1,29 @@
+{
+    "mdis" : {
+        "ck" : {
+            "reconstructed" : "msgr_????_v??.bc",
+            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
+            "sclk" : "messenger_????.tsc",
+            "lsk" : "naif????.tls",
+            "deps" : ["mess:ck", "mdis_att:ck"]
+        }
+    },
+    "mdis_att" : {
+        "ck" : {
+            "reconstructed" : "msgr_mdis_sc??????_??????_sub_v?.bc",
+            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
+            "sclk" : "messenger_????.tsc",
+            "lsk" : "naif????.tls",
+            "deps" : []   
+        }
+    },
+    "mess" : {
+        "ck" : {
+            "reconstructed" : "msgr_????_v??.bc",
+            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
+            "sclk" : "messenger_????.tsc",
+            "lsk" : "naif????.tls",
+            "deps" : []   
+        }
+    }
+}

@@ -1,3 +1,5 @@
+#pragma once 
+
 /** 
   *
   *
@@ -40,6 +42,9 @@ class Kernel {
 
     static std::string translateQuality(Quality qa);
     static Quality translateQuality(std::string qa);
+
+    static int translateFrame(std::string frame); 
+    static std::string translateFrame(int frame); 
 
     /**
       * @brief Instantiate a kernel from path 
