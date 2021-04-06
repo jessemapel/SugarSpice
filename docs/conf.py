@@ -29,17 +29,13 @@ def configureDoxyfile(input_dir, output_dir):
     with open('Doxyfile', 'w') as file:
         file.write(filedata)
 
-# Check if we're running on Read the Docs' servers
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-
 breathe_projects = {}
 
-if read_the_docs_build:
-    input_dir = '../SugarSpice'
-    output_dir = '../build/docs/doxygen'
-    configureDoxyfile(input_dir, output_dir)
-    subprocess.call('doxygen', shell=True)
-    breathe_projects['SugarSpice'] = output_dir + '/xml'
+input_dir = '../SugarSpice'
+output_dir = '../build/docs/doxygen'
+configureDoxyfile(input_dir, output_dir)
+subprocess.call('doxygen', shell=True)
+breathe_projects['SugarSpice'] = output_dir + '/xml'
 
 
 # -- Project information -----------------------------------------------------
