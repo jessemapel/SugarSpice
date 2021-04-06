@@ -17,6 +17,21 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
+
+// // partial specialization for fs::path
+// namespace nlohmann {
+//     template <typename T>
+//     struct adl_serializer<fs::path> {
+//         static void to_json(json& j, const fs::path& opt) {
+//           j = opt.u8string();
+//         }
+
+//         static void from_json<fs::path>(const json& j, fs::path& opt) {
+//                 opt = j.get<string>();
+//         }
+//     };
+//}
+
 template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   
@@ -46,7 +61,6 @@ template <> struct fmt::formatter<fs::path> {
 
 vector<string> jsonArrayToVector(json arr) { 
   vector<string> res; 
-  std::cout << arr << std::endl;
 
   if (arr.is_array()) {
     for(auto it : arr) { 
@@ -95,7 +109,7 @@ vector<pair<string, string>> FormatIntervals(SpiceCell &coverage, string type,
   double begin, end;
   
   vector<pair<string, string>> results;
-  // cout << niv << endl; 
+  
   for(int j = 0;  j < niv;  j++) {
     //Get the endpoints of the jth interval.
     wnfetd_c(&coverage, j, &begin, &end);
@@ -189,7 +203,7 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
         ckobj_c(p.string().c_str(), &currCell);
 
         vector<pair<string, string>> result;        
-        cout << card_c(&currCell) << endl;
+        
         for(int bodyCount = 0 ; bodyCount < card_c(&currCell) ; bodyCount++) {
           //get the NAIF body code
           int body = SPICE_CELL_ELEM_I(&currCell, bodyCount);
@@ -241,7 +255,6 @@ fs::path getDbFile(string mission) {
     // use anaconda 
 
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
-    fmt::print("{}\n", dbPath);
 
     if (!fs::is_directory(dbPath)) {
        throw "No Valid Path found";
@@ -259,25 +272,129 @@ fs::path getDbFile(string mission) {
 }
 
 
-fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::Type type) {
-  fs::path dbPath = getDbFile(mission);
+json getMissionKernels(fs::path root, string mission) {
+  auto parseDeps = [&](json db, vector<string> deps) -> json {
+    return "";
+  };
+
+  auto getKernelsCkFromJson = [](json j, Kernel::Type t, Kernel::Quality q) -> vector<fs::path> {
+    string sType = Kernel::translateType(t);
+    string sQa = Kernel::translateQuality(q);
+
+    // Start at the highest requested Quality, then try lower quality kernels if not available
+    auto highestQa = Kernel::QUALITIES.begin() + static_cast<int>(q);
+    for (auto it = highestQa; it == Kernel::QUALITIES.begin(); it--) {
+      if (!j.contains(*it)) { 
+
+      }
+    }
+    return {};
+  };
   
-  fmt::print("DB File: {}\n", dbPath);
+  auto getPathsFromRegex = [&root](json r) -> vector<fs::path> {
+      vector<string> regexes = jsonArrayToVector(r); 
+      regex reg(fmt::format("({})", fmt::join(regexes, "|")));
+      vector<fs::path> paths = glob(root, reg, true);
+
+      return paths;
+  };
+
+  auto globCks = [&](json category) -> json {
+    if(!category.contains("ck")) {
+      return (json){};
+    }
+
+    category = category["ck"];
+    json ret;
+    
+    for(auto qual: Kernel::QUALITIES) {
+      if(!category.contains(qual)) {
+        continue; 
+      }
+      ret[qual] = getPathsFromRegex(category[qual]);
+    }
+
+    // pass deps through
+    if (category.at("deps").contains("objs")) {
+      ret["deps"]["objs"] = category.at("deps").at("objs");
+    }
+    
+    ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").at("sclk"));
+    ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").at("lsk"));
+    return ret;
+  };
+
+  auto globSpks = [&](json category) -> json {
+    if(!category.contains("spk")) {
+      return (json){};
+    }
+    
+    category = category["ck"];
+    json ret; 
+
+    for(auto qual: Kernel::QUALITIES) {
+      if(!category.contains(qual)) {
+        continue; 
+      }
+      ret[qual] = getPathsFromRegex(category[qual]);
+    }
+
+    // pass deps through
+    if (category.at("deps").contains("objs")) {
+      ret["deps"]["objs"] = category.at("deps").at("objs");
+    }
+
+    ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").value("sclk", "$^"));
+    ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").value("lsk", "$^"));
+    std::cout << category << std::endl;    
+
+    return ret; 
+  };
+
+  auto globFks = [&](json category) -> json {
+    json ret; 
+    std::cout << category << std::endl; 
+    return getPathsFromRegex(category.value("fk", "$^"));
+  };
+
+  auto globIks = [&](json category) -> json {
+    json ret; 
+    return getPathsFromRegex(category.value("ik", "$^"));
+  };
+
+  auto globIaks = [&](json category) -> json {
+    json ret; 
+    return getPathsFromRegex(category.value("iak", "$^"));
+  };
+
+  auto globPcks = [&](json category) -> json {
+    json ret; 
+    return getPathsFromRegex(category.value("pck", "$^"));
+  };
+
+  fs::path dbPath = getDbFile(mission);
   
   ifstream i(dbPath);
   json db;
   i >> db;
   
-  string sType = Kernel::translateType(type);
-  vector<string> regexes = jsonArrayToVector(db[instrument][sType]["reconstructed"]);
-  regex reg(fmt::format("({})", fmt::join(regexes, "|")));
+  // first get any dependencies 
+  // string deps = jsonArrayToVector(db[instrument][sType]); 
 
-  fmt::print("{}\n", fmt::join(regexes, "|"));
-  std::vector<fs::path> paths = glob(root, reg, true);
+  json kernels; 
 
-  fmt::print("{}\n", fmt::join(paths, "\n"));
+  // iterate the categories (e.g. missions)
+  for (auto& cat: db.items()) {
+      kernels[cat.key()]["ck"] = globCks(cat.value());
+      kernels[cat.key()]["spk"] = globSpks(cat.value());
+      kernels[cat.key()]["fk"] = globSpks(cat.value());
+      kernels[cat.key()]["fk"] = globFks(cat.value());
+      kernels[cat.key()]["ik"] = globIks(cat.value());
+      kernels[cat.key()]["iak"] = globIaks(cat.value());
+      kernels[cat.key()]["pck"] = globPcks(cat.value());
+  }
 
-  return "";
+  return kernels;
 }
 
 

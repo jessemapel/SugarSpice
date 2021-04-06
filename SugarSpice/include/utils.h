@@ -13,6 +13,8 @@
 #include <fmt/format.h>
 #include <fmt/compile.h>
 
+#include <nlohmann/json.hpp>
+
 #include <ghc/fs_std.hpp>
 
 #include "spice_types.h"
@@ -54,7 +56,7 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
   * 
   * @returns list of paths matching ext
  **/
-fs::path getKernelDir(fs::path root, std::string mission, std::string instrument, Kernel::Type type);
+ nlohmann::json getMissionKernels(fs::path root, std::string mission);
 
 
 /** 
