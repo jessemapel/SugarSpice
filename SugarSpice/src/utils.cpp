@@ -247,7 +247,7 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
 }
 
 
-fs::path getDbFile(string mission) { 
+fs::path getDbFile(string mission) {
     // If running tests or debugging locally 
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
@@ -269,132 +269,6 @@ fs::path getDbFile(string mission) {
     }
 
     throw invalid_argument(fmt::format("DB file for \"{}\" not found", mission));
-}
-
-
-json getMissionKernels(fs::path root, string mission) {
-  auto parseDeps = [&](json db, vector<string> deps) -> json {
-    return "";
-  };
-
-  auto getKernelsCkFromJson = [](json j, Kernel::Type t, Kernel::Quality q) -> vector<fs::path> {
-    string sType = Kernel::translateType(t);
-    string sQa = Kernel::translateQuality(q);
-
-    // Start at the highest requested Quality, then try lower quality kernels if not available
-    auto highestQa = Kernel::QUALITIES.begin() + static_cast<int>(q);
-    for (auto it = highestQa; it == Kernel::QUALITIES.begin(); it--) {
-      if (!j.contains(*it)) { 
-
-      }
-    }
-    return {};
-  };
-  
-  auto getPathsFromRegex = [&root](json r) -> vector<fs::path> {
-      vector<string> regexes = jsonArrayToVector(r); 
-      regex reg(fmt::format("({})", fmt::join(regexes, "|")));
-      vector<fs::path> paths = glob(root, reg, true);
-
-      return paths;
-  };
-
-  auto globCks = [&](json category) -> json {
-    if(!category.contains("ck")) {
-      return (json){};
-    }
-
-    category = category["ck"];
-    json ret;
-    
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue; 
-      }
-      ret[qual] = getPathsFromRegex(category[qual]);
-    }
-
-    // pass deps through
-    if (category.at("deps").contains("objs")) {
-      ret["deps"]["objs"] = category.at("deps").at("objs");
-    }
-    
-    ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").at("sclk"));
-    ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").at("lsk"));
-    return ret;
-  };
-
-  auto globSpks = [&](json category) -> json {
-    if(!category.contains("spk")) {
-      return (json){};
-    }
-    
-    category = category["ck"];
-    json ret; 
-
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue; 
-      }
-      ret[qual] = getPathsFromRegex(category[qual]);
-    }
-
-    // pass deps through
-    if (category.at("deps").contains("objs")) {
-      ret["deps"]["objs"] = category.at("deps").at("objs");
-    }
-
-    ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").value("sclk", "$^"));
-    ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").value("lsk", "$^"));
-    std::cout << category << std::endl;    
-
-    return ret; 
-  };
-
-  auto globFks = [&](json category) -> json {
-    json ret; 
-    std::cout << category << std::endl; 
-    return getPathsFromRegex(category.value("fk", "$^"));
-  };
-
-  auto globIks = [&](json category) -> json {
-    json ret; 
-    return getPathsFromRegex(category.value("ik", "$^"));
-  };
-
-  auto globIaks = [&](json category) -> json {
-    json ret; 
-    return getPathsFromRegex(category.value("iak", "$^"));
-  };
-
-  auto globPcks = [&](json category) -> json {
-    json ret; 
-    return getPathsFromRegex(category.value("pck", "$^"));
-  };
-
-  fs::path dbPath = getDbFile(mission);
-  
-  ifstream i(dbPath);
-  json db;
-  i >> db;
-  
-  // first get any dependencies 
-  // string deps = jsonArrayToVector(db[instrument][sType]); 
-
-  json kernels; 
-
-  // iterate the categories (e.g. missions)
-  for (auto& cat: db.items()) {
-      kernels[cat.key()]["ck"] = globCks(cat.value());
-      kernels[cat.key()]["spk"] = globSpks(cat.value());
-      kernels[cat.key()]["fk"] = globSpks(cat.value());
-      kernels[cat.key()]["fk"] = globFks(cat.value());
-      kernels[cat.key()]["ik"] = globIks(cat.value());
-      kernels[cat.key()]["iak"] = globIaks(cat.value());
-      kernels[cat.key()]["pck"] = globPcks(cat.value());
-  }
-
-  return kernels;
 }
 
 

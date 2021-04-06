@@ -47,18 +47,6 @@ std::vector<fs::path> glob(fs::path const & root,
  **/
 std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpath, std::string sclk, std::string lsk);
 
-
-/**
-  * @brief This is a short description
-  *
-  * This is a long description 
-  *
-  * 
-  * @returns list of paths matching ext
- **/
- nlohmann::json getMissionKernels(fs::path root, std::string mission);
-
-
 /** 
   *
   *
