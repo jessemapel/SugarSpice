@@ -247,7 +247,7 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
 }
 
 
-fs::path getDbFile(string mission) {
+fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally 
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";

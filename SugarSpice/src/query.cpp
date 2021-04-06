@@ -7,6 +7,10 @@
  **/
 
 #include "query.h"
+#include "utils.h"
+
+using json = nlohmann::json;
+using namespace std;
 
 json searchMissionKernels(fs::path root, string mission) {
 
@@ -119,7 +123,7 @@ json searchMissionKernels(fs::path root, string mission) {
     return getPathsFromRegex(category.value("pck", "$^"));
   };
 
-  fs::path dbPath = getDbFile(mission);
+  fs::path dbPath = getMissionConfigFile(mission);
   
   ifstream i(dbPath);
   json db;

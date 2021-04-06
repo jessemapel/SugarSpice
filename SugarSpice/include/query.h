@@ -1,5 +1,10 @@
 #pragma once 
 
+#include <vector>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <ghc/fs_std.hpp>
+
 /** 
   * @file 
   *
