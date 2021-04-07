@@ -209,7 +209,7 @@ Everything here, except kernel start and stop times, require a human to with the
 Translating .db/makedb files to a single configuration file 
 ************************************************************
 
-.. warning:: As this library is a work in progress, much of this is subject to change. If you have any suggested changes for this proccess, feel free to open an issue and start a discussion. 
+.. warning:: As this library is a work in progress, much of this is subject to change. With so many missions with different requirements, it is very possible that this format misses supporting specific requirements for some missions. If you have any suggested changes for this proccess, feel free to open an issue and start a discussion. 
 
 **Example Configuration File:**
 
@@ -260,6 +260,6 @@ The Flowchart™
 3. When doing text kernels: 
     * Simply look at the `kernel.[0-9]{4}.db` file (specifically the newest one). Mimic the regexes into EMCSScript_ 
     * The key is to make sure the right text kernel is going to the right instrument. 
-4. Test by creating a new gtest running `utils::searchMissionKernels` and manually confirming that all kernels are accounted for. 
+4. Test by creating a new gtest running `utils::searchMissionKernels` and manually confirming that all kernels are accounted for.
 
 .. warning:: As this library is a work in progress, testing these queries isn't 100% figured out, the long term, we will test against ISIS's kernel search and make sure we get the response. 
