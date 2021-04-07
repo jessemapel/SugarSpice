@@ -19,19 +19,20 @@
 class Kernel {
     public: 
 
-    enum Type {
-      CK=0, SPK, TSPK, 
+    enum class Type { NA=0,
+      CK, SPK, TSPK, 
       LSK, MK, SCLK,
       IAK, IK, FK, 
       DSK, PCK, EK
     }; 
     
-    enum Quality  { 
-        NA = 0,        // Non External Orientation data
-        Predicted,     // Based on predicted location of instrument     
-        Nadir,         // Assumes Nadir pointing   
-        Reconstructed, // 
-        Smithed        // Controlled Kernels
+    enum class Quality  {
+        PREDICTED = 1,     // Based on predicted location of instrument     
+        NADIR = 2,         // Assumes Nadir pointing   
+        RECONSTRUCTED = 3, // 
+        SMITHED = 4,       // Controlled Kernels
+        NA = SMITHED       // Either Quaility doesn't apply (e.g. text kernels) -or- 
+                           // we dont care about quality (e.g. CK of any quality)
     };
 
     const static std::vector<std::string> QUALITIES;

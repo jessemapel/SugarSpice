@@ -1,29 +1,49 @@
 {
     "mdis" : {
         "ck" : {
-            "reconstructed" : "msgr_????_v??.bc",
-            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
-            "sclk" : "messenger_????.tsc",
-            "lsk" : "naif????.tls",
-            "deps" : ["mess:ck", "mdis_att:ck"]
-        }
+            "reconstructed" : "msgr_[0-9]{4}_v[0-9]{2}.bc",
+            "smithed" : "msgr_mdis_sc[0-9]{4}_usgs_v[0-9]{1}.bc",
+            "deps" : {
+                "sclk" : "messenger_[0-9]{4}.tsc",
+                "lsk" : "naif[0-9]{4}.tls",
+                "objs" : ["mess:ck", "mdis_att:ck"]
+            } 
+        },
+        "spk" : {
+            "reconstructed" : "msgr_20040803.*.bsp",
+            "deps" : {
+                "lsk" : "naif[0-9]{4}.tls",
+                "objs" : []
+            }
+        },
+        "tspk" : {
+            "NA" : ["de423s.bsp", "des405.bsp"]
+        },
+        "fk" : "msgr_v[0-9]{3}.tf",
+        "ik" : "msgr_mdis_v[0-9]{3}.ti",
+        "iak" : "mdisAddendum[0-9]{3}.ti",
+        "pck" : "pck00010_msgr_v[0-9]{2}.tpc"
     },
     "mdis_att" : {
         "ck" : {
-            "reconstructed" : "msgr_mdis_sc??????_??????_sub_v?.bc",
-            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
-            "sclk" : "messenger_????.tsc",
-            "lsk" : "naif????.tls",
-            "deps" : []   
+            "reconstructed" : "msgr_mdis_sc[0-9]{6}_[0-9]{6}_sub_v[0-9]{1}.bc",
+            "smithed" : "msgr_mdis_sc[0-9]{4}_usgs_v[0-9]{1}.bc",
+            "deps" : {
+                "sclk" : "messenger_[0-9]{4}.tsc",
+                "lsk" : "naif[0-9]{4}.tls",
+                "objs" : []
+            } 
         }
     },
     "mess" : {
         "ck" : {
-            "reconstructed" : "msgr_????_v??.bc",
-            "smithed" : "msgr_mdis_sc????_usgs_v?.bc",
-            "sclk" : "messenger_????.tsc",
-            "lsk" : "naif????.tls",
-            "deps" : []   
+            "reconstructed" : "msgr_[0-9]{4}_v[0-9]{2}.bc",
+            "smithed" : "msgr_mdis_sc[0-9]{4}_usgs_v[0-9]{1}.bc",
+            "deps" : {
+                "sclk" : "messenger_[0-9]{4}.tsc",
+                "lsk" : "naif[0-9]{4}.tls",
+                "objs" : []
+            } 
         }
     }
 }

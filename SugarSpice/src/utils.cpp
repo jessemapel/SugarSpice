@@ -17,6 +17,21 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
+
+// // partial specialization for fs::path
+// namespace nlohmann {
+//     template <typename T>
+//     struct adl_serializer<fs::path> {
+//         static void to_json(json& j, const fs::path& opt) {
+//           j = opt.u8string();
+//         }
+
+//         static void from_json<fs::path>(const json& j, fs::path& opt) {
+//                 opt = j.get<string>();
+//         }
+//     };
+//}
+
 template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   
@@ -46,7 +61,6 @@ template <> struct fmt::formatter<fs::path> {
 
 vector<string> jsonArrayToVector(json arr) { 
   vector<string> res; 
-  std::cout << arr << std::endl;
 
   if (arr.is_array()) {
     for(auto it : arr) { 
@@ -95,7 +109,7 @@ vector<pair<string, string>> FormatIntervals(SpiceCell &coverage, string type,
   double begin, end;
   
   vector<pair<string, string>> results;
-  // cout << niv << endl; 
+  
   for(int j = 0;  j < niv;  j++) {
     //Get the endpoints of the jth interval.
     wnfetd_c(&coverage, j, &begin, &end);
@@ -189,7 +203,7 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
         ckobj_c(p.string().c_str(), &currCell);
 
         vector<pair<string, string>> result;        
-        cout << card_c(&currCell) << endl;
+        
         for(int bodyCount = 0 ; bodyCount < card_c(&currCell) ; bodyCount++) {
           //get the NAIF body code
           int body = SPICE_CELL_ELEM_I(&currCell, bodyCount);
@@ -233,7 +247,7 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
 }
 
 
-fs::path getDbFile(string mission) { 
+fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally 
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
@@ -241,7 +255,6 @@ fs::path getDbFile(string mission) {
     // use anaconda 
 
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
-    fmt::print("{}\n", dbPath);
 
     if (!fs::is_directory(dbPath)) {
        throw "No Valid Path found";
@@ -256,28 +269,6 @@ fs::path getDbFile(string mission) {
     }
 
     throw invalid_argument(fmt::format("DB file for \"{}\" not found", mission));
-}
-
-
-fs::path getKernelDir(fs::path root, string mission, string instrument, Kernel::Type type) {
-  fs::path dbPath = getDbFile(mission);
-  
-  fmt::print("DB File: {}\n", dbPath);
-  
-  ifstream i(dbPath);
-  json db;
-  i >> db;
-  
-  string sType = Kernel::translateType(type);
-  vector<string> regexes = jsonArrayToVector(db[instrument][sType]["reconstructed"]);
-  regex reg(fmt::format("({})", fmt::join(regexes, "|")));
-
-  fmt::print("{}\n", fmt::join(regexes, "|"));
-  std::vector<fs::path> paths = glob(root, reg, true);
-
-  fmt::print("{}\n", fmt::join(paths, "\n"));
-
-  return "";
 }
 
 

@@ -55,9 +55,10 @@ target_link_libraries(SugarSpice
                       PUBLIC
                       ghc_filesystem 
                       fmt::fmt-header-only 
+                      nlohmann_json::nlohmann_json
                       PRIVATE 
                       CSpice::cspice 
-                      nlohmann_json::nlohmann_json)
+                      )
 
 install(TARGETS SugarSpice LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY ${SUGARSPICE_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
@@ -97,7 +98,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
 install(FILES ${SUGARSPICE_HEADER_FILES} DESTINATION ${SUGARSPICE_INSTALL_INCLUDE_DIR})
 
 # Install the library
-install(TARGETS SugarSpice
+install(TARGETS SugarSpice nlohmann_json
         EXPORT sugarSpiceTargets
         LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
         INCLUDES DESTINATION ${SUGARSPICE_INSTALL_INCLUDE_DIR})

@@ -30,19 +30,20 @@ template < typename T> pair<bool, int > findInVector(const std::vector<T>  & vec
 }
 
 
-const std::vector<std::string> Kernel::TYPES =  {"ck", "spk", "tspk", 
+const std::vector<std::string> Kernel::TYPES =  {"na", "ck", "spk", "tspk", 
                                            "lsk", "mk", "sclk", 
                                            "iak", "ik", "fk", 
                                            "dsk", "pck", "ek"};
 
-const std::vector<std::string> Kernel::QUALITIES = {"predicted",
+const std::vector<std::string> Kernel::QUALITIES = { "NA",
+                                                     "predicted",
                                                      "nadir", 
                                                      "reconstructed", 
                                                      "smithed"};
 
 
 string Kernel::translateType(Kernel::Type type) { 
-    return Kernel::TYPES[type];
+    return Kernel::TYPES[static_cast<int>(type)];
 }
 
 
@@ -57,7 +58,7 @@ Kernel::Type Kernel::translateType(string type) {
 
 
 string Kernel::translateQuality(Kernel::Quality qa) {
-    return Kernel::QUALITIES[qa];
+    return Kernel::QUALITIES[static_cast<int>(qa)];
 }
 
 Kernel::Quality Kernel::translateQuality(string qa) {
