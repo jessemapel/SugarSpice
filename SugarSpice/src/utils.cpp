@@ -5,6 +5,7 @@
  **/
 
 #include <exception>
+#include <fstream>
 
 #include <SpiceUsr.h>
 #include <nlohmann/json.hpp>
