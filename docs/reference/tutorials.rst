@@ -118,6 +118,7 @@ Things to note:
 * ``reconfilter=msgr_20040803*.bsp`` describies the format (using Unix globbing wildcards) for this mission's reconstructed kernels for the given kernel type (SPK). Files matching these patterns are globbed, then: 
   1. kerneldb gen uses NAIFs cspice toolkit in order compute the time ranges for the kernels.
   2. Different filtereed as labeled. ``predictfilter`` matches are labeled as predicted, ``reconfilter`` matches are labeled as reconstructed, etc.   
+  3. This process work very well as the names for mission kernels are very well structured. 
 
 **Text Kernel file, $ISISDATA/mro/kernels/ik/kernels.0003.db**
 
