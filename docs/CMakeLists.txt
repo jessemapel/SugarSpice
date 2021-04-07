@@ -14,7 +14,7 @@ set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
 configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
 
-file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR}) 
+file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
 
 message(STATUS ${SUGARSPICE_BUILD_INCLUDE_DIR} " : " ${SUGARSPICE_PUBLIC_HEADERS})
 
@@ -37,13 +37,13 @@ set(SPHINX_RST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/index.rst
                      ${CMAKE_CURRENT_SOURCE_DIR}/reference/tutorials.rst)
 
 add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
-                   COMMAND 
+                   COMMAND
                      ${SPHINX_EXECUTABLE} -b html
                      # Tell Breathe where to find the Doxygen output
                      -Dbreathe_projects.SugarSpice=${DOXYGEN_OUTPUT_DIR}/xml
                    ${SPHINX_SOURCE} ${SPHINX_BUILD}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                   DEPENDS ${SUGARSPICE_PUBLIC_HEADERS} 
+                   DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
                    # Other docs files you want to track should go here (or in some variable)
                    ${SPHINX_RST_FILES} 
                    ${CMAKE_CURRENT_SOURCE_DIR}/../README.md # Docs insert the readme, so it's a dep
