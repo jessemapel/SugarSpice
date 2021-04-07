@@ -252,10 +252,14 @@ The Flowchart™
 **************
 
 1. Identify the mission, create a new json file called <mission>.json, try to stick to NAIF abbreviations (see: https://naif.jpl.nasa.gov/pub/naif/pds/data/) 
-2. When doing time dependent binary kernels (CKs, SPKs, etc.): 
+2. Do binary kernels first (CKs, SPKs, etc.): 
     * Look at the makedb file, translate the wildcards to EMCSScript_ and place them under their respective quality keyword 
     * Always have a deps keyword even if empty, but realistically, there is always a LSK or SPK 
     * If list of regexes (or any list) has only one element, feel free to write it as a string, not array
     * Check for a config file, make sure the dependencies on other time dependent kernels are handled.  
 3. When doing text kernels: 
-    * Simply look at the `kernel.[0-9]{4}.db` file (specifically the newest one). 
+    * Simply look at the `kernel.[0-9]{4}.db` file (specifically the newest one). Mimic the regexes into EMCSScript_ 
+    * The key is to make sure the right text kernel is going to the right instrument. 
+4. Test by creating a new gtest running `utils::searchMissionKernels` and manually confirming that all kernels are accounted for. 
+
+.. warning:: As this library is a work in progress, testing these queries isn't 100% figured out, the long term, we will test against ISIS's kernel search and make sure we get the response. 
