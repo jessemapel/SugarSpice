@@ -16,7 +16,7 @@ There are many niche topics important to understand how SPICE and kernels work. 
 Here are some resources: 
 
 * Intro to Kernels, includes descriptions of kernel types: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/Tutorials/pdf/individual_docs/12_intro_to_kernels
-* Useful glossay of terms: https://isis.astrogeology.usgs.gov/documents/Glossary/Glossary.html
+* Useful glossary of terms: https://isis.astrogeology.usgs.gov/documents/Glossary/Glossary.html
 * Kerneldbgen, used to create ISIS DB files, docs has useful descriptions of Kernel qualities: https://isis.astrogeology.usgs.gov/Application/presentation/Tabbed/kerneldbgen/kerneldbgen.html
 * NAIF required reading on SPICE: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/index.html
 * ISIS repo, for more general information, many wikis: https://github.com/USGS-Astrogeology/ISIS3/pulls?q=is%3Apr+is%3Aclosed
@@ -69,7 +69,7 @@ Structure of ISIS data area, ignoring non-kernel data:
                     └── <kernel files>
 
 
-Where ``<misison>`` the name of any particular mission (mro, odyssey, messenger, etc.), ``<Kernel Type>`` is with slightly different structure if the kernel type is binary (CK, SPK, stc.) or text (IK, IAK, LSK, etc.), This section focuses on the Kernel "makedb" and "db" files. 
+Where ``<mission>`` the name of any particular mission (mro, odyssey, messenger, etc.), ``<Kernel Type>`` is with slightly different structure if the kernel type is binary (CK, SPK, stc.) or text (IK, IAK, LSK, etc.), This section focuses on the Kernel "makedb" and "db" files. 
 
 Each kernel directory (ck, spk, ik, etc.) have a file called ``kernels.[0-9]{4}.db`` where ``[0-9]{4}`` is the version of the db file. As ISIS kernel metadata is not version controlled, it uses a propriatary versioning system where the 4 numbers after the first extension delimiter is a version number.  
 
@@ -141,7 +141,7 @@ Things to note:
       EndGroup
     EndObject
 
-Here, like with most IK db files, the IK selection is instrument specific, so the ``Match`` key is used by ISIS to specify image label keywords that must match in order to select this kernel. These usually habe no ``makledb`` and are hand written as scpice is not needed to extract kernel times. 
+Here, like with most IK db files, the IK selection is instrument specific, so the ``Match`` key is used by ISIS to specify image label keywords that must match in order to select this kernel. These usually have no ``makledb`` and are hand written as scpice is not needed to extract kernel times. 
 
 Last example, a more complex example where kernel selection requires multiple kernels selected from the same kernel type, this is used in situations where a particualr kernel has time-based dependencies. 
 
