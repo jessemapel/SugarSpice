@@ -18,21 +18,6 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
-
-// // partial specialization for fs::path
-// namespace nlohmann {
-//     template <typename T>
-//     struct adl_serializer<fs::path> {
-//         static void to_json(json& j, const fs::path& opt) {
-//           j = opt.u8string();
-//         }
-
-//         static void from_json<fs::path>(const json& j, fs::path& opt) {
-//                 opt = j.get<string>();
-//         }
-//     };
-//}
-
 template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   

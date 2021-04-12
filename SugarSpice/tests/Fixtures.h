@@ -1,7 +1,6 @@
 #pragma once
 #include <ghc/fs_std.hpp>
 
-
 #include "gtest/gtest.h"
 
 
@@ -19,6 +18,7 @@ class IsisDataDirectories : public TempTestingFiles {
 
     void SetUp() override;
     void TearDown() override;
+    void LoadDirectory(std::string name);
 };
 
 

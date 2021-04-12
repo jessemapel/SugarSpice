@@ -65,7 +65,7 @@ json searchMissionKernels(fs::path root, string mission) {
       return (json){};
     }
     
-    category = category["ck"];
+    category = category["spk"];
     json ret; 
 
     for(auto qual: Kernel::QUALITIES) {
@@ -82,10 +82,43 @@ json searchMissionKernels(fs::path root, string mission) {
 
     ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").value("sclk", "$^"));
     ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").value("lsk", "$^"));
-    std::cout << category << std::endl;    
 
     return ret; 
   };
+
+
+  /**
+    * Lambda for parsing a SPK json object, returns a json object 
+    * with a similar structure, but regexes replaces with a path list
+   **/
+  auto globTspks = [&](json category) -> json {
+    if(!category.contains("tspk")) {
+      return (json){};
+    }
+    
+    category = category["tspk"];
+    json ret; 
+
+    for(auto qual: Kernel::QUALITIES) {
+      if(!category.contains(qual)) {
+        continue; 
+      }
+      ret[qual] = getPathsFromRegex(category[qual]);
+    }
+
+    if (category.contains("deps")) {
+        // pass deps through
+        if (category.at("deps").contains("objs")) {
+            ret["deps"]["objs"] = category.at("deps").at("objs");
+        }
+        
+        ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").value("sclk", "$^"));
+        ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").value("lsk", "$^"));
+    }
+
+    return ret; 
+  };
+
 
   /**
     * Lambda for parsing a FK json object, returns a json object 
@@ -138,7 +171,7 @@ json searchMissionKernels(fs::path root, string mission) {
   for (auto& cat: db.items()) {
       kernels[cat.key()]["ck"] = globCks(cat.value());
       kernels[cat.key()]["spk"] = globSpks(cat.value());
-      kernels[cat.key()]["fk"] = globSpks(cat.value());
+      kernels[cat.key()]["tspk"] = globTspks(cat.value());
       kernels[cat.key()]["fk"] = globFks(cat.value());
       kernels[cat.key()]["ik"] = globIks(cat.value());
       kernels[cat.key()]["iak"] = globIaks(cat.value());

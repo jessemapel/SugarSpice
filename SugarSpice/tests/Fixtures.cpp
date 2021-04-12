@@ -22,7 +22,7 @@ void TempTestingFiles::SetUp() {
     stringstream ss;
     ss << "SSTESTS" << hex << rand(prng);
     tpath = tmp_dir / ss.str();
-    std::cout << tpath << std::endl;
+    
     // true if the directory was created.
     if (fs::create_directory(tpath)) {
         break;
@@ -45,12 +45,14 @@ void TempTestingFiles::TearDown() {
 
 void IsisDataDirectories::SetUp() { 
   TempTestingFiles::SetUp();
-  
+}
+
+void IsisDataDirectories::LoadDirectory(string name) { 
   root = tempDir / "test_data";
 
   string line; 
   ifstream files;
-  files.open ("data/dir_structs/isisdata.txt");
+  files.open ("data/dir_structs/"+name+"data.txt");
   if (files.is_open()) {
     while (getline(files, line)) {
       fs::path p = line;
