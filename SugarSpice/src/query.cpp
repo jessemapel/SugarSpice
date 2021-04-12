@@ -9,6 +9,8 @@
 #include "query.h"
 #include "utils.h"
 
+#include <iostream>
+
 using json = nlohmann::json;
 using namespace std;
 
@@ -111,7 +113,7 @@ json searchMissionKernels(fs::path root, string mission) {
         if (category.at("deps").contains("objs")) {
             ret["deps"]["objs"] = category.at("deps").at("objs");
         }
-        
+
         ret["deps"]["sclk"] = getPathsFromRegex(category.at("deps").value("sclk", "$^"));
         ret["deps"]["lsk"] = getPathsFromRegex(category.at("deps").value("lsk", "$^"));
     }
