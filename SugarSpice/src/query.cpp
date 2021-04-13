@@ -6,6 +6,8 @@
   *
  **/
 
+#include <fstream>
+
 #include "query.h"
 #include "utils.h"
 

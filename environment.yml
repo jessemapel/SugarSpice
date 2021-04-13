@@ -15,4 +15,6 @@ dependencies:
   - python
   - pip:
     - breathe
-    - sphinx_rtd_theme
+    - sphinx-material
+    - m2r2
+    - sphinxcontrib.gist
