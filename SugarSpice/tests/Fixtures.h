@@ -14,7 +14,6 @@ class TempTestingFiles : public ::testing::Test {
 
 class IsisDataDirectories : public TempTestingFiles {
   protected:
-    fs::path root; 
 
     void SetUp() override;
     void TearDown() override;

@@ -48,8 +48,6 @@ void IsisDataDirectories::SetUp() {
 }
 
 void IsisDataDirectories::LoadDirectory(string name) { 
-  root = tempDir / "test_data";
-
   string line; 
   ifstream files;
   files.open ("data/dir_structs/"+name+"data.txt");

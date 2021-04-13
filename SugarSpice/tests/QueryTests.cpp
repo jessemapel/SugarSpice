@@ -10,7 +10,11 @@ using namespace std;
 TEST_F(IsisDataDirectories, UnitTestSearchMissionKernels) {
   LoadDirectory("mess");
   nlohmann::json res = searchMissionKernels(tempDir, "mess");
-  
+
+  fs::path prefix = tempDir / "isis_data" / "messenger" / "kernels" / "ck";
+  string command = (string)"ls -l " + (string)prefix;
+  std::system(command.c_str());
+
   ASSERT_EQ(res["mdis"]["ck"]["reconstructed"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["smithed"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["deps"]["sclk"].size(), 2);
