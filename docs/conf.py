@@ -56,7 +56,7 @@ release = '0.1'
 extensions = [ "breathe", "m2r2", "sphinx_material", "sphinxcontrib.gist"]
 
 # Breathe Configuration
-breathe_default_project = "Sugar Spice"
+breathe_default_project = "SugarSpice"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
