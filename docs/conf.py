@@ -32,7 +32,7 @@ def configureDoxyfile(input_dir, output_dir):
 breathe_projects = {}
 
 input_dir = '../SugarSpice'
-output_dir = '../build/docs/doxygen'
+output_dir = 'build'
 configureDoxyfile(input_dir, output_dir)
 subprocess.call('doxygen', shell=True)
 breathe_projects['SugarSpice'] = output_dir + '/xml'
@@ -92,9 +92,9 @@ html_theme_options = {
     # Set the color and the accent color
     'color_primary': '#000000',
     'color_accent': 'light-blue',
-    
+
     'logo_icon': '&#xe87a',
-    
+
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/USGS-Astrogeology/SugarSpice',
     'repo_name': 'Project',

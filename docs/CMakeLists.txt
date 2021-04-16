@@ -8,7 +8,7 @@ file(GLOB_RECURSE SUGARSPICE_PUBLIC_HEADERS ${SUGARSPICE_BUILD_INCLUDE_DIR}/*.h)
 
 set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/docs)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
-set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
+set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
@@ -45,7 +45,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                    DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
                    # Other docs files you want to track should go here (or in some variable)
-                   ${SPHINX_RST_FILES} 
+                   ${SPHINX_RST_FILES}
                    ${CMAKE_CURRENT_SOURCE_DIR}/../README.md # Docs insert the readme, so it's a dep
                    ${DOXYGEN_INDEX_FILE}
                    MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
