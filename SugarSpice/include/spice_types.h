@@ -27,9 +27,9 @@ class Kernel {
     }; 
     
     enum class Quality  {
-        PREDICTED = 1,     // Based on predicted location of instrument     
+        PREDICTED = 1,     // Based on predicted future location of the spacecraft/body     
         NADIR = 2,         // Assumes Nadir pointing   
-        RECONSTRUCTED = 3, // 
+        RECONSTRUCTED = 3, // Supplemented by real spacecraft/body data
         SMITHED = 4,       // Controlled Kernels
         NA = SMITHED       // Either Quaility doesn't apply (e.g. text kernels) -or- 
                            // we dont care about quality (e.g. CK of any quality)
