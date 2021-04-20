@@ -18,7 +18,6 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
-
 template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   
@@ -65,24 +64,36 @@ vector<string> jsonArrayToVector(json arr) {
 }
 
 
+vector<fs::path> ls(fs::path const & root, bool recursive) {
+  vector<fs::path> paths;
+  
+  if (fs::exists(root) && fs::is_directory(root)) {
+    for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
+      if (fs::exists(*i)) {
+        paths.emplace_back(i->path());
+      }
+
+      if(!recursive) {
+        // simply disable recursion if recurse flag is off
+        i.disable_recursion_pending();
+      }
+    }
+  }
+  
+  return paths;
+}
+
 
 vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
     vector<fs::path> paths;
+    vector<fs::path> files_to_search = ls(root, recursive); 
 
-    if (fs::exists(root) && fs::is_directory(root)) {
-        for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
-            if (fs::exists(*i) && regex_search(i->path().c_str(), reg)) {
-                paths.emplace_back(i->path());
-            }
-
-            if(!recursive) {
-              // simply disable recursion if recurse flag is off
-              i.disable_recursion_pending();
-            }
-        }
-
+    for (auto &f : files_to_search) {
+      if (regex_search(f.c_str(), reg)) {
+        paths.emplace_back(f);
+      }
     }
-
+    
     return paths;
 }             
 
@@ -237,10 +248,8 @@ vector<pair<string, string>> getCkIntervals(string kpath, string sclk, string ls
 fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally 
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
-    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
-
-    // use anaconda 
-
+    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db"; 
+    
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
 
     if (!fs::is_directory(dbPath)) {
@@ -255,7 +264,7 @@ fs::path getMissionConfigFile(string mission) {
       }
     }
 
-    throw invalid_argument(fmt::format("DB file for \"{}\" not found", mission));
+    throw invalid_argument(fmt::format("Config file for \"{}\" not found", mission));
 }
 
 

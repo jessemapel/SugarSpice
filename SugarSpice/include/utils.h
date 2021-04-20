@@ -1,10 +1,9 @@
-#pragma once 
-
 /**
  * @file
  *
  *
  **/
+#pragma once
 
 #include <iostream>
 #include <regex>
@@ -19,15 +18,30 @@
 
 #include "spice_types.h"
 
+
 /**
-  * @brief This is a short description
+  * @brief ls, like in unix, kinda. Also it's a function.
   *
-  * This is a long description 
+  * Iterates the input path and returning a list of files. Optionally, recursively. 
   *
   * @param root The root directory to search 
-  * @param ext  File Extension 
+  * @param recursive recursively iterates through directories if true 
   * 
-  * @returns list of paths matching ext
+  * @returns list of paths
+ **/
+std::vector<fs::path> ls(fs::path const & root, bool recursive);
+
+
+/**
+  * @brief glob, like python's glob.glob, except C++
+  *
+  * Given a root and a regular expression, give all the files that match.  
+  *
+  * @param root The root directory to search 
+  * @param reg std::regex object to pattern to search, defaults to ".*", or match averything.  
+  * @param recursive recursively iterates through directories if true 
+  * 
+  * @returns list of paths matching regex
  **/
 std::vector<fs::path> glob(fs::path const & root, 
                            std::regex const & reg = std::regex(".*"), 

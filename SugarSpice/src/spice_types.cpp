@@ -35,7 +35,7 @@ const std::vector<std::string> Kernel::TYPES =  {"na", "ck", "spk", "tspk",
                                            "iak", "ik", "fk", 
                                            "dsk", "pck", "ek"};
 
-const std::vector<std::string> Kernel::QUALITIES = { "NA",
+const std::vector<std::string> Kernel::QUALITIES = { "na",
                                                      "predicted",
                                                      "nadir", 
                                                      "reconstructed", 
