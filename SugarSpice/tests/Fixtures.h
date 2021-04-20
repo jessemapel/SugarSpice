@@ -15,7 +15,7 @@ class TempTestingFiles : public ::testing::Test {
     void TearDown() override; 
 };
 
-class IsisDataDirectories : public ::testing::Test {
+class KernelDataDirectories : public ::testing::Test {
   protected:
 
     vector<fs::path> paths; 

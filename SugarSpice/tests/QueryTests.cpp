@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include <gtest/gtest.h>
 
 #include "Fixtures.h"
@@ -7,7 +9,7 @@
 
 using namespace std;
 
-TEST_F(IsisDataDirectories, FunctionalTestSearchMissionKernels) {
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
   fs::path dbPath = getMissionConfigFile("mess");
   
   ifstream i(dbPath);

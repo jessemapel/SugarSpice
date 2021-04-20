@@ -14,6 +14,3 @@ TEST(UtilTests, GetFrameCode) {
 
 TEST(UtilTests, GetFrameName) {  
 }
-
-TEST_F(IsisDataDirectories, UnitTestGetKernelDirsIsisData) { 
-}

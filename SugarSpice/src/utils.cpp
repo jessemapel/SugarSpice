@@ -18,7 +18,6 @@ using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
-
 template <> struct fmt::formatter<fs::path> {
   char presentation = 'f'; 
   
@@ -67,7 +66,7 @@ vector<string> jsonArrayToVector(json arr) {
 
 vector<fs::path> ls(fs::path const & root, bool recursive) {
   vector<fs::path> paths;
-
+  
   if (fs::exists(root) && fs::is_directory(root)) {
     for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
       if (fs::exists(*i)) {
@@ -88,7 +87,7 @@ vector<fs::path> ls(fs::path const & root, bool recursive) {
 vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
     vector<fs::path> paths;
     vector<fs::path> files_to_search = ls(root, recursive); 
-    
+
     for (auto &f : files_to_search) {
       if (regex_search(f.c_str(), reg)) {
         paths.emplace_back(f);

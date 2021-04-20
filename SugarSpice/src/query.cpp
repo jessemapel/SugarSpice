@@ -11,7 +11,6 @@
 #include "query.h"
 #include "utils.h"
 
-#include <fstream>
 
 using json = nlohmann::json;
 using namespace std;
@@ -163,7 +162,6 @@ json searchMissionKernels(fs::path root, json conf) {
   };
 
 
-  
   // first get any dependencies 
   // string deps = jsonArrayToVector(db[instrument][sType]); 
 

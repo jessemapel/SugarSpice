@@ -1,4 +1,5 @@
 #include "Fixtures.h"
+#include "Paths.h"
 
 #include <exception>
 #include <fstream>
@@ -46,21 +47,10 @@ void TempTestingFiles::TearDown() {
 }
 
 
-void IsisDataDirectories::SetUp() { 
-  string line; 
-  ifstream files;
-
-  // should load everything as more are added
-  files.open ("data/dir_structs/messdata.txt");
-
-  if (files.is_open()) {
-    while (getline(files, line)) {
-      fs::path p = line;
-      paths.emplace_back(p);
-    }
-    files.close();
-  }
+void KernelDataDirectories::SetUp() { 
+  // combine multiple path lists here as we add more. 
+  paths = mess_paths;
 }
 
-void IsisDataDirectories::TearDown() {
+void KernelDataDirectories::TearDown() {
 }
