@@ -7,13 +7,17 @@
 
 using namespace std;
 
-TEST_F(IsisDataDirectories, UnitTestSearchMissionKernels) {
-  LoadDirectory("mess");
-  nlohmann::json res = searchMissionKernels(tempDir, "mess");
+TEST_F(IsisDataDirectories, FunctionalTestSearchMissionKernels) {
+  fs::path dbPath = getMissionConfigFile("mess");
+  
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
 
-  fs::path prefix = tempDir / "isis_data" / "messenger" / "kernels" / "ck";
-  string command = (string)"ls -l " + (string)prefix;
-  std::system(command.c_str());
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
+  
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
   ASSERT_EQ(res["mdis"]["ck"]["reconstructed"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["smithed"].size(), 4);

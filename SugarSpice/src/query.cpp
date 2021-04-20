@@ -14,7 +14,8 @@
 using json = nlohmann::json;
 using namespace std;
 
-json searchMissionKernels(fs::path root, string mission) {
+json searchMissionKernels(fs::path root, json conf) {
+
 
   /** 
     * Lambda for globbing files from a regular expression stored 
@@ -28,6 +29,7 @@ json searchMissionKernels(fs::path root, string mission) {
 
       return paths;
   };
+
 
   /**
     * Lambda for parsing a CK json object, returns a json object 
@@ -158,11 +160,7 @@ json searchMissionKernels(fs::path root, string mission) {
     return getPathsFromRegex(category.value("pck", "$^"));
   };
 
-  fs::path dbPath = getMissionConfigFile(mission);
-  
-  ifstream i(dbPath);
-  json db;
-  i >> db;
+
   
   // first get any dependencies 
   // string deps = jsonArrayToVector(db[instrument][sType]); 
@@ -170,7 +168,7 @@ json searchMissionKernels(fs::path root, string mission) {
   json kernels; 
 
   // iterate the categories (e.g. missions)
-  for (auto& cat: db.items()) {
+  for (auto& cat: conf.items()) {
       kernels[cat.key()]["ck"] = globCks(cat.value());
       kernels[cat.key()]["spk"] = globSpks(cat.value());
       kernels[cat.key()]["tspk"] = globTspks(cat.value());

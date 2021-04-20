@@ -54,4 +54,4 @@
   * @param
   * @returns list of paths matching ext
   **/
- nlohmann::json searchMissionKernels(fs::path root, std::string mission);
+ nlohmann::json searchMissionKernels(fs::path root,  nlohmann::json conf);

@@ -18,4 +18,6 @@ target_link_libraries(runSugarSpiceTests
                       )
 
 
+target_include_directories(runSugarSpiceTests PRIVATE ${CMAKE_SOURCE_DIR}/submodules/hippomocks/)
+
 gtest_discover_tests(runSugarSpiceTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/SugarSpice/tests/)

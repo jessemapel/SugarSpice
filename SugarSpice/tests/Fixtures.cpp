@@ -6,6 +6,9 @@
 #include <random>
 #include <sstream>
 
+
+#include "utils.h"
+
 using namespace std; 
 
 
@@ -44,24 +47,20 @@ void TempTestingFiles::TearDown() {
 
 
 void IsisDataDirectories::SetUp() { 
-  TempTestingFiles::SetUp();
-}
-
-void IsisDataDirectories::LoadDirectory(string name) { 
   string line; 
   ifstream files;
-  files.open ("data/dir_structs/"+name+"data.txt");
+
+  // should load everything as more are added
+  files.open ("data/dir_structs/messdata.txt");
+
   if (files.is_open()) {
     while (getline(files, line)) {
       fs::path p = line;
-      fs::create_directories(tempDir / p.parent_path()); 
-      std::ofstream outfile (tempDir / p);
-      outfile.close();
+      paths.emplace_back(p);
     }
     files.close();
   }
 }
 
 void IsisDataDirectories::TearDown() {
-  TempTestingFiles::TearDown();
 }
