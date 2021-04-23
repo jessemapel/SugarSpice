@@ -30,7 +30,7 @@
     }
   },
   "NIR" : {
-    "iak" : "nirAddendum[0-9]{3}.ti"
+    "iak" : "nirAddendum[0-9]{3}.ti",
     "ck" : {
       "deps" : {
         "sclk" : "dspse[0-9]{3}.tsc",
