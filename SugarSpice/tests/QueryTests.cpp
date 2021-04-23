@@ -9,7 +9,7 @@
 
 using namespace std;
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   fs::path dbPath = getMissionConfigFile("mess");
   
   ifstream i(dbPath);
@@ -43,5 +43,5 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
   ASSERT_EQ(res["mess"]["ck"]["deps"]["sclk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["objs"].size(), 0);
- 
 }
+

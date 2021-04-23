@@ -101,7 +101,7 @@ string Kernel::translateFrame(int frame) {
 
 Kernel::Kernel(fs::path path) { 
     this->path = path; 
-    furnsh_c(path.c_str());
+    furnsh_c(path.string().c_str());
 }
 
 
