@@ -20,9 +20,23 @@
   },
   "UVVIS" : {
     "ik" : "clem_uvvis_beta_ik_v04.ti",
-    "iak" : "uvvisAddendum[0-9]{3}.ti"
+    "iak" : "uvvisAddendum[0-9]{3}.ti",
+    "ck" : {
+      "deps" : {
+        "sclk" : "dspse[0-9]{3}.tsc",
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : ["clem:ck"]
+      }
+    }
   },
   "NIR" : {
     "iak" : "nirAddendum[0-9]{3}.ti"
+    "ck" : {
+      "deps" : {
+        "sclk" : "dspse[0-9]{3}.tsc",
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : ["clem:ck"]
+      }
+    }
   }
 }
