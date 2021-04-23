@@ -49,7 +49,8 @@ void TempTestingFiles::TearDown() {
 
 void KernelDataDirectories::SetUp() {
   // combine multiple path lists here as we add more.
-  paths = mess_paths;
+  paths = base_paths;
+  paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());
   paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
 }
 

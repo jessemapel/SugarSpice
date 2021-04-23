@@ -2,14 +2,18 @@
 #include <ghc/fs_std.hpp>
 
 
+// paths for testing base / shared kernel queries
+std::vector<fs::path> base_paths = {
+    "/isis_data/base/kernels/sclk/naif0001.tls",
+    "/isis_data/base/kernels/sclk/naif0002.tls",
+}
+
 // paths for testing messenger kernel queries
 std::vector<fs::path> mess_paths = {
     "/isis_data/messenger/kernels/ck/msgr_1234_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v02.bc",
     "/isis_data/messenger/kernels/ck/msgr_1236_v03.bc",
-    "/isis_data/base/kernels/sclk/naif0001.tls",
-    "/isis_data/base/kernels/sclk/naif0002.tls",
     "/isis_data/messenger/kernels/sclk/messenger_0001.tsc",
     "/isis_data/messenger/kernels/sclk/messenger_0002.tsc",
     "/isis_data/messenger/kernels/spk/msgr_20040803_20150328_od360sc_0.bsp",
