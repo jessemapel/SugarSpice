@@ -5,8 +5,8 @@
 // paths for testing base / shared kernel queries
 std::vector<fs::path> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
-    "/isis_data/base/kernels/sclk/naif0002.tls",
-}
+    "/isis_data/base/kernels/sclk/naif0002.tls"
+};
 
 // paths for testing messenger kernel queries
 std::vector<fs::path> mess_paths = {
