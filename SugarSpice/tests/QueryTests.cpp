@@ -57,7 +57,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-  std::cout << res << '\n';
 
   ASSERT_EQ(res["clem"]["ck"]["reconstructed"].size(), 4);
   ASSERT_EQ(res["clem"]["ck"]["smithed"].size(), 1);

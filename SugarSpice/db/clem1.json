@@ -27,6 +27,11 @@
         "lsk" : "naif[0-9]{4}.tls",
         "objs" : ["clem:ck"]
       }
+    },
+    "spk" : {
+      "deps" : {
+        "objs" : ["clem:spk"]
+      }
     }
   },
   "NIR" : {
@@ -36,6 +41,11 @@
         "sclk" : "dspse[0-9]{3}.tsc",
         "lsk" : "naif[0-9]{4}.tls",
         "objs" : ["clem:ck"]
+      }
+    },
+    "spk" : {
+      "deps" : {
+        "objs" : ["clem:spk"]
       }
     }
   }
