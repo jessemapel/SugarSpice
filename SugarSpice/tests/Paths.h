@@ -2,14 +2,18 @@
 #include <ghc/fs_std.hpp>
 
 
-// paths for testing messenger kernel queries 
+// paths for testing base / shared kernel queries
+std::vector<fs::path> base_paths = {
+    "/isis_data/base/kernels/sclk/naif0001.tls",
+    "/isis_data/base/kernels/sclk/naif0002.tls"
+};
+
+// paths for testing messenger kernel queries
 std::vector<fs::path> mess_paths = {
     "/isis_data/messenger/kernels/ck/msgr_1234_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v02.bc",
     "/isis_data/messenger/kernels/ck/msgr_1236_v03.bc",
-    "/isis_data/base/kernels/sclk/naif0001.tls",
-    "/isis_data/base/kernels/sclk/naif0002.tls",
     "/isis_data/messenger/kernels/sclk/messenger_0001.tsc",
     "/isis_data/messenger/kernels/sclk/messenger_0002.tsc",
     "/isis_data/messenger/kernels/spk/msgr_20040803_20150328_od360sc_0.bsp",
@@ -41,4 +45,29 @@ std::vector<fs::path> mess_paths = {
     "/isis_data/messenger/kernels/ck/msgr_mdis_gm012345_112233v1.bc",
     "/isis_data/messenger/kernels/ck/msgr_mdis_gm332211_999999v1.bc",
     "/isis_data/messenger/kernels/ck/msgr_mdis_gm012345_999999v2.bc"
+};
+
+// paths for testing clementine kernel queries
+std::vector<fs::path> clem1_paths = {
+    "/isis_data/clementine1/kernels/ck/clem_123.bck",
+    "/isis_data/clementine1/kernels/ck/clem_124.bck",
+    "/isis_data/clementine1/kernels/ck/clem_125.bck",
+    "/isis_data/clementine1/kernels/ck/clem_126.bck",
+
+    "/isis_data/clementine1/kernels/ck/clem_ulcn2005_6hr.bc",
+
+    "/isis_data/clementine1/kernels/sclk/dspse001.tsc",
+    "/isis_data/clementine1/kernels/sclk/dspse002.tsc",
+
+    "/isis_data/clementine1/kernels/spk/clem_123_v01.bsp",
+    "/isis_data/clementine1/kernels/spk/clem_124_v01.bsp",
+
+    "/isis_data/clementine1/kernels/fk/clem_v01.tf",
+
+    "/isis_data/clementine1/kernels/ik/clem_uvvis_beta_ik_v04.ti",
+
+    "/isis_data/clementine1/kernels/iak/uvvisAddendum001.ti",
+    "/isis_data/clementine1/kernels/iak/uvvisAddendum002.ti",
+    "/isis_data/clementine1/kernels/iak/nirAddendum001.ti",
+    "/isis_data/clementine1/kernels/iak/nirAddendum002.ti"
 };

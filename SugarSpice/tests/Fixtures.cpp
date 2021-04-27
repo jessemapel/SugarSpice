@@ -10,10 +10,10 @@
 
 #include "utils.h"
 
-using namespace std; 
+using namespace std;
 
 
-void TempTestingFiles::SetUp() { 
+void TempTestingFiles::SetUp() {
   int max_tries = 10;
   auto tmp_dir = fs::temp_directory_path();
   unsigned long long i = 0;
@@ -26,7 +26,7 @@ void TempTestingFiles::SetUp() {
     stringstream ss;
     ss << "SSTESTS" << hex << rand(prng);
     tpath = tmp_dir / ss.str();
-    
+
     // true if the directory was created.
     if (fs::create_directory(tpath)) {
         break;
@@ -47,9 +47,11 @@ void TempTestingFiles::TearDown() {
 }
 
 
-void KernelDataDirectories::SetUp() { 
-  // combine multiple path lists here as we add more. 
-  paths = mess_paths;
+void KernelDataDirectories::SetUp() {
+  // combine multiple path lists here as we add more.
+  paths = base_paths;
+  paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());
+  paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
 }
 
 void KernelDataDirectories::TearDown() {

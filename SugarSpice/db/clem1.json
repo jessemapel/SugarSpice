@@ -1,0 +1,52 @@
+{
+  "clem" : {
+    "ck" : {
+      "reconstructed" : "clem_[0-9]{3}.bck",
+      "smithed" : "clem_ulcn2005_6hr.bc",
+      "deps" : {
+        "sclk" : "dspse[0-9]{3}.tsc",
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : []
+      }
+    },
+    "spk" : {
+      "reconstructed" : "clem.*\\.bsp",
+      "deps" : {
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : []
+      }
+    },
+    "fk" : "clem_v[0-9]{2}.tf"
+  },
+  "UVVIS" : {
+    "ik" : "clem_uvvis_beta_ik_v04.ti",
+    "iak" : "uvvisAddendum[0-9]{3}.ti",
+    "ck" : {
+      "deps" : {
+        "sclk" : "dspse[0-9]{3}.tsc",
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : ["clem:ck"]
+      }
+    },
+    "spk" : {
+      "deps" : {
+        "objs" : ["clem:spk"]
+      }
+    }
+  },
+  "NIR" : {
+    "iak" : "nirAddendum[0-9]{3}.ti",
+    "ck" : {
+      "deps" : {
+        "sclk" : "dspse[0-9]{3}.tsc",
+        "lsk" : "naif[0-9]{4}.tls",
+        "objs" : ["clem:ck"]
+      }
+    },
+    "spk" : {
+      "deps" : {
+        "objs" : ["clem:spk"]
+      }
+    }
+  }
+}
