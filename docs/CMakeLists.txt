@@ -20,7 +20,7 @@ message(STATUS ${SUGARSPICE_BUILD_INCLUDE_DIR} " : " ${SUGARSPICE_PUBLIC_HEADERS
 
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
                    DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
-                   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+                   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile 
                    # WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    MAIN_DEPENDENCY Doxyfile
                    COMMENT "Generating docs"

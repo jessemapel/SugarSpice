@@ -22,7 +22,6 @@ def configureDoxyfile(input_dir, output_dir):
         filedata = file.read()
 
     print("===========================")
-    print(filedata)
     filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
     filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
 
@@ -31,7 +30,7 @@ def configureDoxyfile(input_dir, output_dir):
 
 breathe_projects = {}
 
-input_dir = '../SugarSpice'
+input_dir = '../SugarSpice/include/'
 output_dir = 'build'
 configureDoxyfile(input_dir, output_dir)
 subprocess.call('doxygen', shell=True)
@@ -114,4 +113,4 @@ html_sidebars = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
