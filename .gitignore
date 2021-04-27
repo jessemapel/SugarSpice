@@ -32,6 +32,6 @@
 *.app
 
 build/
-Doxyfile
+docs/Doxyfile
 
 .DS_Store
