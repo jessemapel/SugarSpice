@@ -5,7 +5,8 @@
 // paths for testing base / shared kernel queries
 std::vector<fs::path> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
-    "/isis_data/base/kernels/sclk/naif0002.tls"
+    "/isis_data/base/kernels/sclk/naif0002.tls",
+    "/kernels/pck/pck00006.tpc"
 };
 
 // paths for testing messenger kernel queries
@@ -70,4 +71,25 @@ std::vector<fs::path> clem1_paths = {
     "/isis_data/clementine1/kernels/iak/uvvisAddendum002.ti",
     "/isis_data/clementine1/kernels/iak/nirAddendum001.ti",
     "/isis_data/clementine1/kernels/iak/nirAddendum002.ti"
+};
+
+
+std::vector<fs::path> galileo_paths = {
+    "/isis_data/galileo/kernels/ck/ck90342a_plt.bc",
+    "/isis_data/galileo/kernels/ck/ck90342b_plt.bc",
+    "/isis_data/galileo/kernels/ck/ck90343a_plt.bc",
+    "/isis_data/galileo/kernels/ck/CKmerge_type3.plt.bck",
+
+    "/isis_data/galileo/kernels/ck/galssi_cal_med.bck",
+    "/isis_data/galileo/kernels/ck/galssi_eur_usgs2020.bc",
+    "/isis_data/galileo/kernels/ck/galssi_io_iau010806baa.bck",
+
+    "/isis_data/galileo/kernels/sclk/mk00062b.tsc",
+
+    "/isis_data/galileo/kernels/spk/s000131a.bsp",
+    "/isis_data/galileo/kernels/spk/s000407a.bsp",
+
+    "/isis_data/galileo/kernels/iak/ssiAddendum001.ti",
+
+    "/isis_data/galileo/kernels/pck/pck00010_msgr_v23_europa2020.tpc"
 };
