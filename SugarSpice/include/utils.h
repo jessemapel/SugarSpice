@@ -49,6 +49,28 @@ std::vector<fs::path> glob(fs::path const & root,
 
 
 /**
+  *
+  *
+  *
+  *
+ **/
+std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
+
+
+/**
+  * @brief recursively search keys in json. 
+  *
+  * Given a root and a regular expression, give all the files that match.  
+  *
+  * @param root input json to search
+  * @param key key to search for   
+  * @param recursive recursively iterates through objects if true 
+  * 
+  * @returns vector of refernces to matching json objects 
+ **/
+std::vector<nlohmann::json::json_pointer> findKeyInJson(nlohmann::json in, std::string key, bool recursive=true);
+
+/**
   * @brief This is a short description
   *
   * This is a long description 
@@ -63,7 +85,7 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
 
 
 /** 
-  *
+  * 
   *
   *
   *

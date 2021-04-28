@@ -9,7 +9,7 @@
 
 using namespace std;
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   fs::path dbPath = getMissionConfigFile("mess");
 
   ifstream i(dbPath);
