@@ -6,7 +6,7 @@ find_package(Sphinx REQUIRED)
 # Find all the public headers
 file(GLOB_RECURSE SUGARSPICE_PUBLIC_HEADERS ${SUGARSPICE_BUILD_INCLUDE_DIR}/*.h)
 
-set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/docs)
+set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/SugarSpice/include/)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
@@ -16,11 +16,9 @@ configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
 
 file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
 
-message(STATUS ${SUGARSPICE_BUILD_INCLUDE_DIR} " : " ${SUGARSPICE_PUBLIC_HEADERS})
-
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
                    DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
-                   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+                   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile 
                    # WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    MAIN_DEPENDENCY Doxyfile
                    COMMENT "Generating docs"

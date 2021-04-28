@@ -43,8 +43,8 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
   ASSERT_EQ(res["mess"]["ck"]["deps"]["sclk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["objs"].size(), 0);
-
 }
+
 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   fs::path dbPath = getMissionConfigFile("clem1");

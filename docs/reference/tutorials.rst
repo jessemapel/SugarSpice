@@ -25,7 +25,7 @@ Creating New Mission Config Files
 =================================
 
 .. _kerneldbgen: https://isis.astrogeology.usgs.gov/Application/presentation/Tabbed/kerneldbgen/kerneldbgen.html
-.. _EMCAScript: http://www.cplusplus.com/reference/regex/ECMAScript/
+.. _emcascript: http://www.cplusplus.com/reference/regex/ECMAScript/
 
 NAIF does not provide adequate resources to programmatically get all required metadata. ISIS solves this problem by creating "DB Files", PVL files containing metadata for every kernel in the ISIS data area. These DB files are a predominately human curiated in that either the Kernel files are hand written or a script (generally called `makedb`, co-located with the kernels in the kernel directory) is hand written to use kerneldbgen_ app to cache most of the kernel metadata. 
 
@@ -254,12 +254,12 @@ The Flowchart™
 
 1. Identify the mission, create a new json file called <mission>.json, try to stick to NAIF abbreviations (see: https://naif.jpl.nasa.gov/pub/naif/pds/data/) 
 2. Do binary kernels first (CKs, SPKs, etc.): 
-    * Look at the makedb file, translate the wildcards to EMCSScript_ and place them under their respective quality keyword 
+    * Look at the makedb file, translate the wildcards to EMCAScript_ and place them under their respective quality keyword 
     * Always have a deps keyword even if empty, but realistically, there is always a LSK or SPK 
     * If list of regexes (or any list) has only one element, feel free to write it as a string, not array
     * Check for a config file, make sure the dependencies on other time dependent kernels are handled.  
 3. When doing text kernels: 
-    * Simply look at the `kernel.[0-9]{4}.db` file (specifically the newest one). Mimic the regexes into EMCSScript_ 
+    * Simply look at the `kernel.[0-9]{4}.db` file (specifically the newest one). Mimic the regexes into EMCAScript_ 
     * The key is to make sure the right text kernel is going to the right instrument. 
 4. Test by creating a new gtest running `utils::searchMissionKernels` and manually confirming that all kernels are accounted for.
 
