@@ -9,7 +9,7 @@
 
 using namespace std;
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   fs::path dbPath = getMissionConfigFile("mess");
 
   ifstream i(dbPath);
@@ -43,8 +43,8 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernels) {
   ASSERT_EQ(res["mess"]["ck"]["deps"]["sclk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["mess"]["ck"]["deps"]["objs"].size(), 0);
-
 }
+
 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   fs::path dbPath = getMissionConfigFile("clem1");
@@ -89,7 +89,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["ck"]["smithed"]["kernels"].size(), 3);
-  ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["pck"].size(), 1);
+  ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["pck"].size(), 2);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["sclk"].size(), 1);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["objs"].size(), 0);
