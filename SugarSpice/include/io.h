@@ -15,17 +15,17 @@ class spkSegment {
      * @param centerOfMotion Naif body code of an object which is the center of motion for
      *                      bodyCode
      * @param referenceFrame Naif name of the reference system relative to which the state is
-     * @param startTime The et start time of the segment
-     * @param endTime The et end time of the segment
      * @param segmentId SPK segment identifier (max size 40)
      * @param degree Degree of the Hermite polynomials used to interpolate the states
      * @param statePositions Time ordered vector of state positions X,Y,Z
      * @param stateVelocities Time ordered vector of state velocities dX, dY, dZ
      * @param stateTimes Time ordered vector of state ephemeris times (TDB)
      */
-    spkSegment(std::string segmentComment, int bodyCode, int centerOfMotion,
+    spkSegment(std::string segmentComment,
+               int bodyCode,
+               int centerOfMotion,
                std::string referenceFrame,
-               double startTime, double endTime, std::string id, int degree, int numStates,
+               std::string id, int degree,
                std::vector<std::vector<double>> statePositions,
                std::vector<std::vector<double>> stateVelocities,
                std::vector<double> stateTimes);
@@ -66,15 +66,6 @@ class spkSegment {
     }
 
 
-    double getStartTime() {
-      return m_startTime;
-    }
-
-    double getEndTime() {
-      return m_endTime;
-    }
-
-
     std::string getSegmentId() {
       return m_segmentId;
     }
@@ -82,11 +73,6 @@ class spkSegment {
 
     int getPolynomialDegree() {
       return m_polyDegree;
-    }
-
-
-    int getSize() {
-      return m_numStates;
     }
 
 
@@ -105,16 +91,28 @@ class spkSegment {
     }
 
 
+    double getStartTime() {
+      return m_stateTimes[0];
+    }
+
+
+    double getEndTime() {
+      return m_stateTimes[getSize()-1];
+    }
+
+
+    int getSize() {
+      return m_stateTimes.size();
+    }
+
+
   private:
     std::string m_comment;
     int m_bodyCode;
     int m_centerOfMotion;
     std::string m_referenceFrame;
-    double m_startTime;
-    double m_endTime;
     std::string m_segmentId;
     int m_polyDegree;
-    int m_numStates;
     std::vector<std::vector<double>> m_statePositions;
     std::vector<std::vector<double>> m_stateVelocities;
     std::vector<double> m_stateTimes;
