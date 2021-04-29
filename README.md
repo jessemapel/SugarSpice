@@ -1,6 +1,5 @@
 # SugarSpice
-[![Documentation Status](https://readthedocs.org/projects/sugar-spice/badge/?version=latest)](http://sugar-spice.readthedocs.io/?badge=latest) ![Build](https://github.com/USGS-Astrogeology/SugarSpice/actions/workflows/ctests.yml/badge.svg)
-
+[![Documentation Status](https://readthedocs.org/projects/sugar-spice/badge/?version=latest)](http://sugar-spice.readthedocs.io/?badge=latest) [![CMake](https://github.com/USGS-Astrogeology/SugarSpice/actions/workflows/ctests.yml/badge.svg)](https://github.com/USGS-Astrogeology/SugarSpice/actions/workflows/ctests.yml)
 
 This Library provides a C++ interface querying, reading and writing Naif SPICE kernels. Built on the [Naif Toolkit](https://naif.jpl.nasa.gov/naif/toolkit.html).
 
