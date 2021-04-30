@@ -32,7 +32,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   ASSERT_EQ(res["mdis"]["fk"].size(), 2);
   ASSERT_EQ(res["mdis"]["ik"].size(), 2);
   ASSERT_EQ(res["mdis"]["iak"].size(), 2);
-  ASSERT_EQ(res["mdis"]["pck"].size(), 2);
+  ASSERT_EQ(res["mdis"]["pck"]["na"]["kernels"].size(), 2);
 
   ASSERT_EQ(res["mdis_att"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis_att"]["ck"]["deps"]["sclk"].size(), 2);
@@ -89,12 +89,15 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["ck"]["smithed"]["kernels"].size(), 3);
-  ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["pck"].size(), 2);
+  ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["objs"].size(), 1);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["sclk"].size(), 1);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["galileo"]["ck"]["deps"]["objs"].size(), 0);
   ASSERT_EQ(res["galileo"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["spk"]["deps"]["lsk"].size(), 2);
   ASSERT_EQ(res["galileo"]["iak"].size(), 1);
-  ASSERT_EQ(res["galileo"]["pck"].size(), 1);
+  ASSERT_EQ(res["galileo"]["pck"]["smithed"]["kernels"].size(), 2);
+  ASSERT_EQ(res["galileo"]["pck"]["smithed"]["deps"].size(), 0);
+  ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 1);
+  ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
 }

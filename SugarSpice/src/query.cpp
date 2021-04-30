@@ -185,8 +185,31 @@ json searchMissionKernels(fs::path root, json conf) {
     * with a similar structure, but regexes replaces with a path list
    **/
   auto globPcks = [&](json category) -> json {
+    if(!category.contains("pck")) {
+      return (json){};
+    }
+
+    category = category["pck"];
     json ret;
-    return getPathsFromRegex(root, category.value("pck", "$^"));
+
+    for(auto qual: Kernel::QUALITIES) {
+      if(!category.contains(qual)) {
+        continue;
+      }
+      ret[qual]["kernels"] = getPathsFromRegex(root, category[qual]["kernels"]);
+    }
+
+    if (category.contains("deps")) {
+        // pass deps through
+        if (category.at("deps").contains("objs")) {
+            ret["deps"]["objs"] = category.at("deps").at("objs");
+        }
+
+        ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
+        ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
+    }
+
+    return ret;
   };
 
 

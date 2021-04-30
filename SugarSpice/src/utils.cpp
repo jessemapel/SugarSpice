@@ -70,7 +70,6 @@ vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
 
 vector<string> jsonArrayToVector(json arr) {
   vector<string> res;
-  std::cout << arr << '\n';
   if (arr.is_array()) {
     for(auto it : arr) {
         res.emplace_back(it);

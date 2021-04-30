@@ -8,7 +8,7 @@
       "smithed" : {
         "kernels" : ["galssi_.*med.bck","galssi_io.*[0-9]{6}.*\\.bck","galssi_eur_.*\\.bc"],
         "deps" : {
-          "pck" : "pck00010_msgr_v[0-9]{2}.tpc"
+          "objs" : ["galileo:pck:smithed"]
         }
       },
       "deps" : {
@@ -28,6 +28,15 @@
         }
     },
     "iak" : "ssiAddendum[0-9]{3}.ti",
-    "pck" : "pck[0-9]{5}.tpc"
+    "pck" : {
+      "smithed" : {
+        "kernels" : "pck00010_msgr_v[0-9]{2}.tpc",
+        "deps" : []
+      },
+      "na" : {
+        "kernels" : "pck[0-9]{5}.tpc",
+        "deps" : []
+      }
+    }
   }
 }

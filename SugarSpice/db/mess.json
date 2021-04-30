@@ -31,7 +31,12 @@
         "fk" : "msgr_v[0-9]{3}.tf",
         "ik" : "msgr_mdis_v[0-9]{3}.ti",
         "iak" : "mdisAddendum[0-9]{3}.ti",
-        "pck" : "pck00010_msgr_v[0-9]{2}.tpc"
+        "pck" : {
+          "na" : {
+            "kernels" : "pck00010_msgr_v[0-9]{2}.tpc",
+            "deps" : []
+          }
+        }
     },
     "mdis_att" : {
         "ck" : {
