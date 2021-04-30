@@ -9,6 +9,39 @@
 
 using namespace std;
 
+
+TEST(QueryTests, UnitTestGetLatestKernel) { 
+  vector<fs::path> kernels = {
+    "iak.0001.ti",
+    "iak.0003.ti",
+    "different/place/iak.0002.ti",
+    "test/iak.0004.ti"
+  };
+
+  EXPECT_EQ(getLatestKernel(kernels),  "test/iak.0004.ti");
+}
+
+
+TEST(QueryTests, UnitTestGetLatestKernelError) { 
+  vector<fs::path> kernels = {
+    "iak.0001.ti",
+    "iak.0003.ti",
+    "different/place/iak.0002.ti",
+    "test/iak.4.ti",
+    // different extension means different filetype and therefore error
+    "test/error.tf" 
+  };
+
+  try { 
+    getLatestKernel(kernels);
+    FAIL() << "expected invalid argument error"; 
+  }
+  catch(invalid_argument &e) {
+    SUCCEED();
+  }
+}
+
+
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   fs::path dbPath = getMissionConfigFile("mess");
 
@@ -71,4 +104,15 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   ASSERT_EQ(res["UVVIS"]["iak"].size(), 2);
 
   ASSERT_EQ(res["UVVIS"]["iak"].size(), 2);
+}
+ 
+
+TEST(he, things) { 
+  // nlohmann::json conf = getMissionConfig("mess");
+  // nlohmann::json kernels = searchMissionKernels("/data/spice/", conf);
+  // std::cout << kernels << std::endl;
+  // kernels = searchMissionKernels();
+
+  std::cout << utcToEt("1996-12-18T12:28:28") << std::endl;
+
 }

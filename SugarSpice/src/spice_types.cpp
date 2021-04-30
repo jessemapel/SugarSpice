@@ -108,3 +108,11 @@ Kernel::Kernel(fs::path path) {
 Kernel::~Kernel() {
     unload_c(this->path.c_str());
 }
+
+
+double utcToEt(string utc) { 
+    SpiceDouble et; 
+    utc2et_c(utc.c_str(), &et);
+    return et; 
+}
+

@@ -7,6 +7,7 @@
  **/
 
 #include <fstream>
+#include <algorithm>
 
 #include <SpiceUsr.h>
 
@@ -16,6 +17,21 @@
 
 using json = nlohmann::json;
 using namespace std;
+
+
+fs::path getLatestKernel(vector<fs::path> kernels) {
+  string extension = kernels.at(0).extension();
+
+  // ensure everything is different versions of the same file
+  for(auto k : kernels) {
+    if (k.extension() != extension) {
+      throw invalid_argument("The input paths do are not different versions of the same file");
+    }
+  }
+
+  return *(max_element(kernels.begin(), kernels.end()));
+}
+
 
 /** 
   * @brief glob, but with json
@@ -28,7 +44,7 @@ using namespace std;
   * @param r json list of regexes
   * @returns vector of paths 
  **/
-vector<fs::path> getPathsFromRegex (fs::path root, json r) {
+vector<fs::path> getPathsFromRegex(fs::path root, json r) {
     vector<string> regexes = jsonArrayToVector(r); 
     regex reg(fmt::format("({})", fmt::join(regexes, "|")));
     vector<fs::path> paths = glob(root, reg, true);
@@ -189,7 +205,6 @@ json searchMissionKernels(fs::path root, json conf) {
 }
 
 
-
 json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
   auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> { 
     // get sclk
@@ -264,3 +279,4 @@ json searchMissionKernels(json kernels, std::vector<double> times, bool isContig
 
   return reducedKernels;
 } 
+

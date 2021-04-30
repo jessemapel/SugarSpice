@@ -70,3 +70,6 @@ class Kernel {
     Type type; 
     Quality quality; 
 };
+
+
+double utcToEt(std::string et);

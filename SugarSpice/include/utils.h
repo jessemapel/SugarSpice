@@ -110,6 +110,22 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
 
 
 /** 
+  * @brief Returns the path to the Mission specific Spice config file. 
+  * 
+  * Given a mission, search a prioritized list of directories for 
+  * the json config file. This function checks in the order: 
+  *  
+  *   1. The local build dir, i.e. $CMAKE_SOURCE_DIR
+  *   2. The install dir, i.e. $CMAKE_PREFIX 
+  * 
+  * @param mission mission name of the config file 
+  * 
+  * @returns path object of the condig file
+ **/ 
+ nlohmann::json getMissionConfig(std::string mission); 
+
+
+/** 
   * @brief Returns std::vector<string> interpretation of a json array. 
   * 
   * Attempts to convert the json array to a C++ array. Also handles 

@@ -238,6 +238,16 @@ fs::path getMissionConfigFile(string mission) {
 }
 
 
+json getMissionConfig(string mission) { 
+  fs::path dbPath = getMissionConfigFile("mess");
+
+  ifstream i(dbPath);
+  json conf;
+  i >> conf;
+  return conf; 
+}
+
+
 string getKernelType(fs::path kernelPath) {
   SpiceChar type[6]; 
   SpiceChar source[6]; 

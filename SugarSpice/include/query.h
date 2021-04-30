@@ -15,6 +15,8 @@
  **/
 
 
+fs::path getLatestKernel(std::vector<fs::path> kernels);
+
 
 /**
  * @brief Returns all kernels available for a mission
