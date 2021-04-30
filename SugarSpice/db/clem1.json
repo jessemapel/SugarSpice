@@ -1,8 +1,14 @@
 {
   "clem" : {
     "ck" : {
-      "reconstructed" : "clem_[0-9]{3}.bck",
-      "smithed" : "clem_ulcn2005_6hr.bc",
+      "reconstructed" : {
+        "kernels" : "clem_[0-9]{3}.bck",
+        "deps" : {}
+      },
+      "smithed" : {
+        "kernels" : "clem_ulcn2005_6hr.bc",
+        "deps" : {}
+      },
       "deps" : {
         "sclk" : "dspse[0-9]{3}.tsc",
         "lsk" : "naif[0-9]{4}.tls",
@@ -10,7 +16,10 @@
       }
     },
     "spk" : {
-      "reconstructed" : "clem.*\\.bsp",
+      "reconstructed" : {
+        "kernels" :  "clem.*\\.bsp",
+        "deps": {}
+      },
       "deps" : {
         "lsk" : "naif[0-9]{4}.tls",
         "objs" : []

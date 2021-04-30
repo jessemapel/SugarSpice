@@ -14,15 +14,15 @@
 #include "spice_types.h"
 
 using json = nlohmann::json;
-using namespace std; 
+using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
 
 
-// FMT formatter for fs::path, this enables passing path objects to FMT calls. 
+// FMT formatter for fs::path, this enables passing path objects to FMT calls.
 template <> struct fmt::formatter<fs::path> {
-  char presentation = 'f'; 
-  
+  char presentation = 'f';
+
   constexpr auto parse(format_parse_context& ctx) {
     // Parse the presentation format and store it in the formatter:
     auto it = ctx.begin(), end = ctx.end();
@@ -55,41 +55,40 @@ vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
       if (recursive && it.value().is_structured()) {
         vec = recur(pointer, key, vec, recursive);
       }
-      if(it.key() == key) {      
+      if(it.key() == key) {
         vec.push_back(pointer);
       }
     }
     return vec;
   };
 
-  vector<json::json_pointer> res; 
-  json::json_pointer p = ""_json_pointer; 
-  res = recur(p, key, res, recursive); 
-  return res; 
-} 
+  vector<json::json_pointer> res;
+  json::json_pointer p = ""_json_pointer;
+  res = recur(p, key, res, recursive);
+  return res;
+}
 
-vector<string> jsonArrayToVector(json arr) { 
-  vector<string> res; 
-
+vector<string> jsonArrayToVector(json arr) {
+  vector<string> res;
   if (arr.is_array()) {
-    for(auto it : arr) { 
+    for(auto it : arr) {
         res.emplace_back(it);
     }
   }
   else if (arr.is_string()) {
     res.emplace_back(arr);
   }
-  else { 
+  else {
     throw invalid_argument("Input json is not a valid Json array");
   }
 
-  return res; 
+  return res;
 }
 
 
 vector<fs::path> ls(fs::path const & root, bool recursive) {
   vector<fs::path> paths;
-  
+
   if (fs::exists(root) && fs::is_directory(root)) {
     for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
       if (fs::exists(*i)) {
@@ -102,23 +101,23 @@ vector<fs::path> ls(fs::path const & root, bool recursive) {
       }
     }
   }
-  
+
   return paths;
 }
 
 
 vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
     vector<fs::path> paths;
-    vector<fs::path> files_to_search = ls(root, recursive); 
+    vector<fs::path> files_to_search = ls(root, recursive);
 
     for (auto &f : files_to_search) {
       if (regex_search(f.c_str(), reg)) {
         paths.emplace_back(f);
       }
     }
-    
+
     return paths;
-}             
+}
 
 
 vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
@@ -127,21 +126,21 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
     int niv = card_c(&coverage) / 2;
     //Convert the coverage interval start and stop times to TDB
     double begin, end;
-  
+
     vector<pair<double, double>> res;
-  
+
     for(int j = 0;  j < niv;  j++) {
       //Get the endpoints of the jth interval.
       wnfetd_c(&coverage, j, &begin, &end);
-      
+
       pair<double, double> p = {begin, end};
-      res.emplace_back(p);  
+      res.emplace_back(p);
     }
-    
-    return res; 
+
+    return res;
   };
-   
-    
+
+
   SpiceChar fileType[32], source[2048];
   SpiceInt handle;
   SpiceBoolean found;
@@ -150,7 +149,7 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
 
   kinfo_c(kpath.string().c_str(), 32, 2048, fileType, source, &handle, &found);
   string currFile = fileType;
-  
+
   //create a spice cell capable of containing all the objects in the kernel.
   SPICEINT_CELL(currCell, 1000);
 
@@ -158,9 +157,9 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
   //to the last "currCell"
   ssize_c(0, &currCell);
   ssize_c(1000, &currCell);
-  
-  SPICEDOUBLE_CELL(cover, 200000); 
-  
+
+  SPICEDOUBLE_CELL(cover, 200000);
+
   if (currFile == "SPK") {
     spkobj_c(kpath.string().c_str(), &currCell);
   }
@@ -171,8 +170,8 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
     throw invalid_argument("Input Kernel is a text kernel which has no intervals");
   }
 
-  vector<pair<double, double>> result;   
-  
+  vector<pair<double, double>> result;
+
   for(int bodyCount = 0 ; bodyCount < card_c(&currCell) ; bodyCount++) {
     //get the NAIF body code
     int body = SPICE_CELL_ELEM_I(&currCell, bodyCount);
@@ -180,14 +179,14 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
     //only provide coverage for negative NAIF codes
     //(Positive codes indicate planetary bodies, negatives indicate
     // spacecraft and instruments)
-    if (body < 0) {        
-      std::vector<pair<double, double>> times; 
+    if (body < 0) {
+      std::vector<pair<double, double>> times;
       //find the correct coverage window
       if(currFile == "SPK") {
         SPICEDOUBLE_CELL(cover, 200000);
         ssize_c(0, &cover);
         ssize_c(200000, &cover);
-        spkcov_c(kpath.string().c_str(), body, &cover);                
+        spkcov_c(kpath.string().c_str(), body, &cover);
         times = formatIntervals(cover);
       }
       else if(currFile == "CK") {
@@ -198,7 +197,7 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
 
         // A SPICE SEGMENT is composed of SPICE INTERVALS
         ckcov_c(kpath.string().c_str(), body, SPICEFALSE, "SEGMENT", 0.0, "TDB", &cover);
-        
+
         times = formatIntervals(cover);
       }
 
@@ -208,18 +207,18 @@ vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
   }
 
   //for(auto& t: result) {
-  //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);    
+  //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);
   //}
-  
-  return result; 
+
+  return result;
 }
 
 
 fs::path getMissionConfigFile(string mission) {
-    // If running tests or debugging locally 
+    // If running tests or debugging locally
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
-    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db"; 
-    
+    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
+
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
 
     if (!fs::is_directory(dbPath)) {
@@ -228,9 +227,9 @@ fs::path getMissionConfigFile(string mission) {
 
     std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
-    for(auto p : paths) { 
+    for(auto p : paths) {
       if (p.filename() == fmt::format("{}.json", mission)) {
-        return p; 
+        return p;
       }
     }
 
@@ -249,10 +248,10 @@ json getMissionConfig(string mission) {
 
 
 string getKernelType(fs::path kernelPath) {
-  SpiceChar type[6]; 
-  SpiceChar source[6]; 
-  SpiceInt handle; 
-  SpiceBoolean found; 
+  SpiceChar type[6];
+  SpiceChar source[6];
+  SpiceInt handle;
+  SpiceBoolean found;
 
   furnsh_c(kernelPath.c_str());
 
@@ -262,8 +261,6 @@ string getKernelType(fs::path kernelPath) {
     throw domain_error("Kernel Type not found");
   }
 
-  unload_c(kernelPath.c_str()); 
+  unload_c(kernelPath.c_str());
   return string(type);
 }
-
-
