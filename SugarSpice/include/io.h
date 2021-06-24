@@ -4,11 +4,11 @@
 #include <vector>
 #include <ghc/fs_std.hpp>
 
-class spkSegment {
+class SpkSegment {
   public:
 
     /**
-     * Constructs a fully populated spkSegment
+     * Constructs a fully populated SpkSegment
      *
      * @param segmentComment The comment string for the new segment
      * @param bodyCode Naif body code of an object whose state is described by the segments
@@ -21,7 +21,7 @@ class spkSegment {
      * @param stateVelocities Time ordered vector of state velocities dX, dY, dZ
      * @param stateTimes Time ordered vector of state ephemeris times (TDB)
      */
-    spkSegment(std::string segmentComment,
+    SpkSegment(std::string segmentComment,
                int bodyCode,
                int centerOfMotion,
                std::string referenceFrame,
@@ -36,7 +36,7 @@ class spkSegment {
      *
      * @return std::string
      */
-    std::string getComment() {
+    std::string getComment() const {
       return m_comment;
     }
 
@@ -46,7 +46,7 @@ class spkSegment {
      *
      * @return int
      */
-    int getBodyCode() {
+    int getBodyCode() const {
       return m_bodyCode;
     }
 
@@ -56,54 +56,75 @@ class spkSegment {
      *
      * @return int
      */
-    int getCenterOfMotion() {
+    int getCenterOfMotion() const {
       return m_centerOfMotion;
     }
 
 
-    std::string getReferenceFrame() {
+    std::string getReferenceFrame() const {
       return m_referenceFrame;
     }
 
 
-    std::string getSegmentId() {
+    std::string getSegmentId() const {
       return m_segmentId;
     }
 
 
-    int getPolynomialDegree() {
+    int getPolynomialDegree() const {
       return m_polyDegree;
     }
 
 
-    std::vector<std::vector<double>> getStatePositions() {
+    std::vector<std::vector<double>> getStatePositions() const {
       return m_statePositions;
     }
 
 
-    std::vector<std::vector<double>> getStateVelocities() {
+    std::vector<std::vector<double>> getStateVelocities() const {
       return m_stateVelocities;
     }
 
 
-    std::vector<double> getStateTimes() {
+    std::vector<double> getStateTimes() const {
       return m_stateTimes;
     }
 
 
-    double getStartTime() {
+    double getStartTime() const {
       return m_stateTimes[0];
     }
 
 
-    double getEndTime() {
+    double getEndTime() const {
       return m_stateTimes[getSize()-1];
     }
 
 
-    int getSize() {
+    int getSize() const {
       return m_stateTimes.size();
     }
+
+
+    /**
+     * Combine the state positions and velocities into a single vector
+     *
+     * @return Single vector with {X1, Y1, Z1, dX1, dY1, dZ1, X2, Y2, Z2, dX2, dY2, dZ2, ...}
+     */
+    std::vector<double> concatStates () const;
+
+
+    /**
+      * @brief Write SPK segments to a file
+      *
+      * Given a vector of SPK segments, write them to the requested SPK file.
+      *
+      * @param Full file specification to have the SPK segments written to
+      * @param Vector of spkSegments to be written
+      */
+    void writeSpk (fs::path fileName,
+                   std::string comment,
+                   std::vector<SpkSegment> segments);
 
 
   private:
@@ -119,15 +140,4 @@ class spkSegment {
   };
 
 
-/**
-  * @brief Write SPK segments to a file
-  *
-  * Given a vector of SPK segments, write them to the requested SPK file.
-  *
-  * @param Full file specification to have the SPK segments written to
-  * @param Vector of spkSegments to be written
-  */
-void writeSpk (fs::path fileName,
-               std::string comment,
-               std::vector<spkSegment> segments);
 

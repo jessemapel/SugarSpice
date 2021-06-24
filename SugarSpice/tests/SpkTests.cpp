@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "Fixtures.h"
 #include "io.h"
 
 TEST(IOTests, CreateSPKSegment) {
@@ -15,19 +16,18 @@ TEST(IOTests, CreateSPKSegment) {
   std::vector<std::vector<double>> vel = {{0.1, 0.2, 0.3}};
   std::vector<double> et = {0.0};
 
-  spkSegment seg(comment, body, center, refFrame, id, degree, pos, vel, et);
+  SpkSegment seg(comment, body, center, refFrame, id, degree, pos, vel, et);
   EXPECT_EQ(seg.getComment(), comment);
 
   // Add other member tests
 
 }
 
-TEST(IOTests, WriteSPKSegment) {
+TEST_F(TempTestingFiles, WriteSPKSegment) {
 
-  auto tmp_dir = fs::temp_directory_path();
+//  auto tmp_dir = fs::temp_directory_path();
   fs::path tpath;
-//  tpath = tmp_dir / "test_spk.bsp";
-  tpath = "/Users/ssides/test_spk.bsp";
+  tpath = tempDir / "test_spk.bsp";
 
   std::string comment = "This is a comment for \n a test SPK segment";
   int body = 1;
@@ -39,9 +39,8 @@ TEST(IOTests, WriteSPKSegment) {
   std::vector<std::vector<double>> vel = {{0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}};
   std::vector<double> et = {0.0, 1.0};
 
-  std::vector<spkSegment> segments;
-  segments.push_back(spkSegment(comment, body, center, refFrame, id, degree, pos, vel, et));
+  std::vector<SpkSegment> segments;
+  segments.push_back(SpkSegment(comment, body, center, refFrame, id, degree, pos, vel, et));
 
-  writeSpk (tpath, "", segments);
-
+  segments[0].writeSpk (tpath, "", segments);
 }
