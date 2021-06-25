@@ -25,7 +25,6 @@ TEST(IOTests, CreateSPKSegment) {
 
 TEST_F(TempTestingFiles, WriteSPKSegment) {
 
-//  auto tmp_dir = fs::temp_directory_path();
   fs::path tpath;
   tpath = tempDir / "test_spk.bsp";
 
@@ -42,5 +41,7 @@ TEST_F(TempTestingFiles, WriteSPKSegment) {
   std::vector<SpkSegment> segments;
   segments.push_back(SpkSegment(comment, body, center, refFrame, id, degree, pos, vel, et));
 
-  segments[0].writeSpk (tpath, "", segments);
+  writeSpk (tpath, "", segments);
+
+  // TODO: Once we can read add a read and tests here
 }

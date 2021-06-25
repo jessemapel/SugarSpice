@@ -114,17 +114,7 @@ class SpkSegment {
     std::vector<double> concatStates () const;
 
 
-    /**
-      * @brief Write SPK segments to a file
-      *
-      * Given a vector of SPK segments, write them to the requested SPK file.
-      *
-      * @param Full file specification to have the SPK segments written to
-      * @param Vector of spkSegments to be written
-      */
-    void writeSpk (fs::path fileName,
-                   std::string comment,
-                   std::vector<SpkSegment> segments);
+
 
 
   private:
@@ -138,6 +128,19 @@ class SpkSegment {
     std::vector<std::vector<double>> m_stateVelocities;
     std::vector<double> m_stateTimes;
   };
+
+
+  /**
+    * @brief Write SPK segments to a file
+    *
+    * Given a vector of SPK segments, write them to the requested SPK file.
+    *
+    * @param Full file specification to have the SPK segments written to
+    * @param Vector of spkSegments to be written
+    */
+  void writeSpk (fs::path fileName,
+                 std::string comment,
+                 std::vector<SpkSegment> segments);
 
 
 

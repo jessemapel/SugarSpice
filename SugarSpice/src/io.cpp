@@ -5,7 +5,7 @@
 #include "io.h"
 
 
-void SpkSegment::writeSpk (fs::path fileName, std::string comment, std::vector<SpkSegment> segments) {
+void writeSpk (fs::path fileName, std::string comment, std::vector<SpkSegment> segments) {
 
   // TODO:
   //   write all segments not just first
@@ -22,7 +22,6 @@ void SpkSegment::writeSpk (fs::path fileName, std::string comment, std::vector<S
 
   SpiceInt handle;
   spkopn_c(fileName.string().c_str(), "SPK", 512, &handle);
-  std::cout << "w4" << " " << times[0] << " " << times[times.size()-1] << " " << segments[0].getSize() << std::endl;
 
   spkw13_c(handle,
            segments[0].getBodyCode(),
