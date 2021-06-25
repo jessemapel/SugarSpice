@@ -113,10 +113,6 @@ class SpkSegment {
      */
     std::vector<double> concatStates () const;
 
-
-
-
-
   private:
     std::string m_comment;
     int m_bodyCode;
