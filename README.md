@@ -40,14 +40,14 @@ cd SugarSpice
 
 # Create new environment from the provided dependency file, the -n flag is
 # proceded by the name of the new environment, change this to whatever works for you
-conda env create -f envornment.yml -n ssdev
+conda env create -f environment.yml -n ssdev
 
 # activate the new env
 conda activate ssdev
 
 # make and cd into the build directory. This can be placed anywhere, but here, we make
 # it in the repo (build is in .gitingore, so no issues there)
-mkdir buid
+mkdir build
 cd build
 
 # Configure the project, install directory can be anything, here, it's the conda env
