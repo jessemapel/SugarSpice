@@ -33,7 +33,7 @@ set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
 set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/utils.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/io.h
-                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h,
+                            ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/query.h)
 
 add_library(SugarSpice SHARED ${SUGARSPICE_SRC_FILES})
