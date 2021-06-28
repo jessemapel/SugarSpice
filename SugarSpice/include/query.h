@@ -14,7 +14,7 @@
   *
  **/
 
-
+namespace SugarSpice {
 
 /**
  * @brief Returns all kernels available for a mission
@@ -47,3 +47,4 @@ nlohmann::json searchMissionKernels(fs::path root,  nlohmann::json conf);
 **/
 nlohmann::json searchMissionKernels(nlohmann::json kernels, std::vector<double> times, bool isContiguous=false);
 
+}

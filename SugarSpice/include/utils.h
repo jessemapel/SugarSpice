@@ -19,6 +19,8 @@
 #include "spice_types.h"
 
 
+namespace SugarSpice {
+
 /**
   * @brief ls, like in unix, kinda. Also it's a function.
   *
@@ -121,3 +123,5 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
   * @returns string vector containing arr data
  **/ 
  std::vector<std::string> jsonArrayToVector(nlohmann::json arr);
+
+}

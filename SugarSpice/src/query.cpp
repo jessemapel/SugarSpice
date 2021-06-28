@@ -17,6 +17,8 @@
 using json = nlohmann::json;
 using namespace std;
 
+namespace SugarSpice {
+
 /**
   * @brief glob, but with json
   *
@@ -307,4 +309,6 @@ json searchMissionKernels(json kernels, std::vector<double> times, bool isContig
   }
 
   return reducedKernels;
+}
+
 }

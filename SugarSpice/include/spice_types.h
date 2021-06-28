@@ -8,6 +8,7 @@
 #include <ghc/fs_std.hpp>
 #include <iostream>
 
+namespace SugarSpice {
 
 /**
   *
@@ -70,3 +71,5 @@ class Kernel {
     Type type; 
     Quality quality; 
 };
+
+}

@@ -11,6 +11,8 @@
 
 using namespace std; 
 
+namespace SugarSpice {
+
 /**
   * Used here to do reverse lookups of enum stringss
   *
@@ -107,4 +109,6 @@ Kernel::Kernel(fs::path path) {
 
 Kernel::~Kernel() {
     unload_c(this->path.c_str());
+}
+
 }

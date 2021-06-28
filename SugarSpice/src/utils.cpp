@@ -47,6 +47,8 @@ template <> struct fmt::formatter<fs::path> {
 };
 
 
+namespace SugarSpice {
+
 vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
   function<vector<json::json_pointer>(json::json_pointer, string, vector<json::json_pointer>, bool)> recur = [&recur, &in](json::json_pointer elem, string key, vector<json::json_pointer> vec, bool recursive) -> vector<json::json_pointer> {
     json e = in[elem];
@@ -253,4 +255,6 @@ string getKernelType(fs::path kernelPath) {
 
   unload_c(kernelPath.c_str());
   return string(type);
+}
+
 }
