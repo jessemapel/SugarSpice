@@ -104,7 +104,6 @@ json globKernels(fs::path root, json conf, string kernelType) {
     }
   }
 
-  std::cout << "func return: " << ret << std::endl;
   return  ret.empty() ? "{}"_json : ret;
 }
 

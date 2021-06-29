@@ -72,4 +72,13 @@ class Kernel {
 };
 
 
+/**
+  * @brief convert a UTC string to an ephemeris time
+  *  
+  * Basically a wrapper around NAIF's cspice str2et function except it also temporarily loads the required kernels. 
+  * See Also: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/str2et_c.html
+  *
+  * @param et UTC string, e.g. "1988 June 13, 12:29:48 TDB"
+  * @returns double precision ephemeris time 
+  **/
 double utcToEt(std::string et);

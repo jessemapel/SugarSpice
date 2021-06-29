@@ -53,7 +53,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-  std::cout << "res: " << res << std::endl;
+  
   ASSERT_EQ(res["mdis"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["smithed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["deps"]["sclk"].size(), 2);
@@ -86,7 +86,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-  std::cout << res << std::endl;
 
   ASSERT_EQ(res["clem"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["clem"]["ck"]["smithed"]["kernels"].size(), 1);
