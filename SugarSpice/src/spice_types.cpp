@@ -7,9 +7,14 @@
 #include <fmt/format.h>
 #include <SpiceUsr.h>
 
+#include <nlohmann/json.hpp>
+
 #include "spice_types.h"
+#include "query.h"
+#include "utils.h"
 
 using namespace std; 
+using json = nlohmann::json;
 
 /**
   * Used here to do reverse lookups of enum stringss
@@ -37,7 +42,7 @@ const std::vector<std::string> Kernel::TYPES =  {"na", "ck", "spk", "tspk",
 
 const std::vector<std::string> Kernel::QUALITIES = { "na",
                                                      "predicted",
-                                                     "nadir", 
+                                                     "nadir",  
                                                      "reconstructed", 
                                                      "smithed"};
 
@@ -99,7 +104,7 @@ string Kernel::translateFrame(int frame) {
 }
 
 
-Kernel::Kernel(fs::path path) { 
+Kernel::Kernel(fs::path path) {
     this->path = path; 
     furnsh_c(path.string().c_str());
 }
@@ -110,7 +115,12 @@ Kernel::~Kernel() {
 }
 
 
-double utcToEt(string utc) { 
+double utcToEt(string utc) {
+    // get lsk kernel
+    json conf = getMissionConfig("base");
+    conf = globKernels(getDataDirectory(), conf, "lsk"); 
+    Kernel lsk(getLatestKernel(conf.at("base").at("lsk").at("kernels")));
+
     SpiceDouble et; 
     utc2et_c(utc.c_str(), &et);
     return et; 

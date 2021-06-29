@@ -53,196 +53,68 @@ vector<fs::path> getPathsFromRegex (fs::path root, json r) {
 };
 
 
+json globKernels(fs::path root, json conf, string kernelType) {
+  vector<json::json_pointer> pointers = findKeyInJson(conf, kernelType, true);
+
+  json ret; 
+
+  // iterate pointers
+  for(auto pointer : pointers) {      
+    json category = conf[pointer];
+    std::cout << pointer << std::endl;
+    std::cout << "cat: " <<  category << endl;
+
+    if (category.contains("kernels")) {
+      ret[pointer]["kernels"] = getPathsFromRegex(root, category.at("kernels"));
+    }
+
+    if (category.contains("deps")) {
+      if (category.at("deps").contains("sclk")) {
+        ret[pointer]["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").at("sclk"));
+      }
+      if (category.at("deps").contains("pck")) {
+        ret[pointer]["deps"]["pck"] = getPathsFromRegex(root, category.at("deps").at("pck"));
+      }
+      if (category.at("deps").contains("objs")) {
+        ret[pointer]["deps"]["objs"] = category.at("deps").at("objs");
+      }
+    }
+
+    // iterate over potential qualities 
+    for(auto qual: Kernel::QUALITIES) {
+      if(!category.contains(qual)) {
+        continue;
+      }
+      
+      std::cout << category.at(qual) << std::endl;
+
+      ret[pointer][qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
+      
+      if (category[qual].contains("deps")) {
+        if (category[qual].at("deps").contains("sclk")) {
+          ret[pointer][qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
+        }
+        if (category[qual].at("deps").contains("pck")) {
+          ret[pointer][qual]["deps"]["pck"] = getPathsFromRegex(root, category[qual].at("deps").at("pck"));
+        }
+        if (category[qual].at("deps").contains("objs")) {
+          ret[pointer][qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
+        }
+      }
+    }
+  }
+
+  std::cout << "func return: " << ret << std::endl;
+  return  ret.empty() ? "{}"_json : ret;
+}
+
+
 json searchMissionKernels(fs::path root, json conf) {
-
-  /**
-    * Lambda for parsing a CK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globCks = [&](json category) -> json {
-    if(!category.contains("ck")) {
-      return (json){};
-    }
-
-    category = category["ck"];
-    json ret;
-
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue;
-      }
-      ret[qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
-      if (category[qual].at("deps").contains("lsk")) {
-        ret[qual]["deps"]["lsk"] = getPathsFromRegex(root, category[qual].at("deps").at("lsk"));
-      }
-      if (category[qual].at("deps").contains("sclk")) {
-        ret[qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
-      }
-      if (category[qual].at("deps").contains("pck")) {
-        ret[qual]["deps"]["pck"] = getPathsFromRegex(root, category[qual].at("deps").at("pck"));
-      }
-      if (category[qual].at("deps").contains("objs")) {
-        ret[qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
-      }
-    }
-
-    // pass deps through
-    if (category.at("deps").contains("objs")) {
-      ret["deps"]["objs"] = category.at("deps").at("objs");
-    }
-
-    ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").at("sclk"));
-    ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").at("lsk"));
-    return ret;
-  };
-
-  /**
-    * Lambda for parsing a SPK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globSpks = [&](json category) -> json {
-    if(!category.contains("spk")) {
-      return (json){};
-    }
-
-    category = category["spk"];
-    json ret;
-
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue;
-      }
-      ret[qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
-      if (category[qual].at("deps").contains("lsk")) {
-        ret[qual]["deps"]["lsk"] = getPathsFromRegex(root, category[qual].at("deps").at("lsk"));
-      }
-      if (category[qual].at("deps").contains("sclk")) {
-        ret[qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
-      }
-      if (category[qual].at("deps").contains("objs")) {
-        ret[qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
-      }
-    }
-
-    // pass deps through
-    if (category.at("deps").contains("objs")) {
-      ret["deps"]["objs"] = category.at("deps").at("objs");
-    }
-
-    ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-    ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
-
-    return ret;
-  };
-
-
-  /**
-    * Lambda for parsing a SPK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globTspks = [&](json category) -> json {
-    if(!category.contains("tspk")) {
-      return (json){};
-    }
-
-    category = category["tspk"];
-    json ret;
-
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue;
-      }
-      ret[qual] = getPathsFromRegex(root, category[qual]);
-    }
-
-    if (category.contains("deps")) {
-        // pass deps through
-        if (category.at("deps").contains("objs")) {
-            ret["deps"]["objs"] = category.at("deps").at("objs");
-        }
-
-        ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-        ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
-    }
-
-    return ret;
-  };
-
-
-  /**
-    * Lambda for parsing a FK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globFks = [&](json category) -> json {
-    json ret;
-    return getPathsFromRegex(root, category.value("fk", "$^"));
-  };
-
-  /**
-    * Lambda for parsing a IK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globIks = [&](json category) -> json {
-    json ret;
-    return getPathsFromRegex(root, category.value("ik", "$^"));
-  };
-
-  /**
-    * Lambda for parsing a IAK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globIaks = [&](json category) -> json {
-    json ret;
-    return getPathsFromRegex(root, category.value("iak", "$^"));
-  };
-
-  /**
-    * Lambda for parsing a PCK json object, returns a json object
-    * with a similar structure, but regexes replaces with a path list
-   **/
-  auto globPcks = [&](json category) -> json {
-    if(!category.contains("pck")) {
-      return (json){};
-    }
-
-    category = category["pck"];
-    json ret;
-
-    for(auto qual: Kernel::QUALITIES) {
-      if(!category.contains(qual)) {
-        continue;
-      }
-      ret[qual]["kernels"] = getPathsFromRegex(root, category[qual]["kernels"]);
-    }
-
-    if (category.contains("deps")) {
-        // pass deps through
-        if (category.at("deps").contains("objs")) {
-            ret["deps"]["objs"] = category.at("deps").at("objs");
-        }
-
-        ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-        ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
-    }
-
-    return ret;
-  };
-
-
-  // first get any dependencies
-  // string deps = jsonArrayToVector(db[instrument][sType]);
-
   json kernels;
 
-  // iterate the categories (e.g. missions)
-  for (auto& cat: conf.items()) {
-      kernels[cat.key()]["ck"] = globCks(cat.value());
-      kernels[cat.key()]["spk"] = globSpks(cat.value());
-      kernels[cat.key()]["tspk"] = globTspks(cat.value());
-      kernels[cat.key()]["fk"] = globFks(cat.value());
-      kernels[cat.key()]["ik"] = globIks(cat.value());
-      kernels[cat.key()]["iak"] = globIaks(cat.value());
-      kernels[cat.key()]["pck"] = globPcks(cat.value());
+  // the kernels group is now the conf with 
+  for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck"}) {
+      kernels.merge_patch(globKernels(root, conf, kernelType));
   }
 
   return kernels;

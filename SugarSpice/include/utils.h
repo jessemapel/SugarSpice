@@ -137,3 +137,17 @@ std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpat
   * @returns string vector containing arr data
  **/ 
  std::vector<std::string> jsonArrayToVector(nlohmann::json arr);
+
+
+/** 
+  * @brief Returns std::vector<string> interpretation of a json array. 
+  * 
+  * Attempts to convert the json array to a C++ array. Also handles 
+  * strings in cases where one element arrays are stored as scalars. 
+  * Throws exception if the json obj is not an array. 
+  * 
+  * @param arr input json arr
+  * 
+  * @returns string vector containing arr data
+ **/ 
+ fs::path getDataDirectory();

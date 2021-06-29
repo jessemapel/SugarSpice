@@ -49,3 +49,9 @@ nlohmann::json searchMissionKernels(fs::path root,  nlohmann::json conf);
 **/
 nlohmann::json searchMissionKernels(nlohmann::json kernels, std::vector<double> times, bool isContiguous=false);
 
+
+/**
+  * Lambda for parsing a CK json object, returns a json object
+  * with a similar structure, but regexes replaces with a path list
+ **/
+nlohmann::json globKernels(fs::path root, nlohmann::json conf, std::string kernelType);
