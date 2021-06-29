@@ -8,6 +8,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace SugarSpice;
 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   fs::path dbPath = getMissionConfigFile("mess");
