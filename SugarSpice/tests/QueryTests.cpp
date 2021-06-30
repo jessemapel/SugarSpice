@@ -8,6 +8,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace SugarSpice;
 
 
 TEST(QueryTests, UnitTestGetLatestKernel) { 

@@ -5,7 +5,8 @@ set(SUGARSPICE_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/SugarSpice/tests/)
 # collect all of the test sources
 set (SUGARSPICE_TEST_SOURCE ${SUGARSPICE_TEST_DIRECTORY}/Fixtures.cpp
                             ${SUGARSPICE_TEST_DIRECTORY}/UtilTests.cpp
-                            ${SUGARSPICE_TEST_DIRECTORY}/QueryTests.cpp)
+                            ${SUGARSPICE_TEST_DIRECTORY}/QueryTests.cpp
+                            ${SUGARSPICE_TEST_DIRECTORY}/SpkTests.cpp)
 
 # setup test executable
 add_executable(runSugarSpiceTests TestMain.cpp ${SUGARSPICE_TEST_SOURCE})

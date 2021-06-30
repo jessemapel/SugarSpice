@@ -47,66 +47,68 @@ template <> struct fmt::formatter<fs::path> {
 };
 
 
-vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
-  function<vector<json::json_pointer>(json::json_pointer, string, vector<json::json_pointer>, bool)> recur = [&recur, &in](json::json_pointer elem, string key, vector<json::json_pointer> vec, bool recursive) -> vector<json::json_pointer> {
-    json e = in[elem];
-    for (auto &it : e.items()) {
-      json::json_pointer pointer = elem/it.key();
-      if (recursive && it.value().is_structured()) {
-        vec = recur(pointer, key, vec, recursive);
-      }
-      if(it.key() == key) {
-        vec.push_back(pointer);
-      }
-    }
-    return vec;
-  };
+namespace SugarSpice {
 
-  vector<json::json_pointer> res;
-  json::json_pointer p = ""_json_pointer;
-  res = recur(p, key, res, recursive);
-  return res;
-}
+  vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
+    function<vector<json::json_pointer>(json::json_pointer, string, vector<json::json_pointer>, bool)> recur = [&recur, &in](json::json_pointer elem, string key, vector<json::json_pointer> vec, bool recursive) -> vector<json::json_pointer> {
+      json e = in[elem];
+      for (auto &it : e.items()) {
+        json::json_pointer pointer = elem/it.key();
+        if (recursive && it.value().is_structured()) {
+          vec = recur(pointer, key, vec, recursive);
+        }
+        if(it.key() == key) {
+          vec.push_back(pointer);
+        }
+      }
+      return vec;
+    };
 
-vector<string> jsonArrayToVector(json arr) {
-  vector<string> res;
-  if (arr.is_array()) {
-    for(auto it : arr) {
+    vector<json::json_pointer> res;
+    json::json_pointer p = ""_json_pointer;
+    res = recur(p, key, res, recursive);
+    return res;
+  }
+
+  vector<string> jsonArrayToVector(json arr) {
+    vector<string> res;
+    if (arr.is_array()) {
+      for(auto it : arr) {
         res.emplace_back(it);
-    }
-  }
-  else if (arr.is_string()) {
-    res.emplace_back(arr);
-  }
-  else {
-    throw invalid_argument("Input json is not a valid Json array");
-  }
-
-  return res;
-}
-
-
-vector<fs::path> ls(fs::path const & root, bool recursive) {
-  vector<fs::path> paths;
-
-  if (fs::exists(root) && fs::is_directory(root)) {
-    for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
-      if (fs::exists(*i)) {
-        paths.emplace_back(i->path());
-      }
-
-      if(!recursive) {
-        // simply disable recursion if recurse flag is off
-        i.disable_recursion_pending();
       }
     }
+    else if (arr.is_string()) {
+      res.emplace_back(arr);
+    }
+    else {
+      throw invalid_argument("Input json is not a valid Json array");
+    }
+
+    return res;
   }
 
-  return paths;
-}
+
+  vector<fs::path> ls(fs::path const & root, bool recursive) {
+    vector<fs::path> paths;
+
+    if (fs::exists(root) && fs::is_directory(root)) {
+      for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
+        if (fs::exists(*i)) {
+          paths.emplace_back(i->path());
+        }
+
+        if(!recursive) {
+          // simply disable recursion if recurse flag is off
+          i.disable_recursion_pending();
+        }
+      }
+    }
+
+    return paths;
+  }
 
 
-vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
+  vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
     vector<fs::path> paths;
     vector<fs::path> files_to_search = ls(root, recursive);
 
@@ -117,130 +119,130 @@ vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) 
     }
 
     return paths;
-}
-
-
-vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
-  auto formatIntervals = [&](SpiceCell &coverage) -> vector<pair<double, double>> {
-    //Get the number of intervals in the object.
-    int niv = card_c(&coverage) / 2;
-    //Convert the coverage interval start and stop times to TDB
-    double begin, end;
-
-    vector<pair<double, double>> res;
-
-    for(int j = 0;  j < niv;  j++) {
-      //Get the endpoints of the jth interval.
-      wnfetd_c(&coverage, j, &begin, &end);
-
-      pair<double, double> p = {begin, end};
-      res.emplace_back(p);
-    }
-
-    return res;
-  };
-
-
-  SpiceChar fileType[32], source[2048];
-  SpiceInt handle;
-  SpiceBoolean found;
-
-  Kernel k(kpath);
-
-  kinfo_c(kpath.string().c_str(), 32, 2048, fileType, source, &handle, &found);
-  string currFile = fileType;
-
-  //create a spice cell capable of containing all the objects in the kernel.
-  SPICEINT_CELL(currCell, 1000);
-
-  //this resizing is done because otherwise a spice cell will append new data
-  //to the last "currCell"
-  ssize_c(0, &currCell);
-  ssize_c(1000, &currCell);
-
-  SPICEDOUBLE_CELL(cover, 200000);
-
-  if (currFile == "SPK") {
-    spkobj_c(kpath.string().c_str(), &currCell);
-  }
-  else if (currFile == "CK") {
-    ckobj_c(kpath.string().c_str(), &currCell);
-  }
-  else if (currFile == "TEXT") {
-    throw invalid_argument("Input Kernel is a text kernel which has no intervals");
   }
 
-  vector<pair<double, double>> result;
 
-  for(int bodyCount = 0 ; bodyCount < card_c(&currCell) ; bodyCount++) {
-    //get the NAIF body code
-    int body = SPICE_CELL_ELEM_I(&currCell, bodyCount);
+  vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
+    auto formatIntervals = [&](SpiceCell &coverage) -> vector<pair<double, double>> {
+      //Get the number of intervals in the object.
+      int niv = card_c(&coverage) / 2;
+      //Convert the coverage interval start and stop times to TDB
+      double begin, end;
 
-    //only provide coverage for negative NAIF codes
-    //(Positive codes indicate planetary bodies, negatives indicate
-    // spacecraft and instruments)
-    if (body < 0) {
-      std::vector<pair<double, double>> times;
-      //find the correct coverage window
-      if(currFile == "SPK") {
-        SPICEDOUBLE_CELL(cover, 200000);
-        ssize_c(0, &cover);
-        ssize_c(200000, &cover);
-        spkcov_c(kpath.string().c_str(), body, &cover);
-        times = formatIntervals(cover);
-      }
-      else if(currFile == "CK") {
-        //  200,000 is the max coverage window size for a CK kernel
-        SPICEDOUBLE_CELL(cover, 200000);
-        ssize_c(0, &cover);
-        ssize_c(200000, &cover);
+      vector<pair<double, double>> res;
 
-        // A SPICE SEGMENT is composed of SPICE INTERVALS
-        ckcov_c(kpath.string().c_str(), body, SPICEFALSE, "SEGMENT", 0.0, "TDB", &cover);
+      for(int j = 0;  j < niv;  j++) {
+        //Get the endpoints of the jth interval.
+        wnfetd_c(&coverage, j, &begin, &end);
 
-        times = formatIntervals(cover);
+        pair<double, double> p = {begin, end};
+        res.emplace_back(p);
       }
 
-      result.reserve(result.size() + distance(times.begin(), times.end()));
-      result.insert(result.end(), times.begin(), times.end());
+      return res;
+    };
+
+
+    SpiceChar fileType[32], source[2048];
+    SpiceInt handle;
+    SpiceBoolean found;
+
+    Kernel k(kpath);
+
+    kinfo_c(kpath.string().c_str(), 32, 2048, fileType, source, &handle, &found);
+    string currFile = fileType;
+
+    //create a spice cell capable of containing all the objects in the kernel.
+    SPICEINT_CELL(currCell, 1000);
+
+    //this resizing is done because otherwise a spice cell will append new data
+    //to the last "currCell"
+    ssize_c(0, &currCell);
+    ssize_c(1000, &currCell);
+
+    SPICEDOUBLE_CELL(cover, 200000);
+
+    if (currFile == "SPK") {
+      spkobj_c(kpath.string().c_str(), &currCell);
     }
+    else if (currFile == "CK") {
+      ckobj_c(kpath.string().c_str(), &currCell);
+    }
+    else if (currFile == "TEXT") {
+      throw invalid_argument("Input Kernel is a text kernel which has no intervals");
+    }
+
+    vector<pair<double, double>> result;
+
+    for(int bodyCount = 0 ; bodyCount < card_c(&currCell) ; bodyCount++) {
+      //get the NAIF body code
+      int body = SPICE_CELL_ELEM_I(&currCell, bodyCount);
+
+      //only provide coverage for negative NAIF codes
+      //(Positive codes indicate planetary bodies, negatives indicate
+      // spacecraft and instruments)
+      if (body < 0) {
+        std::vector<pair<double, double>> times;
+        //find the correct coverage window
+        if(currFile == "SPK") {
+          SPICEDOUBLE_CELL(cover, 200000);
+          ssize_c(0, &cover);
+          ssize_c(200000, &cover);
+          spkcov_c(kpath.string().c_str(), body, &cover);
+          times = formatIntervals(cover);
+        }
+        else if(currFile == "CK") {
+          //  200,000 is the max coverage window size for a CK kernel
+          SPICEDOUBLE_CELL(cover, 200000);
+          ssize_c(0, &cover);
+          ssize_c(200000, &cover);
+
+          // A SPICE SEGMENT is composed of SPICE INTERVALS
+          ckcov_c(kpath.string().c_str(), body, SPICEFALSE, "SEGMENT", 0.0, "TDB", &cover);
+
+          times = formatIntervals(cover);
+        }
+
+        result.reserve(result.size() + distance(times.begin(), times.end()));
+        result.insert(result.end(), times.begin(), times.end());
+      }
+    }
+
+    //for(auto& t: result) {
+    //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);
+    //}
+
+    return result;
   }
 
-  //for(auto& t: result) {
-  //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);
-  //}
 
-  return result;
-}
-
-
-fs::path getDataDirectory() {
-    char* ptr = getenv("ISISDATA");
-    fs::path isisDataDir = ptr == NULL ? "" : ptr;
-
-    ptr = getenv("ALESPICEROOT");
-    fs::path aleDataDir = ptr == NULL ? "" : ptr;
-
-    ptr = getenv("SPICEROOT");;
-    fs::path spiceDataDir = ptr == NULL ? "" : ptr;
-
-    if (fs::is_directory(spiceDataDir)) {
-       return spiceDataDir;
-    }
-
-    if (fs::is_directory(aleDataDir)) {
-      return aleDataDir; 
-    }
-
-    if (fs::is_directory(isisDataDir)) {
-      return isisDataDir; 
-    }  
-    
-    throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
-}
+  fs::path getDataDirectory() {
+      char* ptr = getenv("ISISDATA");
+      fs::path isisDataDir = ptr == NULL ? "" : ptr;
+  
+      ptr = getenv("ALESPICEROOT");
+      fs::path aleDataDir = ptr == NULL ? "" : ptr;
+  
+      ptr = getenv("SPICEROOT");;
+      fs::path spiceDataDir = ptr == NULL ? "" : ptr;
+  
+      if (fs::is_directory(spiceDataDir)) {
+         return spiceDataDir;
+      }
+  
+      if (fs::is_directory(aleDataDir)) {
+        return aleDataDir; 
+      }
+  
+      if (fs::is_directory(isisDataDir)) {
+        return isisDataDir; 
+      }  
+      
+      throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
+  }
 
 
-fs::path getMissionConfigFile(string mission) {
+  fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
@@ -248,7 +250,7 @@ fs::path getMissionConfigFile(string mission) {
     fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
 
     if (!fs::is_directory(dbPath)) {
-       throw "No Valid Path found";
+      throw "No Valid Path found";
     }
 
     std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
@@ -262,34 +264,35 @@ fs::path getMissionConfigFile(string mission) {
     }
 
     throw invalid_argument(fmt::format("Config file for \"{}\" not found", mission));
-}
-
-
-json getMissionConfig(string mission) { 
-  fs::path dbPath = getMissionConfigFile(mission);
-
-  ifstream i(dbPath);
-  json conf;
-  i >> conf;
-  return conf; 
-}
-
-
-string getKernelType(fs::path kernelPath) {
-  SpiceChar type[6];
-  SpiceChar source[6];
-  SpiceInt handle;
-  SpiceBoolean found;
-
-  furnsh_c(kernelPath.c_str());
-
-  kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
-
-  if (!found) {
-    throw domain_error("Kernel Type not found");
   }
 
-  unload_c(kernelPath.c_str());
-  return string(type);
+
+  json getMissionConfig(string mission) { 
+    fs::path dbPath = getMissionConfigFile(mission);
+  
+    ifstream i(dbPath);
+    json conf;
+    i >> conf;
+    return conf; 
+  }
+
+  string getKernelType(fs::path kernelPath) {
+    SpiceChar type[6];
+    SpiceChar source[6];
+    SpiceInt handle;
+    SpiceBoolean found;
+
+    furnsh_c(kernelPath.c_str());
+
+    kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
+
+    if (!found) {
+      throw domain_error("Kernel Type not found");
+    }
+
+    unload_c(kernelPath.c_str());
+    return string(type);
+  }
+
 }
 

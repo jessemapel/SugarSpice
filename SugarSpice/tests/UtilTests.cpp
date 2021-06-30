@@ -4,6 +4,7 @@
 #include "Fixtures.h"
 #include "spice_types.h"
 
+using namespace SugarSpice;
 
 TEST(UtilTests, GetKernelType) { 
 }
