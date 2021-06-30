@@ -5,6 +5,8 @@
 #include "Fixtures.h"
 #include "io.h"
 
+using namespace SugarSpice;
+
 TEST(IOTests, CreateSPKSegment) {
   std::string comment = "This is a comment for \n a test SPK segment";
   int body = 1;
