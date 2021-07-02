@@ -226,8 +226,6 @@ namespace SugarSpice {
     // Use installDbPath unless $SSPICE_DEBUG is set
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
 
-    std::cout << dbPath << std::endl;
-
     if (!fs::is_directory(dbPath)) {
       throw "No Valid Path found";
     }
