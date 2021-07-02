@@ -218,10 +218,15 @@ namespace SugarSpice {
 
   fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally
-    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
-    fs::path installDbPath = fs::absolute(_INSTALL_PREFIX) / "etc" / "SugarSpice" / "db";
+    char* _CONDA_PREFIX = std::getenv("CONDA_PREFIX");
 
-    fs::path dbPath = fs::exists(installDbPath) ? installDbPath : debugDbPath;
+    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
+    fs::path installDbPath = fs::absolute(_CONDA_PREFIX) / "etc" / "SugarSpice" / "db";
+
+    // Use installDbPath unless $SSPICE_DEBUG is set
+    fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
+
+    std::cout << dbPath << std::endl;
 
     if (!fs::is_directory(dbPath)) {
       throw "No Valid Path found";
