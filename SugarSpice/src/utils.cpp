@@ -230,10 +230,12 @@ namespace SugarSpice {
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
 
     std::cout << "used path: " << dbPath << std::endl;
-
+  
     if (!fs::is_directory(dbPath)) {
       throw "No Valid Path found";
     }
+
+    std::cout << "valid dir" << std::endl;
 
     std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
