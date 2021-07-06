@@ -49,6 +49,61 @@ template <> struct fmt::formatter<fs::path> {
 
 namespace SugarSpice {
 
+  // given a string keyname template, search the kernel pool for matching keywords and their values
+  // should return json with all matching keynames:values
+  void findKeywords(string keytpl) {
+    //ldpool_c("/usgs/cpkgs/isis3/data/messenger/kernels/pck/pck00010_msgr_v23.tpc");
+    ldpool_c("/usgs/cpkgs/isis3/data/messenger/kernels/ik/msgr_mdis_v010.ti");
+    // define i/o for gnpool
+    ConstSpiceChar *cstr = keytpl.c_str();
+    SpiceInt start = 0;
+    SpiceInt room = 50;
+    SpiceInt lenout = 100;
+    SpiceInt nkeys;
+    SpiceChar kvars [room][lenout];
+    SpiceBoolean gnfound;
+    // end
+
+    gnpool_c(cstr, start, room, lenout, &nkeys, kvars, &gnfound);
+
+    if(gnfound) {
+      std::cout << "found " << nkeys << std::endl;
+    }
+    else {
+      std::cout << "not found" << std::endl;
+    }
+    
+    ConstSpiceChar *fkey;
+    SpiceChar cvals [room][lenout];
+    SpiceInt nvals;
+    SpiceBoolean gcfound;
+    
+    ConstSpiceChar *fval;
+
+    // call gcpool for each key found in gnpool
+    for(int i = 0; i < nkeys; i++) {
+      fkey = &kvars[i][0];
+      printf("============\n");
+      printf("key: %s\n",fkey);
+      printf("   vals:\n");
+      gcpool_c("INS-236810_FOV_SHAPE", start, room, lenout, &nvals, cvals, &gcfound);
+
+      if(gcfound) {
+        std::cout << "found " << nvals << std::endl;
+      }
+      else {
+        std::cout << "not found" << std::endl;
+      }
+
+      for(int j = 0; j < nvals; j++) {
+        fval = &cvals[j][0];
+        std::cout << strlen(fval) << std::endl;
+        printf("val: %s\n",fval);
+      }
+
+    }
+  }
+
   vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
     function<vector<json::json_pointer>(json::json_pointer, string, vector<json::json_pointer>, bool)> recur = [&recur, &in](json::json_pointer elem, string key, vector<json::json_pointer> vec, bool recursive) -> vector<json::json_pointer> {
       json e = in[elem];

@@ -17,6 +17,13 @@ TEST(UtilTests, GetFrameCode) {
 TEST(UtilTests, GetFrameName) {  
 }
 
+TEST(UtilTests, findKeywords) {
+// given a string keyname template, search the kernel pool for matching keywords and their values
+// should return json with all matching keynames:values
+
+findKeywords("*");
+
+}
 
 TEST(UtilTests, findKeyInJson) {
   nlohmann::ordered_json j = R"(
