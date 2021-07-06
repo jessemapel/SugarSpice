@@ -17,6 +17,7 @@ endif()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "$ENV{CONDA_PREFIX}")
 endif()
+message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
