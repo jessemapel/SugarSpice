@@ -15,14 +15,23 @@
 
 
 namespace SugarSpice {
-  /** @breif 
+  /** 
+    * @brief 
     * 
     *
     *
     *
    **/
-  fs::path getLatestKernel(std::vector<fs::path> kernels);
+  fs::path getLatestKernel(std::vector<std::string> kernels);
   
+   /** 
+    * @brief 
+    * 
+    *
+    *
+    *
+   **/ 
+  nlohmann::json getLatestKernels(nlohmann::json kernels);
   
   /**
    * @brief Returns all kernels available for a mission

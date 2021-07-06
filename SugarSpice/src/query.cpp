@@ -20,11 +20,10 @@ using namespace std;
 
 namespace SugarSpice {
   
-  fs::path getLatestKernel(vector<fs::path> kernels) {
-    string extension = kernels.at(0).extension();
-  
+  fs::path getLatestKernel(vector<string> kernels) {
+    string extension = static_cast<fs::path>(kernels.at(0)).extension();
     // ensure everything is different versions of the same file
-    for(auto k : kernels) {
+    for(const fs::path &k : kernels) {
       if (k.extension() != extension) {
         throw invalid_argument("The input paths do are not different versions of the same file");
       }
@@ -34,6 +33,40 @@ namespace SugarSpice {
   }
   
   
+  json getLatestKernels(json kernels) {
+    // the kernels group is now the conf with 
+    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk"}) {
+        vector<json::json_pointer> catPointers = findKeyInJson(kernels, kernelType, true);
+        for(auto &p : catPointers) {
+          for(auto qual: Kernel::QUALITIES) { 
+            if(!kernels[p].contains(qual)){
+              continue; 
+            }
+            std::vector<string> l = jsonArrayToVector(kernels[p][qual]["kernels"]);
+            fs::path latest;
+
+            if (!l.empty()) {
+              latest = getLatestKernel(l);
+              kernels[p][qual]["kernels"] = latest; 
+            }
+          }
+          
+          if(kernels[p].contains("kernels")) { 
+            fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]["kernels"]));
+            kernels[p]["kernels"] = latest;  
+          }
+        }
+    }
+
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "sclk", true);
+    for(auto &p : pointers) {
+      fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]));
+      kernels[p] = latest; 
+    }
+ 
+    return kernels;
+  }
+
   /**
     * @brief glob, but with json
     *
@@ -109,7 +142,7 @@ namespace SugarSpice {
     json kernels;
   
     // the kernels group is now the conf with 
-    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck"}) {
+    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk"}) {
         kernels.merge_patch(globKernels(root, conf, kernelType));
     }
   
@@ -119,17 +152,23 @@ namespace SugarSpice {
   
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
     auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> {
-      // get sclk
       vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      vector<string> sclks;
+
+      if (!p.empty()) { 
+        sclks = jsonArrayToVector(j[p.at(0)]);
+        sort(sclks.begin(), sclks.end(), greater<string>());
+      }
   
-      vector<string> sclks = jsonArrayToVector(j[p.at(0)]);
-      sort(sclks.begin(), sclks.end(), greater<string>());
-  
-      // get lsk
-      p = findKeyInJson(j, "lsk", true);
-  
-      vector<string> lsks = jsonArrayToVector(j[p.at(0)]);
+      json baseConf = getMissionConfig("base");
+      fs::path dataDir = getDataDirectory();
+      
+      baseConf = searchMissionKernels(dataDir, baseConf);
+      p = findKeyInJson(baseConf, "lsk", true);
+      
+      vector<string> lsks = jsonArrayToVector(baseConf.at(p.at(0))["kernels"]);
       sort(lsks.begin(), lsks.end(), greater<string>());
+      
       vector<shared_ptr<Kernel>> timeKernels(2);
   
       if(lsks.size()) {
@@ -138,7 +177,6 @@ namespace SugarSpice {
       if (sclks.size()) {
         timeKernels.emplace_back(new Kernel(sclks.at(0)));
       }
-  
       return timeKernels;
     };
   
@@ -154,24 +192,24 @@ namespace SugarSpice {
     // refine cks for every instrument/category
     for (auto &p : pointers) {
       json cks = kernels[p];
-  
       if(cks.is_null() ) {
         continue;
       }
   
       // load time kernels
       vector<shared_ptr<Kernel>> timeKernels = loadTimeKernels(cks);
-  
+      
       for(auto qual: Kernel::QUALITIES) {
         if(!cks.contains(qual)) {
           continue;
         }
   
-        json ckQual = cks[qual];
+        json ckQual = cks[qual]["kernels"];
         newKernels = json::array();
-  
+        
         for(auto &kernel : ckQual) {
           vector<pair<double, double>> intervals = getTimeIntervals(kernel);
+
           for(auto &interval : intervals) {
             auto isInRange = [&interval](double d) -> bool {return d >= interval.first && d <= interval.second;};
   
@@ -183,12 +221,12 @@ namespace SugarSpice {
             }
           } // end of searching intervals
         } // end  of searching kernels
-  
-        reducedKernels[p/qual] = newKernels;
+        
+        reducedKernels[p/qual/"kernels"] = newKernels;
         reducedKernels[p]["deps"] = kernels[p]["deps"];
       }
     }
-  
-    return reducedKernels;
+    kernels.merge_patch(reducedKernels);
+    return kernels;
   }
 }

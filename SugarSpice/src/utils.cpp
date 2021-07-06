@@ -35,7 +35,8 @@ template <> struct fmt::formatter<fs::path> {
     // Return an iterator past the end of the parsed range:
     return it;
   }
-    template <typename FormatContext>
+  
+  template <typename FormatContext>
   auto format(const fs::path& p, FormatContext& ctx) {
   // auto format(const point &p, FormatContext &ctx) -> decltype(ctx.out()) // c++11
     // ctx.out() is an output iterator to write to.
@@ -182,7 +183,7 @@ namespace SugarSpice {
       //(Positive codes indicate planetary bodies, negatives indicate
       // spacecraft and instruments)
       if (body < 0) {
-        std::vector<pair<double, double>> times;
+        vector<pair<double, double>> times;
         //find the correct coverage window
         if(currFile == "SPK") {
           SPICEDOUBLE_CELL(cover, 200000);
@@ -253,11 +254,9 @@ namespace SugarSpice {
       throw "No Valid Path found";
     }
 
-    std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
+    vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
     for(auto p : paths) {
-      fmt::print("it: {}\n", p.filename());
-      fmt::print("search: {}\n", fmt::format("{}.json", mission));
       if (p.filename() == fmt::format("{}.json", mission)) {
         return p;
       }
