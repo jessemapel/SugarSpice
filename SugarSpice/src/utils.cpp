@@ -238,7 +238,9 @@ namespace SugarSpice {
     std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
     for(auto p : paths) {
+      std::cout << p << std::endl;
       if (p.filename() == fmt::format("{}.json", mission)) {
+        std::cout << "returning" << std::endl;
         return p;
       }
     }
