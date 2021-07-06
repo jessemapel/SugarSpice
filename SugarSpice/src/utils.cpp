@@ -223,26 +223,17 @@ namespace SugarSpice {
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
     fs::path installDbPath = fs::absolute(_CONDA_PREFIX) / "etc" / "SugarSpice" / "db";
 
-    std::cout << "debug path: " << debugDbPath << std::endl;
-    std::cout << "install path: " << installDbPath << std::endl;
-
     // Use installDbPath unless $SSPICE_DEBUG is set
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
 
-    std::cout << "used path: " << dbPath << std::endl;
-  
     if (!fs::is_directory(dbPath)) {
-      throw "No Valid Path found";
+      throw runtime_error("Config Directory Not Found.");;
     }
-
-    std::cout << "valid dir" << std::endl;
 
     std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
     for(auto p : paths) {
-      std::cout << p << std::endl;
       if (p.filename() == fmt::format("{}.json", mission)) {
-        std::cout << "returning" << std::endl;
         return p;
       }
     }
