@@ -12,7 +12,7 @@ using namespace SugarSpice;
 
 
 TEST(QueryTests, UnitTestGetLatestKernel) { 
-  vector<fs::path> kernels = {
+  vector<string> kernels = {
     "iak.0001.ti",
     "iak.0003.ti",
     "different/place/iak.0002.ti",
@@ -24,7 +24,7 @@ TEST(QueryTests, UnitTestGetLatestKernel) {
 
 
 TEST(QueryTests, UnitTestGetLatestKernelError) { 
-  vector<fs::path> kernels = {
+  vector<string> kernels = {
     "iak.0001.ti",
     "iak.0003.ti",
     "different/place/iak.0002.ti",
@@ -127,3 +127,4 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 1);
   ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
 }
+
