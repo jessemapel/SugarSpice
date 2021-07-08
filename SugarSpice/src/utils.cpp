@@ -35,7 +35,8 @@ template <> struct fmt::formatter<fs::path> {
     // Return an iterator past the end of the parsed range:
     return it;
   }
-    template <typename FormatContext>
+  
+  template <typename FormatContext>
   auto format(const fs::path& p, FormatContext& ctx) {
   // auto format(const point &p, FormatContext &ctx) -> decltype(ctx.out()) // c++11
     // ctx.out() is an output iterator to write to.
@@ -182,7 +183,7 @@ namespace SugarSpice {
       //(Positive codes indicate planetary bodies, negatives indicate
       // spacecraft and instruments)
       if (body < 0) {
-        std::vector<pair<double, double>> times;
+        vector<pair<double, double>> times;
         //find the correct coverage window
         if(currFile == "SPK") {
           SPICEDOUBLE_CELL(cover, 200000);
@@ -216,6 +217,32 @@ namespace SugarSpice {
   }
 
 
+  fs::path getDataDirectory() {
+      char* ptr = getenv("ISISDATA");
+      fs::path isisDataDir = ptr == NULL ? "" : ptr;
+  
+      ptr = getenv("ALESPICEROOT");
+      fs::path aleDataDir = ptr == NULL ? "" : ptr;
+  
+      ptr = getenv("SPICEROOT");;
+      fs::path spiceDataDir = ptr == NULL ? "" : ptr;
+  
+      if (fs::is_directory(spiceDataDir)) {
+         return spiceDataDir;
+      }
+  
+      if (fs::is_directory(aleDataDir)) {
+        return aleDataDir; 
+      }
+  
+      if (fs::is_directory(isisDataDir)) {
+        return isisDataDir; 
+      }  
+      
+      throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
+  }
+
+
   fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
@@ -227,7 +254,7 @@ namespace SugarSpice {
       throw "No Valid Path found";
     }
 
-    std::vector<fs::path> paths = glob(dbPath, basic_regex("json"));
+    vector<fs::path> paths = glob(dbPath, basic_regex("json"));
 
     for(auto p : paths) {
       if (p.filename() == fmt::format("{}.json", mission)) {
@@ -238,6 +265,15 @@ namespace SugarSpice {
     throw invalid_argument(fmt::format("Config file for \"{}\" not found", mission));
   }
 
+
+  json getMissionConfig(string mission) { 
+    fs::path dbPath = getMissionConfigFile(mission);
+  
+    ifstream i(dbPath);
+    json conf;
+    i >> conf;
+    return conf; 
+  }
 
   string getKernelType(fs::path kernelPath) {
     SpiceChar type[6];
@@ -258,3 +294,4 @@ namespace SugarSpice {
   }
 
 }
+

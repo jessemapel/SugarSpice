@@ -7,9 +7,14 @@
 #include <fmt/format.h>
 #include <SpiceUsr.h>
 
+#include <nlohmann/json.hpp>
+
 #include "spice_types.h"
+#include "query.h"
+#include "utils.h"
 
 using namespace std; 
+using json = nlohmann::json;
 
 namespace SugarSpice {
 
@@ -111,4 +116,15 @@ namespace SugarSpice {
     unload_c(this->path.c_str());
   }
 
+
+  double utcToEt(string utc) {
+      // get lsk kernel
+      json conf = getMissionConfig("base");
+      conf = globKernels(getDataDirectory(), conf, "lsk"); 
+      Kernel lsk(getLatestKernel(conf.at("base").at("lsk").at("kernels")));
+  
+      SpiceDouble et; 
+      utc2et_c(utc.c_str(), &et);
+      return et; 
+  }
 }

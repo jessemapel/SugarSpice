@@ -18,9 +18,8 @@
 
 #include "spice_types.h"
 
-
 namespace SugarSpice {
-
+  
   /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
@@ -30,10 +29,10 @@ namespace SugarSpice {
     * @param recursive recursively iterates through directories if true 
     * 
     * @returns list of paths
-  **/
+   **/
   std::vector<fs::path> ls(fs::path const & root, bool recursive);
-
-
+  
+  
   /**
     * @brief glob, like python's glob.glob, except C++
     *
@@ -44,21 +43,21 @@ namespace SugarSpice {
     * @param recursive recursively iterates through directories if true 
     * 
     * @returns list of paths matching regex
-  **/
+   **/
   std::vector<fs::path> glob(fs::path const & root, 
-                            std::regex const & reg = std::regex(".*"), 
-                            bool recursive=false);
-
-
+                             std::regex const & reg = std::regex(".*"), 
+                             bool recursive=false);
+  
+  
   /**
     *
     *
     *
     *
-  **/
+   **/
   std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
-
-
+  
+  
   /**
     * @brief recursively search keys in json. 
     *
@@ -69,9 +68,9 @@ namespace SugarSpice {
     * @param recursive recursively iterates through objects if true 
     * 
     * @returns vector of refernces to matching json objects 
-  **/
+   **/
   std::vector<nlohmann::json::json_pointer> findKeyInJson(nlohmann::json in, std::string key, bool recursive=true);
-
+  
   /**
     * @brief This is a short description
     *
@@ -82,19 +81,19 @@ namespace SugarSpice {
     * @param lsk   Required lsk kernel
     * 
     * @returns list of paths matching ext
-  **/
+   **/
   std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpath, std::string sclk, std::string lsk);
-
-
+  
+  
   /** 
     * 
     *
     *
     *
-  **/
-  std::string getKernelType(fs::path kernelPath);
-
-
+   **/
+   std::string getKernelType(fs::path kernelPath);
+  
+  
   /** 
     * @brief Returns the path to the Mission specific Spice config file. 
     * 
@@ -107,10 +106,26 @@ namespace SugarSpice {
     * @param mission mission name of the config file 
     * 
     * @returns path object of the condig file
-  **/
-  fs::path getMissionConfigFile(std::string mission);
-
-
+   **/
+   fs::path getMissionConfigFile(std::string mission);
+  
+  
+  /** 
+    * @brief Returns the path to the Mission specific Spice config file. 
+    * 
+    * Given a mission, search a prioritized list of directories for 
+    * the json config file. This function checks in the order: 
+    *  
+    *   1. The local build dir, i.e. $CMAKE_SOURCE_DIR
+    *   2. The install dir, i.e. $CMAKE_PREFIX 
+    * 
+    * @param mission mission name of the config file 
+    * 
+    * @returns path object of the condig file
+   **/ 
+   nlohmann::json getMissionConfig(std::string mission); 
+  
+  
   /** 
     * @brief Returns std::vector<string> interpretation of a json array. 
     * 
@@ -121,7 +136,20 @@ namespace SugarSpice {
     * @param arr input json arr
     * 
     * @returns string vector containing arr data
-  **/ 
-  std::vector<std::string> jsonArrayToVector(nlohmann::json arr);
-
+   **/ 
+   std::vector<std::string> jsonArrayToVector(nlohmann::json arr);
+  
+  
+  /** 
+    * @brief Returns std::vector<string> interpretation of a json array. 
+    * 
+    * Attempts to convert the json array to a C++ array. Also handles 
+    * strings in cases where one element arrays are stored as scalars. 
+    * Throws exception if the json obj is not an array. 
+    * 
+    * @param arr input json arr
+    * 
+    * @returns string vector containing arr data
+   **/ 
+   fs::path getDataDirectory();
 }
