@@ -218,10 +218,10 @@ namespace SugarSpice {
 
   fs::path getMissionConfigFile(string mission) {
     // If running tests or debugging locally
-    char* _CONDA_PREFIX = std::getenv("CONDA_PREFIX");
+    char* condaPrefix = std::getenv("CONDA_PREFIX");
 
     fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
-    fs::path installDbPath = fs::absolute(_CONDA_PREFIX) / "etc" / "SugarSpice" / "db";
+    fs::path installDbPath = fs::absolute(condaPrefix) / "etc" / "SugarSpice" / "db";
 
     // Use installDbPath unless $SSPICE_DEBUG is set
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
