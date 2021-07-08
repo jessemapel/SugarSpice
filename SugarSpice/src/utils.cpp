@@ -70,7 +70,7 @@ namespace SugarSpice {
     }
 
     // Call gXpool for each key found in gnpool
-    // accumulate results to json-parseable string resBuffer
+    // accumulate results to json allResults
     
     // Define gXpool params
     ConstSpiceChar *fkey;
@@ -120,7 +120,7 @@ namespace SugarSpice {
         // end gcpool
       }
 
-      // append to resBuffer:
+      // append to allResults:
       //     key:list-of-values
       string resultKey(fkey);
       allResults[resultKey] = jresultVal;
@@ -206,7 +206,7 @@ namespace SugarSpice {
     auto formatIntervals = [&](SpiceCell &coverage) -> vector<pair<double, double>> {
       //Get the number of intervals in the object.
       int niv = card_c(&coverage) / 2;
-      //Convert the coverage interval START and stop times to TDB
+      //Convert the coverage interval start and stop times to TDB
       double begin, end;
 
       vector<pair<double, double>> res;
@@ -289,7 +289,7 @@ namespace SugarSpice {
     }
 
     //for(auto& t: result) {
-    //  cout << fmt::format(FMT_COMPILE("START/stop: {}, {}\n"), t.first, t.second);
+    //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);
     //}
 
     return result;
