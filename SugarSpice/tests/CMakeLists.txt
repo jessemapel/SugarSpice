@@ -13,6 +13,7 @@ add_executable(runSugarSpiceTests TestMain.cpp ${SUGARSPICE_TEST_SOURCE})
 target_link_libraries(runSugarSpiceTests
                       PRIVATE
                       SugarSpice
+                      CSpice::cspice
                       gtest
                       gmock
                       Threads::Threads

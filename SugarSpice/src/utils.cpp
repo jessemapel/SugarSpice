@@ -49,59 +49,96 @@ template <> struct fmt::formatter<fs::path> {
 
 namespace SugarSpice {
 
-  // given a string keyname template, search the kernel pool for matching keywords and their values
-  // should return json with all matching keynames:values
-  void findKeywords(string keytpl) {
-    //ldpool_c("/usgs/cpkgs/isis3/data/messenger/kernels/pck/pck00010_msgr_v23.tpc");
-    ldpool_c("/usgs/cpkgs/isis3/data/messenger/kernels/ik/msgr_mdis_v010.ti");
-    // define i/o for gnpool
+  // Given a string keyname template, search the kernel pool for matching keywords and their values
+  // returns json with up to ROOM=50 matching keynames:values
+  // if no keys are found, returns null
+  json findKeywords(string keytpl) {
+    // Define gnpool i/o
+    const SpiceInt START = 0;
+    const SpiceInt ROOM = 50;
+    const SpiceInt LENOUT = 100;
     ConstSpiceChar *cstr = keytpl.c_str();
-    SpiceInt start = 0;
-    SpiceInt room = 50;
-    SpiceInt lenout = 100;
     SpiceInt nkeys;
-    SpiceChar kvars [room][lenout];
+    SpiceChar kvals [ROOM][LENOUT];
     SpiceBoolean gnfound;
-    // end
 
-    gnpool_c(cstr, start, room, lenout, &nkeys, kvars, &gnfound);
+    // Call gnpool to search for input key template
+    gnpool_c(cstr, START, ROOM, LENOUT, &nkeys, kvals, &gnfound);
 
-    if(gnfound) {
-      std::cout << "found " << nkeys << std::endl;
+    if(!gnfound) {
+      return nullptr;
     }
-    else {
-      std::cout << "not found" << std::endl;
-    }
+
+    // Call gXpool for each key found in gnpool
+    // accumulate results to json-parseable string resBuffer
     
+    // Define gXpool params
     ConstSpiceChar *fkey;
-    SpiceChar cvals [room][lenout];
     SpiceInt nvals;
-    SpiceBoolean gcfound;
-    
-    ConstSpiceChar *fval;
+    SpiceChar cvals [ROOM][LENOUT];
+    SpiceDouble dvals[ROOM];
+    SpiceInt ivals[ROOM];
+    SpiceBoolean gcfound, gdfound, gifound;
 
-    // call gcpool for each key found in gnpool
+    json allResults;
+    string resultVal;
+    string resBuffer = "{";
+
+    // iterate over kvals;
     for(int i = 0; i < nkeys; i++) {
-      fkey = &kvars[i][0];
-      printf("============\n");
-      printf("key: %s\n",fkey);
-      printf("   vals:\n");
-      gcpool_c("INS-236810_FOV_SHAPE", start, room, lenout, &nvals, cvals, &gcfound);
 
-      if(gcfound) {
-        std::cout << "found " << nvals << std::endl;
-      }
-      else {
-        std::cout << "not found" << std::endl;
+      fkey = &kvals[i][0];
+      gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
+      if(!gcfound) {
+        gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound);
+        if(!gdfound) {
+          gipool_c(fkey, START, ROOM, &nvals, ivals, &gifound);
+          
+          // format gipool output
+          // all output values are formatted as a json list
+          // including single values
+          resultVal = "";
+          for(int j=0; j<nvals-1; j++) {
+            resultVal += fmt::format("{}, ", ivals[j]);
+          }
+          resultVal += fmt::format("{}", ivals[nvals-1]);
+          // end gipool
+        } else {
+          
+          // format gdpool output
+          resultVal = "";
+          for(int j=0; j<nvals-1; j++) {
+            resultVal += fmt::format("{}, ", dvals[j]);
+          }
+          resultVal += fmt::format("{}", dvals[nvals-1]);
+          // end gdpool 
+        }
+      } else {
+        
+        // format gcpool output
+        resultVal = "";
+        string str_cval;
+        for(int j=0; j<nvals-1; j++) {
+          str_cval.assign(&cvals[j][0]);
+          resultVal += fmt::format("\"{}\", ", str_cval);
+        }
+        str_cval.assign(&cvals[nvals-1][0]);
+        resultVal += fmt::format("\"{}\"", str_cval);
+        // end gcpool
       }
 
-      for(int j = 0; j < nvals; j++) {
-        fval = &cvals[j][0];
-        std::cout << strlen(fval) << std::endl;
-        printf("val: %s\n",fval);
+      // append to resBuffer:
+      //     key:list-of-values
+      string resultKey(fkey);
+      if(i < nkeys - 1) {
+        resBuffer += fmt::format("\"{}\":[{}], ", resultKey, resultVal);
+      } else {
+        resBuffer += fmt::format("\"{}\":[{}]", resultKey, resultVal); 
       }
-
     }
+    resBuffer += "}";
+
+    return json::parse(resBuffer);
   }
 
   vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
@@ -181,7 +218,7 @@ namespace SugarSpice {
     auto formatIntervals = [&](SpiceCell &coverage) -> vector<pair<double, double>> {
       //Get the number of intervals in the object.
       int niv = card_c(&coverage) / 2;
-      //Convert the coverage interval start and stop times to TDB
+      //Convert the coverage interval START and stop times to TDB
       double begin, end;
 
       vector<pair<double, double>> res;
@@ -264,7 +301,7 @@ namespace SugarSpice {
     }
 
     //for(auto& t: result) {
-    //  cout << fmt::format(FMT_COMPILE("start/stop: {}, {}\n"), t.first, t.second);
+    //  cout << fmt::format(FMT_COMPILE("START/stop: {}, {}\n"), t.first, t.second);
     //}
 
     return result;
