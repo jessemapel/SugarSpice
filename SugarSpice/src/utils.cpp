@@ -81,11 +81,11 @@ namespace SugarSpice {
     SpiceBoolean gcfound, gdfound, gifound;
 
     json allResults;
-    string resultVal;
-    string resBuffer = "{";
+    json jresultVal;
 
     // iterate over kvals;
     for(int i = 0; i < nkeys; i++) {
+      jresultVal.clear();
 
       fkey = &kvals[i][0];
       gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
@@ -97,48 +97,36 @@ namespace SugarSpice {
           // format gipool output
           // all output values are formatted as a json list
           // including single values
-          resultVal = "";
-          for(int j=0; j<nvals-1; j++) {
-            resultVal += fmt::format("{}, ", ivals[j]);
+          for(int j=0; j<nvals; j++) {
+            jresultVal.push_back(ivals[j]);
           }
-          resultVal += fmt::format("{}", ivals[nvals-1]);
           // end gipool
         } else {
           
           // format gdpool output
-          resultVal = "";
-          for(int j=0; j<nvals-1; j++) {
-            resultVal += fmt::format("{}, ", dvals[j]);
+          for(int j=0; j<nvals; j++) {
+            jresultVal.push_back(dvals[j]);
           }
-          resultVal += fmt::format("{}", dvals[nvals-1]);
           // end gdpool 
         }
       } else {
         
         // format gcpool output
-        resultVal = "";
         string str_cval;
-        for(int j=0; j<nvals-1; j++) {
+        for(int j=0; j<nvals; j++) {
           str_cval.assign(&cvals[j][0]);
-          resultVal += fmt::format("\"{}\", ", str_cval);
+          jresultVal.push_back(str_cval);
         }
-        str_cval.assign(&cvals[nvals-1][0]);
-        resultVal += fmt::format("\"{}\"", str_cval);
         // end gcpool
       }
 
       // append to resBuffer:
       //     key:list-of-values
       string resultKey(fkey);
-      if(i < nkeys - 1) {
-        resBuffer += fmt::format("\"{}\":[{}], ", resultKey, resultVal);
-      } else {
-        resBuffer += fmt::format("\"{}\":[{}]", resultKey, resultVal); 
-      }
+      allResults[resultKey] = jresultVal;
     }
-    resBuffer += "}";
 
-    return json::parse(resBuffer);
+    return allResults;
   }
 
   vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {

@@ -20,13 +20,12 @@ TEST(UtilTests, GetFrameName) {
 
 TEST(UtilTests, findKeywords) {
   furnsh_c("data/msgr_mdis_v010.ti");
-  
+
   nlohmann::json res = findKeywords("*");
 
   EXPECT_EQ(res.at("INS-236810_FOV_SHAPE")[0], "RECTANGLE");
   EXPECT_EQ(res.at("INS-236800_WAVELENGTH_RANGE")[1], 1040);
   EXPECT_EQ(res.at("INS-236800_IFOV")[0], 179.6);
-  
 }
 
 TEST(UtilTests, findKeyInJson) {
