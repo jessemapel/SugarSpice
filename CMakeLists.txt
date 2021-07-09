@@ -14,6 +14,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       STRING "Choose the type of build." FORCE)
 endif()
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "$ENV{CONDA_PREFIX}")
+endif()
+message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
+
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 add_subdirectory("submodules/gularkfilesystem")
@@ -36,9 +41,14 @@ set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h
                             ${SUGARSPICE_BUILD_INCLUDE_DIR}/query.h)
 
+set(SUGARSPICE_CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/clem1.json
+                            ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/galileo.json
+                            ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/lro.json
+                            ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/mess.json)
+
 add_library(SugarSpice SHARED ${SUGARSPICE_SRC_FILES})
 
-ADD_DEFINITIONS(-D_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}" -D_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
+ADD_DEFINITIONS(-D_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 
 
 set_target_properties(SugarSpice PROPERTIES
@@ -96,6 +106,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
 
 # Install the headers
 install(FILES ${SUGARSPICE_HEADER_FILES} DESTINATION ${SUGARSPICE_INSTALL_INCLUDE_DIR})
+
+# Install the json db files
+install(FILES ${SUGARSPICE_CONFIG_FILES} DESTINATION "etc/SugarSpice/db")
 
 # Install the library
 install(TARGETS SugarSpice nlohmann_json
