@@ -78,48 +78,65 @@ namespace SugarSpice {
     SpiceChar cvals [ROOM][LENOUT];
     SpiceDouble dvals[ROOM];
     SpiceInt ivals[ROOM];
-    SpiceBoolean gcfound, gdfound, gifound;
-
+    SpiceBoolean gcfound = false, gdfound = false, gifound = false;
+    
     json allResults;
-    json jresultVal;
 
     // iterate over kvals;
-    for(int i = 0; i < nkeys; i++) {
-      jresultVal.clear();
+    for(int i = 0; i < nkeys; i++) {  
+      json jresultVal;
 
       fkey = &kvals[i][0];
-      gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
-      if(!gcfound) {
-        gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound);
-        if(!gdfound) {
-          gipool_c(fkey, START, ROOM, &nvals, ivals, &gifound);
-          
-          // format gipool output
-          // all output values are formatted as a json list
-          // including single values
-          for(int j=0; j<nvals; j++) {
-            jresultVal.push_back(ivals[j]);
-          }
-          // end gipool
-        } else {
-          
-          // format gdpool output
+
+      gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound); 
+      
+      if (gdfound) {
+        // format output
+        if (nvals == 1) {
+          jresultVal = dvals[0]; 
+        }
+        else {
           for(int j=0; j<nvals; j++) {
             jresultVal.push_back(dvals[j]);
           }
-          // end gdpool 
         }
-      } else {
-        
-        // format gcpool output
-        string str_cval;
-        for(int j=0; j<nvals; j++) {
-          str_cval.assign(&cvals[j][0]);
-          jresultVal.push_back(str_cval);
-        }
-        // end gcpool
       }
 
+      if (!gdfound) {
+        gipool_c(fkey, START, ROOM, &nvals, ivals, &gifound);
+      }
+
+      if (gifound) {
+        // format output
+        if (nvals == 1) {
+          jresultVal = ivals[0]; 
+        }
+        else {
+          for(int j=0; j<nvals; j++) {
+            jresultVal.push_back(ivals[j]);
+          }
+        }
+      }
+
+      if (!gifound || !gdfound) { 
+        gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
+      }
+
+      if (gcfound) {
+        // format gcpool output
+        string str_cval;
+        if (nvals == 1) {
+          str_cval.assign(&cvals[0][0]);
+          jresultVal = str_cval; 
+        }
+        else {
+          for(int j=0; j<nvals; j++) {
+            str_cval.assign(&cvals[j][0]);
+            jresultVal.push_back(str_cval);
+          }
+        }
+      }
+      
       // append to allResults:
       //     key:list-of-values
       string resultKey(fkey);
