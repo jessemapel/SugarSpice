@@ -7,6 +7,7 @@
  **/
 
 #include <fstream>
+#include <algorithm>
 
 #include <SpiceUsr.h>
 
@@ -18,6 +19,53 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace SugarSpice {
+  
+  fs::path getLatestKernel(vector<string> kernels) {
+    string extension = static_cast<fs::path>(kernels.at(0)).extension();
+    // ensure everything is different versions of the same file
+    for(const fs::path &k : kernels) {
+      if (k.extension() != extension) {
+        throw invalid_argument("The input paths do are not different versions of the same file");
+      }
+    }
+  
+    return *(max_element(kernels.begin(), kernels.end()));
+  }
+  
+  
+  json getLatestKernels(json kernels) {
+    // the kernels group is now the conf with 
+    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk"}) {
+        vector<json::json_pointer> catPointers = findKeyInJson(kernels, kernelType, true);
+        for(auto &p : catPointers) {
+          for(auto qual: Kernel::QUALITIES) { 
+            if(!kernels[p].contains(qual)){
+              continue; 
+            }
+            std::vector<string> l = jsonArrayToVector(kernels[p][qual]["kernels"]);
+            fs::path latest;
+
+            if (!l.empty()) {
+              latest = getLatestKernel(l);
+              kernels[p][qual]["kernels"] = latest; 
+            }
+          }
+          
+          if(kernels[p].contains("kernels")) { 
+            fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]["kernels"]));
+            kernels[p]["kernels"] = latest;  
+          }
+        }
+    }
+
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "sclk", true);
+    for(auto &p : pointers) {
+      fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]));
+      kernels[p] = latest; 
+    }
+ 
+    return kernels;
+  }
 
   /**
     * @brief glob, but with json
@@ -29,271 +77,142 @@ namespace SugarSpice {
     * @param root root path to search
     * @param r json list of regexes
     * @returns vector of paths
-  **/
+   **/
   vector<fs::path> getPathsFromRegex (fs::path root, json r) {
-    vector<string> regexes = jsonArrayToVector(r);
-    regex reg(fmt::format("({})", fmt::join(regexes, "|")));
-    vector<fs::path> paths = glob(root, reg, true);
-
-    return paths;
+      vector<string> regexes = jsonArrayToVector(r);
+      regex reg(fmt::format("({})", fmt::join(regexes, "|")));
+      vector<fs::path> paths = glob(root, reg, true);
+  
+      return paths;
   };
-
-
-  json searchMissionKernels(fs::path root, json conf) {
-
-    /**
-      * Lambda for parsing a CK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globCks = [&](json category) -> json {
-      if(!category.contains("ck")) {
-        return (json){};
+  
+  
+  json globKernels(fs::path root, json conf, string kernelType) {
+    vector<json::json_pointer> pointers = findKeyInJson(conf, kernelType, true);
+  
+    json ret; 
+  
+    // iterate pointers
+    for(auto pointer : pointers) {      
+      json category = conf[pointer];
+  
+      if (category.contains("kernels")) {
+        ret[pointer]["kernels"] = getPathsFromRegex(root, category.at("kernels"));
       }
-
-      category = category["ck"];
-      json ret;
-
-      for(auto qual: Kernel::QUALITIES) {
-        if(!category.contains(qual)) {
-          continue;
-        }
-        ret[qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
-        if (category[qual].at("deps").contains("lsk")) {
-          ret[qual]["deps"]["lsk"] = getPathsFromRegex(root, category[qual].at("deps").at("lsk"));
-        }
-        if (category[qual].at("deps").contains("sclk")) {
-          ret[qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
-        }
-        if (category[qual].at("deps").contains("pck")) {
-          ret[qual]["deps"]["pck"] = getPathsFromRegex(root, category[qual].at("deps").at("pck"));
-        }
-        if (category[qual].at("deps").contains("objs")) {
-          ret[qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
-        }
-      }
-
-      // pass deps through
-      if (category.at("deps").contains("objs")) {
-        ret["deps"]["objs"] = category.at("deps").at("objs");
-      }
-
-      ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").at("sclk"));
-      ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").at("lsk"));
-      return ret;
-    };
-
-    /**
-      * Lambda for parsing a SPK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globSpks = [&](json category) -> json {
-      if(!category.contains("spk")) {
-        return (json){};
-      }
-
-      category = category["spk"];
-      json ret;
-
-      for(auto qual: Kernel::QUALITIES) {
-        if(!category.contains(qual)) {
-          continue;
-        }
-        ret[qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
-        if (category[qual].at("deps").contains("lsk")) {
-          ret[qual]["deps"]["lsk"] = getPathsFromRegex(root, category[qual].at("deps").at("lsk"));
-        }
-        if (category[qual].at("deps").contains("sclk")) {
-          ret[qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
-        }
-        if (category[qual].at("deps").contains("objs")) {
-          ret[qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
-        }
-      }
-
-      // pass deps through
-      if (category.at("deps").contains("objs")) {
-        ret["deps"]["objs"] = category.at("deps").at("objs");
-      }
-
-      ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-      ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
-
-      return ret;
-    };
-
-
-    /**
-      * Lambda for parsing a SPK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globTspks = [&](json category) -> json {
-      if(!category.contains("tspk")) {
-        return (json){};
-      }
-
-      category = category["tspk"];
-      json ret;
-
-      for(auto qual: Kernel::QUALITIES) {
-        if(!category.contains(qual)) {
-          continue;
-        }
-        ret[qual] = getPathsFromRegex(root, category[qual]);
-      }
-
+  
       if (category.contains("deps")) {
-        // pass deps through
-        if (category.at("deps").contains("objs")) {
-          ret["deps"]["objs"] = category.at("deps").at("objs");
+        if (category.at("deps").contains("sclk")) {
+          ret[pointer]["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").at("sclk"));
         }
-
-        ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-        ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
+        if (category.at("deps").contains("pck")) {
+          ret[pointer]["deps"]["pck"] = getPathsFromRegex(root, category.at("deps").at("pck"));
+        }
+        if (category.at("deps").contains("objs")) {
+          ret[pointer]["deps"]["objs"] = category.at("deps").at("objs");
+        }
       }
-
-      return ret;
-    };
-
-
-    /**
-      * Lambda for parsing a FK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globFks = [&](json category) -> json {
-      json ret;
-      return getPathsFromRegex(root, category.value("fk", "$^"));
-    };
-
-    /**
-      * Lambda for parsing a IK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globIks = [&](json category) -> json {
-      json ret;
-      return getPathsFromRegex(root, category.value("ik", "$^"));
-    };
-
-    /**
-      * Lambda for parsing a IAK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globIaks = [&](json category) -> json {
-      json ret;
-      return getPathsFromRegex(root, category.value("iak", "$^"));
-    };
-
-    /**
-      * Lambda for parsing a PCK json object, returns a json object
-      * with a similar structure, but regexes replaces with a path list
-    **/
-    auto globPcks = [&](json category) -> json {
-      if(!category.contains("pck")) {
-        return (json){};
-      }
-
-      category = category["pck"];
-      json ret;
-
+  
+      // iterate over potential qualities 
       for(auto qual: Kernel::QUALITIES) {
         if(!category.contains(qual)) {
           continue;
         }
-        ret[qual]["kernels"] = getPathsFromRegex(root, category[qual]["kernels"]);
-      }
-
-      if (category.contains("deps")) {
-        // pass deps through
-        if (category.at("deps").contains("objs")) {
-          ret["deps"]["objs"] = category.at("deps").at("objs");
+        
+        ret[pointer][qual]["kernels"] = getPathsFromRegex(root, category[qual].at("kernels"));
+        
+        if (category[qual].contains("deps")) {
+          if (category[qual].at("deps").contains("sclk")) {
+            ret[pointer][qual]["deps"]["sclk"] = getPathsFromRegex(root, category[qual].at("deps").at("sclk"));
+          }
+          if (category[qual].at("deps").contains("pck")) {
+            ret[pointer][qual]["deps"]["pck"] = getPathsFromRegex(root, category[qual].at("deps").at("pck"));
+          }
+          if (category[qual].at("deps").contains("objs")) {
+            ret[pointer][qual]["deps"]["objs"] = category[qual].at("deps").at("objs");
+          }
         }
-
-        ret["deps"]["sclk"] = getPathsFromRegex(root, category.at("deps").value("sclk", "$^"));
-        ret["deps"]["lsk"] = getPathsFromRegex(root, category.at("deps").value("lsk", "$^"));
       }
-
-      return ret;
-    };
-
-
-    // first get any dependencies
-    // string deps = jsonArrayToVector(db[instrument][sType]);
-
-    json kernels;
-
-    // iterate the categories (e.g. missions)
-    for (auto& cat: conf.items()) {
-      kernels[cat.key()]["ck"] = globCks(cat.value());
-      kernels[cat.key()]["spk"] = globSpks(cat.value());
-      kernels[cat.key()]["tspk"] = globTspks(cat.value());
-      kernels[cat.key()]["fk"] = globFks(cat.value());
-      kernels[cat.key()]["ik"] = globIks(cat.value());
-      kernels[cat.key()]["iak"] = globIaks(cat.value());
-      kernels[cat.key()]["pck"] = globPcks(cat.value());
     }
-
+  
+    return  ret.empty() ? "{}"_json : ret;
+  }
+  
+  
+  json searchMissionKernels(fs::path root, json conf) {
+    json kernels;
+  
+    // the kernels group is now the conf with 
+    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk"}) {
+        kernels.merge_patch(globKernels(root, conf, kernelType));
+    }
+  
     return kernels;
   }
-
-
-
+  
+  
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
     auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> {
-      // get sclk
       vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      vector<string> sclks;
 
-      vector<string> sclks = jsonArrayToVector(j[p.at(0)]);
-      sort(sclks.begin(), sclks.end(), greater<string>());
-
-      // get lsk
-      p = findKeyInJson(j, "lsk", true);
-
-      vector<string> lsks = jsonArrayToVector(j[p.at(0)]);
+      if (!p.empty()) { 
+        sclks = jsonArrayToVector(j[p.at(0)]);
+        sort(sclks.begin(), sclks.end(), greater<string>());
+      }
+  
+      json baseConf = getMissionConfig("base");
+      fs::path dataDir = getDataDirectory();
+      
+      baseConf = searchMissionKernels(dataDir, baseConf);
+      p = findKeyInJson(baseConf, "lsk", true);
+      
+      vector<string> lsks = jsonArrayToVector(baseConf.at(p.at(0))["kernels"]);
       sort(lsks.begin(), lsks.end(), greater<string>());
+      
       vector<shared_ptr<Kernel>> timeKernels(2);
-
+  
       if(lsks.size()) {
         timeKernels.emplace_back(new Kernel(lsks.at(0)));
       }
       if (sclks.size()) {
         timeKernels.emplace_back(new Kernel(sclks.at(0)));
       }
-
       return timeKernels;
     };
-
+  
     json reducedKernels;
-
+  
     vector<json::json_pointer> ckpointers = findKeyInJson(kernels, "ck", true);
     vector<json::json_pointer> spkpointers = findKeyInJson(kernels, "spk", true);
     vector<json::json_pointer> pointers(ckpointers.size() + spkpointers.size());
     merge(ckpointers.begin(), ckpointers.end(), spkpointers.begin(), spkpointers.end(), pointers.begin());
-
+  
     json newKernels = json::array();
-
+  
     // refine cks for every instrument/category
     for (auto &p : pointers) {
       json cks = kernels[p];
-
       if(cks.is_null() ) {
         continue;
       }
-
+  
       // load time kernels
       vector<shared_ptr<Kernel>> timeKernels = loadTimeKernels(cks);
-
+      
       for(auto qual: Kernel::QUALITIES) {
         if(!cks.contains(qual)) {
           continue;
         }
-
-        json ckQual = cks[qual];
+  
+        json ckQual = cks[qual]["kernels"];
         newKernels = json::array();
-
+        
         for(auto &kernel : ckQual) {
           vector<pair<double, double>> intervals = getTimeIntervals(kernel);
+
           for(auto &interval : intervals) {
             auto isInRange = [&interval](double d) -> bool {return d >= interval.first && d <= interval.second;};
-
+  
             if (isContiguous && all_of(times.cbegin(), times.cend(), isInRange)) {
               newKernels.push_back(kernel);
             }
@@ -302,13 +221,12 @@ namespace SugarSpice {
             }
           } // end of searching intervals
         } // end  of searching kernels
-
-        reducedKernels[p/qual] = newKernels;
+        
+        reducedKernels[p/qual/"kernels"] = newKernels;
         reducedKernels[p]["deps"] = kernels[p]["deps"];
       }
     }
-
-    return reducedKernels;
+    kernels.merge_patch(reducedKernels);
+    return kernels;
   }
-
 }

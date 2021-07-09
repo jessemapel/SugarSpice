@@ -55,5 +55,6 @@ void KernelDataDirectories::SetUp() {
   paths.insert(paths.end(), galileo_paths.begin(), galileo_paths.end());
 }
 
+
 void KernelDataDirectories::TearDown() {
 }

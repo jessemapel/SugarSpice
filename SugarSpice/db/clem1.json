@@ -2,17 +2,14 @@
   "clem" : {
     "ck" : {
       "reconstructed" : {
-        "kernels" : "clem_[0-9]{3}.bck",
-        "deps" : {}
+        "kernels" : "clem_[0-9]{3}.bck"
       },
       "smithed" : {
-        "kernels" : "clem_ulcn2005_6hr.bc",
-        "deps" : {}
+        "kernels" : "clem_ulcn2005_6hr.bc"
       },
       "deps" : {
         "sclk" : "dspse[0-9]{3}.tsc",
-        "lsk" : "naif[0-9]{4}.tls",
-        "objs" : []
+        "objs" : ["/base/lsk"]
       }
     },
     "spk" : {
@@ -21,40 +18,43 @@
         "deps": {}
       },
       "deps" : {
-        "lsk" : "naif[0-9]{4}.tls",
-        "objs" : []
+        "objs" : ["/base/lsk"]
       }
     },
-    "fk" : "clem_v[0-9]{2}.tf"
+    "fk" : {
+      "kernels" : "clem_v[0-9]{2}.tf"
+    }
   },
-  "UVVIS" : {
-    "ik" : "clem_uvvis_beta_ik_v04.ti",
-    "iak" : "uvvisAddendum[0-9]{3}.ti",
+  "uvvis" : {
+    "ik" : {
+      "kernels" : "clem_uvvis_beta_ik_v04.ti"
+    },
+    "iak" : {
+      "kernels" : "uvvisAddendum[0-9]{3}.ti"
+    },
     "ck" : {
       "deps" : {
         "sclk" : "dspse[0-9]{3}.tsc",
-        "lsk" : "naif[0-9]{4}.tls",
-        "objs" : ["clem:ck"]
+        "objs" : ["/clem/ck/lsk"]
       }
     },
     "spk" : {
       "deps" : {
-        "objs" : ["clem:spk"]
+        "objs" : ["/clem/spk"]
       }
     }
   },
-  "NIR" : {
+  "nir" : {
     "iak" : "nirAddendum[0-9]{3}.ti",
     "ck" : {
       "deps" : {
         "sclk" : "dspse[0-9]{3}.tsc",
-        "lsk" : "naif[0-9]{4}.tls",
-        "objs" : ["clem:ck"]
+        "objs" : ["/clem/ck/lsk"]
       }
     },
     "spk" : {
       "deps" : {
-        "objs" : ["clem:spk"]
+        "objs" : ["/clem/spk"]
       }
     }
   }
