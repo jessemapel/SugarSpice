@@ -17,6 +17,14 @@ TEST(UtilTests, GetFrameCode) {
 TEST(UtilTests, GetFrameName) {  
 }
 
+TEST(UtilTests, findKeywords) {
+  unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
+
+  nlohmann::json res = findKeywords("*");
+  EXPECT_EQ(res.at("INS-236810_FOV_SHAPE"), "RECTANGLE");
+  EXPECT_EQ(res.at("INS-236800_WAVELENGTH_RANGE")[1], 1040);
+  EXPECT_EQ(res.at("INS-236800_IFOV"), 179.6);
+}
 
 TEST(UtilTests, findKeyInJson) {
   nlohmann::ordered_json j = R"(

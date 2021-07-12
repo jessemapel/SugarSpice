@@ -50,6 +50,103 @@ template <> struct fmt::formatter<fs::path> {
 
 namespace SugarSpice {
 
+  // Given a string keyname template, search the kernel pool for matching keywords and their values
+  // returns json with up to ROOM=50 matching keynames:values
+  // if no keys are found, returns null
+  json findKeywords(string keytpl) {
+    // Define gnpool i/o
+    const SpiceInt START = 0;
+    const SpiceInt ROOM = 50;
+    const SpiceInt LENOUT = 100;
+    ConstSpiceChar *cstr = keytpl.c_str();
+    SpiceInt nkeys;
+    SpiceChar kvals [ROOM][LENOUT];
+    SpiceBoolean gnfound;
+
+    // Call gnpool to search for input key template
+    gnpool_c(cstr, START, ROOM, LENOUT, &nkeys, kvals, &gnfound);
+
+    if(!gnfound) {
+      return nullptr;
+    }
+
+    // Call gXpool for each key found in gnpool
+    // accumulate results to json allResults
+    
+    // Define gXpool params
+    ConstSpiceChar *fkey;
+    SpiceInt nvals;
+    SpiceChar cvals [ROOM][LENOUT];
+    SpiceDouble dvals[ROOM];
+    SpiceInt ivals[ROOM];
+    SpiceBoolean gcfound = false, gdfound = false, gifound = false;
+    
+    json allResults;
+
+    // iterate over kvals;
+    for(int i = 0; i < nkeys; i++) {  
+      json jresultVal;
+
+      fkey = &kvals[i][0];
+
+      gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound); 
+      
+      if (gdfound) {
+        // format output
+        if (nvals == 1) {
+          jresultVal = dvals[0]; 
+        }
+        else {
+          for(int j=0; j<nvals; j++) {
+            jresultVal.push_back(dvals[j]);
+          }
+        }
+      }
+
+      if (!gdfound) {
+        gipool_c(fkey, START, ROOM, &nvals, ivals, &gifound);
+      }
+
+      if (gifound) {
+        // format output
+        if (nvals == 1) {
+          jresultVal = ivals[0]; 
+        }
+        else {
+          for(int j=0; j<nvals; j++) {
+            jresultVal.push_back(ivals[j]);
+          }
+        }
+      }
+
+      if (!gifound || !gdfound) { 
+        gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
+      }
+
+      if (gcfound) {
+        // format gcpool output
+        string str_cval;
+        if (nvals == 1) {
+          str_cval.assign(&cvals[0][0]);
+          jresultVal = str_cval; 
+        }
+        else {
+          for(int j=0; j<nvals; j++) {
+            str_cval.assign(&cvals[j][0]);
+            jresultVal.push_back(str_cval);
+          }
+        }
+      }
+      
+      // append to allResults:
+      //     key:list-of-values
+      string resultKey(fkey);
+      allResults[resultKey] = jresultVal;
+    }
+
+    return allResults;
+  }
+
   vector<json::json_pointer> findKeyInJson(json in, string key, bool recursive) {
     function<vector<json::json_pointer>(json::json_pointer, string, vector<json::json_pointer>, bool)> recur = [&recur, &in](json::json_pointer elem, string key, vector<json::json_pointer> vec, bool recursive) -> vector<json::json_pointer> {
       json e = in[elem];

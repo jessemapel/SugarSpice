@@ -56,7 +56,20 @@ namespace SugarSpice {
     *
    **/
   std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
-  
+
+
+  /**
+    * @brief finds key:values in kernel pool
+    *
+    * Given a key template, returns matching key:values from the kernel pool
+    *   by using gnpool, gcpool, gdpool, and gipool
+    *
+    * @param keytpl input key template to search for
+    * 
+    * @returns json list of found key:values
+  **/
+  nlohmann::json findKeywords(std::string keytpl);
+
   
   /**
     * @brief recursively search keys in json. 
