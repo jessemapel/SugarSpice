@@ -50,6 +50,94 @@ template <> struct fmt::formatter<fs::path> {
 
 namespace SugarSpice {
 
+  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
+    
+    // convert params to spice types
+    ConstSpiceChar *target_w = target.c_str();  // better way to do this?
+    ConstSpiceChar *observer_w = observer.c_str();
+    ConstSpiceChar *frame_w = frame.c_str();
+    ConstSpiceChar *abcorr_w = abcorr.c_str();
+    SpiceDouble et_w(et);
+
+    // define outputs
+    SpiceDouble lt;
+    SpiceDouble state[6];
+
+    spkezr_c( target_w, et_w, frame_w, abcorr_w, observer_w, state, &lt );
+
+    // convert to std::array for returnval
+    array<double, 6> state_d;
+    for(int i = 0; i < 6; i++) {
+      state_d[i] = state[i];
+    }
+
+    return {lt, state_d};
+  }
+
+  targetOrientation getTargetOrientation(int inst, double et, double tol, string ref) {
+
+    // convert params to spice types
+    SpiceInt inst_w(inst);
+    SpiceDouble et_w(et);
+    SpiceDouble tol_w(tol);
+    ConstSpiceChar *ref_w = ref.c_str();
+    // ConstSpiceChar *sclk = "1/0031509051:963000";
+    
+
+    SpiceDouble sclkdp_w;
+    sce2t_c(inst_w, et_w, &sclkdp_w);          // convert et to sclk  ORIGINAL BEFORE ALL THE BUGHUNTING STUFF
+    cout << sclkdp_w << endl;
+    // sclkdp_w = 3.380330819995E+14;
+
+    // scencd_c(inst_w, sclk, &sclkdp_w);
+    // cout << sclkdp_w << endl;
+
+    // ConstSpiceChar *tol_a = "0:400";  
+    // sctiks_c(inst_w, tol_a, &tol_w);
+    // cout << "tol: " << tol_w << endl;  "0:400" becomes 400.0
+
+    // define outputs
+    SpiceBoolean            found;
+    SpiceDouble             av      [3];
+    SpiceDouble             cmat    [3][3];    // return a quat using M2Q_C
+    SpiceDouble             clkout;            // return as et
+
+
+    // call ckgpav from spicelib
+    ckgpav_c( inst_w, sclkdp_w, tol_w, ref_w, cmat, av, &clkout, &found );
+
+    std::cout << clkout << std::endl;                  // TODO remove prints
+    std::cout << cmat[0][0] << " " << cmat[0][1] << " " << cmat[0][2] << std::endl;
+    std::cout << av[0] << " " << av[1] << " " << av[2] << std::endl;
+
+    if(!found) {
+      throw invalid_argument("Cannot find target orientation with provided kernels"); // TODO ?
+    }
+
+
+    // convert matrix to quat
+    SpiceDouble quat[4];
+    m2q_c(cmat, quat);
+
+    // convert clock output to et
+    SpiceDouble etout;
+    sct2e_c(inst, clkout, &etout);
+
+    // convert SpiceDouble arrs to std::array for output
+    array<double,3> av_d;
+    for(int i=0;i<3;i++) {
+      av_d[i] = av[i];
+    }
+
+    array<double,4> quat_d;
+    for(int i=0;i<4;i++) {
+      quat_d[i] = quat[i];
+    }
+
+    return {av_d, quat_d, etout};
+  }
+
+
   // Given a string keyname template, search the kernel pool for matching keywords and their values
   // returns json with up to ROOM=50 matching keynames:values
   // if no keys are found, returns null
