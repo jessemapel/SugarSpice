@@ -1,11 +1,26 @@
-#include <vector>
-
 #include <gtest/gtest.h>
+#include <vector>
 
 #include "Fixtures.h"
 #include "io.h"
 
 using namespace SugarSpice;
+
+
+TEST_F(TempTestingFiles, UnitTestWriteCk) {
+  fs::path path;
+  path = tempDir / "test_ck.bsp";
+
+  std::vector<std::vector<double>> orientations = {{1,2, 3,4}, {1,2,3,4}};
+  std::vector<std::vector<double>> av = {{1,1,1}, {1,2,3}};
+  std::vector<double> times = {1, 2};
+  int bodyCode = -500; 
+  std::string referenceFrame = "j2000";
+  std::string segmentId = "CKCKCK";
+
+  writeCk(path, times, orientations, bodyCode, referenceFrame, segmentId);
+}
+
 
 TEST(IOTests, CreateSPKSegment) {
   std::string comment = "This is a comment for \n a test SPK segment";
@@ -22,11 +37,10 @@ TEST(IOTests, CreateSPKSegment) {
   EXPECT_EQ(seg.getComment(), comment);
 
   // Add other member tests
-
 }
 
-TEST_F(TempTestingFiles, WriteSPKSegment) {
 
+TEST_F(TempTestingFiles, WriteSPKSegment) {
   fs::path tpath;
   tpath = tempDir / "test_spk.bsp";
 

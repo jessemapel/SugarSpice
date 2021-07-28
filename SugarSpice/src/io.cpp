@@ -1,12 +1,118 @@
 #include <iostream>
+#include <optional>
 
 #include "SpiceUsr.h"
 
 #include "io.h"
 
+using namespace std; 
+
 namespace SugarSpice {
 
-  void writeSpk (fs::path fileName, std::string comment, std::vector<SpkSegment> segments) {
+  SpkSegment::SpkSegment (string segmentComment,
+                          int bodyCode,
+                          int centerOfMotion,
+                          string referenceFrame,
+                          string segmentId, int polyDegree,
+                          vector<vector<double>> statePositions,
+                          vector<vector<double>> stateVelocities,
+                          vector<double> stateTimes) {
+
+    this->comment         = segmentComment;
+    this->bodyCode        = bodyCode;
+    this->centerOfMotion  = centerOfMotion;
+    this->referenceFrame  = referenceFrame;
+    this->segmentId       = segmentId;
+    this->polyDegree      = polyDegree;
+    this->statePositions  = statePositions;
+    this->stateVelocities = stateVelocities;
+    this->stateTimes      = stateTimes;
+    return;
+  }
+
+
+  vector<double> SpkSegment::concatStates (vector<vector<double>> statePositions, vector<vector<double>> stateVelocities) const {
+
+    vector<double> states;
+    for (int i=0; i<getSize(); i++) {
+      states.push_back(statePositions[i][0]);
+      states.push_back(statePositions[i][1]);
+      states.push_back(statePositions[i][2]);
+      states.push_back(stateVelocities[i][0]);
+      states.push_back(stateVelocities[i][1]);
+      states.push_back(stateVelocities[i][2]);
+    }
+
+    return states;
+  }
+
+
+  CkSegment::CkSegment(vector<vector<double>> quats, 
+                       vector<double> times, 
+                       int bodyCode, 
+                       string referenceFrame, 
+                       string segmentId,
+                       optional<vector<vector<double>>> anglularVelocity = nullopt, 
+                       optional<string> comment = nullopt) {
+      
+    this->comment          = comment;
+    this->bodyCode         = bodyCode;
+    this->referenceFrame   = referenceFrame;
+    this->segmentId        = segmentId;
+    this->anglularVelocity = anglularVelocity;
+    this->comment          = comment;
+  }
+
+
+  void writeCk(fs::path path, 
+               vector<vector<double>> quats, 
+               vector<double> times, 
+               int bodyCode, 
+               string referenceFrame, 
+               string segmentId, 
+               optional<vector<vector<double>>> anglularVelocity, 
+               optional<string> comment) {
+    SpiceInt handle; 
+    SpiceBoolean avflag = (bool)anglularVelocity;
+    SpiceDouble **quatPtrs;
+    SpiceDouble **avPtrs;
+    
+    vector<double*> ptrs;
+    for (auto& vec : quats) {
+        ptrs.push_back(vec.data());
+    }
+    quatPtrs = ptrs.data();
+
+    ptrs.clear();
+    if (anglularVelocity) {
+      for (auto& vec : quats) {
+        ptrs.push_back(vec.data());
+      }
+      avPtrs = ptrs.data();
+    }
+    else {
+      avPtrs = nullptr;
+    }
+
+    ckopn_c(path.c_str(), "CK", comment.value_or("CK Kernel").size(), &handle);
+
+    ckw03_c (handle, 
+             times.at(0),
+             times.at(times.size()-1),
+             bodyCode,
+             referenceFrame.c_str(),
+             avflag,
+             segmentId.c_str(), 
+             times.size(),
+             times.data(),
+             quatPtrs,
+             avPtrs,
+             times.size(),
+             times.data());
+  }
+
+
+  void writeSpk(fs::path fileName, string comment, vector<SpkSegment> segments) {
 
     // TODO:
     //   write all segments not just first
@@ -15,24 +121,50 @@ namespace SugarSpice {
     //   Add convience function to SpkSegment to combine the pos and vel into a single array
 
     // Combine positions and velocities for spicelib call
-    std::vector<std::vector<double>> pos = segments[0].getStatePositions();
-    std::vector<std::vector<double>> vel = segments[0].getStateVelocities();
-    std::vector<double> times = segments[0].getStateTimes();
+    vector<vector<double>> pos = segments[0].getStatePositions();
+    vector<vector<double>> vel = segments[0].getStateVelocities();
+    vector<double> times = segments[0].getStateTimes();
 
-    std::vector<double> states(segments[0].concatStates());
+    writeSpk(fileName,
+             segments[0].statePositions,
+             segments[0].getStateTimes, 
+             segments[0].getBodyCode,
+             segments[0].getCenterOfMotion,
+             segments[0].getReferenceFrame,
+             segments[0].getSegmentId,
+             segments[0].getPolynomialDegree,
+             segments[0].getStateVelocities,
+             times.data;
+
+    return;
+  }
+
+
+  void writeSpk(fs::path fileName, 
+                 vector<vector<double>> statePositions,
+                 vector<double> stateTimes
+                 int bodyCode,
+                 int centerOfMotion,
+                 string referenceFrame,
+                 string segmentId, 
+                 int polyDegree,
+                 optional<vector<vector<double>>> stateVelocities,
+                 optional<string> segmentComment) {
+
+    vector<double> states = concatStates(statePositions, stateVelocities);
 
     SpiceInt handle;
     spkopn_c(fileName.string().c_str(), "SPK", 512, &handle);
 
     spkw13_c(handle,
-             segments[0].getBodyCode(),
-             segments[0].getCenterOfMotion(),
-             segments[0].getReferenceFrame().c_str(),
-             times[0],
-             segments[0].getSize() - 1,
-             segments[0].getSegmentId().c_str(),
-             segments[0].getPolynomialDegree(),
-             segments[0].getSize(),
+             bodyCode,
+             centerOfMotion,
+             referenceFrame,
+             stateTimes[0],
+             stateTimes.getSize() - 1,
+             segmentId.c_str(),
+             polyDegree,
+             stateTimes[0].getSize(),
              states.data(),
              times.data());
 
@@ -41,43 +173,4 @@ namespace SugarSpice {
     return;
   }
 
-
-  SpkSegment::SpkSegment (std::string segmentComment,
-                          int bodyCode,
-                          int centerOfMotion,
-                          std::string referenceFrame,
-                          std::string segmentId, int polyDegree,
-                          std::vector<std::vector<double>> statePositions,
-                          std::vector<std::vector<double>> stateVelocities,
-                          std::vector<double> stateTimes) {
-
-    m_comment = segmentComment;
-    m_bodyCode = bodyCode;
-    m_centerOfMotion = centerOfMotion;
-    m_referenceFrame = referenceFrame;
-    m_segmentId = segmentId;
-    m_polyDegree = polyDegree;
-    m_statePositions = statePositions;
-    m_stateVelocities = stateVelocities;
-    m_stateTimes = stateTimes;
-
-    return;
-
-  }
-
-
-  std::vector<double> SpkSegment::concatStates () const {
-
-    std::vector<double> states;
-    for (int i=0; i<getSize(); i++) {
-      states.push_back(m_statePositions[i][0]);
-      states.push_back(m_statePositions[i][1]);
-      states.push_back(m_statePositions[i][2]);
-      states.push_back(m_stateVelocities[i][0]);
-      states.push_back(m_stateVelocities[i][1]);
-      states.push_back(m_stateVelocities[i][2]);
-    }
-
-    return states;
-  }
 }
