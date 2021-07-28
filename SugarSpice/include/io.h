@@ -74,13 +74,13 @@ namespace SugarSpice {
                  std::optional<std::string> comment = std::nullopt);
   
   
-        std::vector<double> times, 
-        std::vector<vector<double>> quats, 
-        int bodyCode, 
-        std::string referenceFrame, 
-        std::string segmentId,
-        std::optional<std::vector<std::vector<double>>> anglularVelocity = nullopt, 
-        std::optional<std::string> comment = nullopt
+        std::vector<double> times; 
+        std::vector<std::vector<double>> quats; 
+        int bodyCode; 
+        std::string referenceFrame; 
+        std::string segmentId;
+        std::optional<std::vector<std::vector<double>>> anglularVelocity = std::nullopt; 
+        std::optional<std::string> comment = std::nullopt;
     };
   
   

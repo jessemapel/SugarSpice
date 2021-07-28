@@ -127,13 +127,13 @@ namespace SugarSpice {
 
     writeSpk(fileName,
              segments[0].statePositions,
-             segments[0].getStateTimes, 
-             segments[0].getBodyCode,
-             segments[0].getCenterOfMotion,
-             segments[0].getReferenceFrame,
-             segments[0].getSegmentId,
-             segments[0].getPolynomialDegree,
-             segments[0].getStateVelocities,
+             segments[0].stateTimes, 
+             segments[0].bodyCode,
+             segments[0].centerOfMotion,
+             segments[0].referenceFrame,
+             segments[0].segmentId,
+             segments[0].polynomialDegree,
+             segments[0].stateVelocities,
              times.data;
 
     return;

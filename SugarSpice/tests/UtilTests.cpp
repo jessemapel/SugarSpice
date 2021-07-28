@@ -48,8 +48,3 @@ TEST(UtilTests, findKeyInJson) {
   EXPECT_EQ(res.at(1).to_string(), "/l1a/me");
   EXPECT_EQ(res.at(2).to_string(), "/me");
 }
-
-
-TEST_F(test, test) { 
-  
-}
