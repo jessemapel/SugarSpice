@@ -37,7 +37,7 @@ namespace SugarSpice {
        *
        * @return Single vector with {X1, Y1, Z1, dX1, dY1, dZ1, X2, Y2, Z2, dX2, dY2, dZ2, ...}
        */
-      std::vector<double> concatStates () const;
+      std::vector<std::vector<double>> concatStates (std::vector<std::vector<double>> statePositions, std::vector<std::vector<double>> stateVelocities);
 
       std::string comment;
       int bodyCode;
@@ -68,7 +68,7 @@ namespace SugarSpice {
          * @param anglularVelocity Time ordered vector of state velocities dX, dY, dZ
          * @param stateTimes Time ordered vector of state ephemeris times (TDB)
          */
-        CkSegment(std::vector<double> times, std::vector<std::vector<double>> quats, int bodyCode, 
+        CkSegment(std::vector<std::vector<double>> quats,std::vector<double> times,  int bodyCode, 
                  std::string referenceFrame, std::string segmentId, 
                  std::optional<std::vector<std::vector<double>>> anglularVelocity = std::nullopt, 
                  std::optional<std::string> comment = std::nullopt);
@@ -111,9 +111,13 @@ namespace SugarSpice {
       * @param angularVelocity optional, nx3 array of angular velocities 
       * @param comment optional, comment to be associated with the segment
       */
-    void writeCk(fs::path path, std::vector<std::vector<double>> quats, std::vector<double> times,
-                 int bodyCode, std::string referenceFrame, std::string segmentId, 
+    void writeCk(fs::path path, 
+                 std::vector<std::vector<double>> quats, 
+                 std::vector<double> times, 
+                 int bodyCode, 
+                 std::string referenceFrame, 
+                 std::string segmentId, 
                  std::optional<std::vector<std::vector<double>>> anglularVelocity = std::nullopt, 
-                 std::optional<std::string> comment = std::nullopt);
+                 std::optional<std::string> comment= std::nullopt);
   
   }

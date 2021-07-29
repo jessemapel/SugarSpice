@@ -18,7 +18,7 @@ TEST_F(TempTestingFiles, UnitTestWriteCk) {
   std::string referenceFrame = "j2000";
   std::string segmentId = "CKCKCK";
 
-  writeCk(path, times, orientations, bodyCode, referenceFrame, segmentId);
+  writeCk(path, orientations, times, bodyCode, referenceFrame, segmentId);
 }
 
 
@@ -34,7 +34,7 @@ TEST(IOTests, CreateSPKSegment) {
   std::vector<double> et = {0.0};
 
   SpkSegment seg(comment, body, center, refFrame, id, degree, pos, vel, et);
-  EXPECT_EQ(seg.getComment(), comment);
+  EXPECT_EQ(seg.comment, comment);
 
   // Add other member tests
 }
