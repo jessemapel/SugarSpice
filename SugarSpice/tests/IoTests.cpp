@@ -9,16 +9,16 @@ using namespace SugarSpice;
 
 TEST_F(TempTestingFiles, UnitTestWriteCk) {
   fs::path path;
-  path = tempDir / "test_ck.bsp";
+  path = "/tmp/test_ck.bsp";
 
-  std::vector<std::vector<double>> orientations = {{1,2, 3,4}, {1,2,3,4}};
+  std::vector<std::vector<double>> orientations = {{0.2886751, 0.2886751, 0.5773503, 0.7071068 }, {0.4082483, 0.4082483, 0.8164966, 0 }};
   std::vector<std::vector<double>> av = {{1,1,1}, {1,2,3}};
   std::vector<double> times = {1, 2};
-  int bodyCode = -500; 
+  int bodyCode = -236000; 
   std::string referenceFrame = "j2000";
   std::string segmentId = "CKCKCK";
 
-  writeCk(path, orientations, times, bodyCode, referenceFrame, segmentId);
+  writeCk(path, orientations, times, bodyCode, referenceFrame, segmentId, av);
 }
 
 
@@ -33,7 +33,7 @@ TEST(IOTests, CreateSPKSegment) {
   std::vector<std::vector<double>> vel = {{0.1, 0.2, 0.3}};
   std::vector<double> et = {0.0};
 
-  SpkSegment seg(comment, body, center, refFrame, id, degree, pos, vel, et);
+  SpkSegment seg(pos, et, body, center, refFrame, id, degree, vel, comment);
   EXPECT_EQ(seg.comment, comment);
 
   // Add other member tests
@@ -55,9 +55,9 @@ TEST_F(TempTestingFiles, WriteSPKSegment) {
   std::vector<double> et = {0.0, 1.0};
 
   std::vector<SpkSegment> segments;
-  segments.push_back(SpkSegment(comment, body, center, refFrame, id, degree, pos, vel, et));
+  segments.push_back(SpkSegment(pos, et, body, center, refFrame, id, degree, vel, comment));
 
-  writeSpk (tpath, "", segments);
+  writeSpk (tpath, segments);
 
   // TODO: Once we can read add a read and tests here
 }

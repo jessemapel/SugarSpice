@@ -9,21 +9,21 @@ using namespace std;
 
 namespace SugarSpice {
 
-  SpkSegment::SpkSegment (string segmentComment,
+  SpkSegment::SpkSegment (vector<vector<double>> statePositions,
+                          vector<double> stateTimes,
                           int bodyCode,
                           int centerOfMotion,
                           string referenceFrame,
-                          string segmentId, int polyDegree,
-                          vector<vector<double>> statePositions,
-                          vector<vector<double>> stateVelocities,
-                          vector<double> stateTimes) {
+                          string id, int degree,
+                          optional<vector<vector<double>>> stateVelocities,
+                          optional<string> comment) {
 
-    this->comment         = segmentComment;
+    this->comment         = comment;
     this->bodyCode        = bodyCode;
     this->centerOfMotion  = centerOfMotion;
     this->referenceFrame  = referenceFrame;
-    this->segmentId       = segmentId;
-    this->polyDegree      = polyDegree;
+    this->id              = id;
+    this->polyDegree      = degree;
     this->statePositions  = statePositions;
     this->stateVelocities = stateVelocities;
     this->stateTimes      = stateTimes;
@@ -37,7 +37,6 @@ namespace SugarSpice {
       throw invalid_argument("Both statePositions and stateVelocities need to match in size.");
     }
 
-
     vector<vector<double>> states;
     for (int i=0; i<statePositions.size(); i++) {
       states.push_back({statePositions[i][0],
@@ -47,7 +46,6 @@ namespace SugarSpice {
                         stateVelocities[i][1],
                         stateVelocities[i][2]});
     }
-
     return states;
   }
 
@@ -57,15 +55,15 @@ namespace SugarSpice {
                        int bodyCode, 
                        string referenceFrame, 
                        string segmentId,
-                       optional<vector<vector<double>>> anglularVelocity, 
+                       optional<vector<vector<double>>> anglularVelocities, 
                        optional<string> comment) {
       
-    this->comment          = comment;
-    this->bodyCode         = bodyCode;
-    this->referenceFrame   = referenceFrame;
-    this->segmentId        = segmentId;
-    this->anglularVelocity = anglularVelocity;
-    this->comment          = comment;
+    this->comment            = comment;
+    this->bodyCode           = bodyCode;
+    this->referenceFrame     = referenceFrame;
+    this->id                 = segmentId;
+    this->angularVelocities = anglularVelocities;
+    this->comment            = comment;
   }
 
 
@@ -75,29 +73,10 @@ namespace SugarSpice {
                int bodyCode, 
                string referenceFrame, 
                string segmentId, 
-               optional<vector<vector<double>>> anglularVelocity, 
+               optional<vector<vector<double>>> angularVelocities, 
                optional<string> comment) {
-    SpiceInt handle; 
-    SpiceBoolean avflag = (bool)anglularVelocity;
-    SpiceDouble **quatPtrs;
-    SpiceDouble **avPtrs;
-    
-    vector<double*> ptrs;
-    for (auto& vec : quats) {
-        ptrs.push_back(vec.data());
-    }
-    quatPtrs = ptrs.data();
 
-    ptrs.clear();
-    if (anglularVelocity) {
-      for (auto& vec : quats) {
-        ptrs.push_back(vec.data());
-      }
-      avPtrs = ptrs.data();
-    }
-    else {
-      avPtrs = nullptr;
-    }
+    SpiceInt handle; 
 
     ckopn_c(path.c_str(), "CK", comment.value_or("CK Kernel").size(), &handle);
 
@@ -106,12 +85,12 @@ namespace SugarSpice {
              times.at(times.size()-1),
              bodyCode,
              referenceFrame.c_str(),
-             avflag,
+             (bool)angularVelocities,
              segmentId.c_str(), 
              times.size(),
              times.data(),
-             quatPtrs,
-             avPtrs,
+             quats.data(),
+             (angularVelocities) ? angularVelocities->data() : nullptr,
              times.size(),
              times.data());
   }
@@ -125,11 +104,22 @@ namespace SugarSpice {
                  string referenceFrame,
                  string segmentId, 
                  int polyDegree,
-                 vector<vector<double>> stateVelocities,
+                 optional<vector<vector<double>>> stateVelocities,
                  optional<string> segmentComment) {
 
-    vector<vector<double>> states = concatStates(statePositions, stateVelocities);
+    vector<vector<double>> states;
+
+    if (!stateVelocities) {
+      // init a 0 velocity array 
+      vector<vector<double>> velocities;
+      for (int i = 0; i < statePositions.size(); i++) { 
+        velocities.push_back({0,0,0});
+      }
+      stateVelocities = velocities;
+    }
     
+    states = concatStates(statePositions, *stateVelocities);
+
     vector<double*> ptrs;
     for (auto& vec : states) {
         ptrs.push_back(vec.data());
@@ -157,7 +147,7 @@ namespace SugarSpice {
   }
 
 
-  void writeSpk(fs::path fileName, string comment, vector<SpkSegment> segments) {
+  void writeSpk(fs::path fileName, vector<SpkSegment> segments) {
 
     // TODO:
     //   write all segments not just first
@@ -173,7 +163,7 @@ namespace SugarSpice {
              segments[0].bodyCode,
              segments[0].centerOfMotion,
              segments[0].referenceFrame,
-             segments[0].segmentId,
+             segments[0].id,
              segments[0].polyDegree,
              segments[0].stateVelocities,
              segments[0].comment);
@@ -181,6 +171,27 @@ namespace SugarSpice {
     return;
   }
 
+  void writeCk(fs::path fileName, vector<CkSegment> segments) {
+
+    // TODO:
+    //   write all segments not just first
+    //   trap naif errors and do ????
+    //   if file exists do something (delete it, error out)
+    //   Add convience function to SpkSegment to combine the pos and vel into a single array
+
+    // Combine positions and velocities for spicelib call
+    
+    writeCk(fileName,
+            segments[0].quats,
+            segments[0].times, 
+            segments[0].bodyCode,
+            segments[0].referenceFrame,
+            segments[0].id,
+            segments[0].angularVelocities,
+            segments[0].comment);
+
+    return;
+  }
 
 
 }

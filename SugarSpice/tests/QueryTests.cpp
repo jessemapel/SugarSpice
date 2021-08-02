@@ -128,13 +128,3 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
 }
 
-
-// TEST(lol, MakeThings) {
-//   nlohmann::json conf = getMissionConfig("mess");;
-
-//   nlohmann::json res = searchMissionKernels("/data/spice/", conf);
-//   // res = res["mdis"]["ck"]["reconstructed"]["kernels"];
-
-//   res = searchMissionKernels(res, {260279984.68365425, 262872242.80247504}, false);
-//   res = getLatestKernels(res);
-// }
