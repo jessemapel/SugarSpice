@@ -8,6 +8,9 @@
 #include <fstream>
 
 #include <SpiceUsr.h>
+#include <SpiceZfc.h>
+#include <SpiceZmc.h>
+
 #include <nlohmann/json.hpp>
 
 #include "utils.h"
@@ -17,7 +20,6 @@ using json = nlohmann::json;
 using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
-
 
 // FMT formatter for fs::path, this enables passing path objects to FMT calls.
 template <> struct fmt::formatter<fs::path> {
@@ -53,88 +55,71 @@ namespace SugarSpice {
   targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
     
     // convert params to spice types
-    ConstSpiceChar *target_w = target.c_str();  // better way to do this?
-    ConstSpiceChar *observer_w = observer.c_str();
-    ConstSpiceChar *frame_w = frame.c_str();
-    ConstSpiceChar *abcorr_w = abcorr.c_str();
-    SpiceDouble et_w(et);
+    ConstSpiceChar *target_spice = target.c_str();  // better way to do this?
+    ConstSpiceChar *observer_spice = observer.c_str();
+    ConstSpiceChar *frame_spice = frame.c_str();
+    ConstSpiceChar *abcorr_spice = abcorr.c_str();
 
     // define outputs
     SpiceDouble lt;
-    SpiceDouble state[6];
+    SpiceDouble starg_spice[6];
 
-    spkezr_c( target_w, et_w, frame_w, abcorr_w, observer_w, state, &lt );
+    spkezr_c( target_spice, et, frame_spice, abcorr_spice, observer_spice, starg_spice, &lt );
 
-    // convert to std::array for returnval
-    array<double, 6> state_d;
+    // convert to std::array for output
+    array<double, 6> starg;
     for(int i = 0; i < 6; i++) {
-      state_d[i] = state[i];
+      starg[i] = starg_spice[i];
     }
 
-    return {lt, state_d};
+    return {lt, starg};
   }
 
-  targetOrientation getTargetOrientation(int inst, double et, double tol, string ref) {
+  targetOrientation getTargetOrientation(double et, int toFrame, int refFrame) {
+    // Much of this function is from ISIS SpiceRotation.cpp
+    SpiceDouble stateCJ[6][6];
+    SpiceDouble CJ_spice[3][3];
+    SpiceDouble av_spice[3];
+    SpiceDouble quat_spice[4];
 
-    // convert params to spice types
-    SpiceInt inst_w(inst);
-    SpiceDouble et_w(et);
-    SpiceDouble tol_w(tol);
-    ConstSpiceChar *ref_w = ref.c_str();
-    // ConstSpiceChar *sclk = "1/0031509051:963000";
-    
+    array<double,4> quat;
+    array<double,3> av;
 
-    SpiceDouble sclkdp_w;
-    sce2t_c(inst_w, et_w, &sclkdp_w);          // convert et to sclk  ORIGINAL BEFORE ALL THE BUGHUNTING STUFF
-    cout << sclkdp_w << endl;
-    // sclkdp_w = 3.380330819995E+14;
+    bool has_av = true;
 
-    // scencd_c(inst_w, sclk, &sclkdp_w);
-    // cout << sclkdp_w << endl;
+    // First try getting the entire state matrix (6x6), which includes CJ and the angular velocity
+    frmchg_((int *) &refFrame, (int *) &toFrame, &et, (doublereal *) stateCJ);
 
-    // ConstSpiceChar *tol_a = "0:400";  
-    // sctiks_c(inst_w, tol_a, &tol_w);
-    // cout << "tol: " << tol_w << endl;  "0:400" becomes 400.0
+    if (!failed_c()) {
+      // Transpose and isolate CJ and av
+      xpose6_c(stateCJ, stateCJ);
+      xf2rav_c(stateCJ, CJ_spice, av_spice);
 
-    // define outputs
-    SpiceBoolean            found;
-    SpiceDouble             av      [3];
-    SpiceDouble             cmat    [3][3];    // return a quat using M2Q_C
-    SpiceDouble             clkout;            // return as et
+      // Convert to std::array for output
+      for(int i = 0; i < 3; i++) {
+        av[i] = av_spice[i];
+      }
 
+    }
+    else {  // TODO This case is untested
+      // Recompute CJ_spice ignoring av
+      
+      reset_c(); // reset frmchg_ failure
+       
+      refchg_((int *) &refFrame, (int *) &toFrame, &et, (doublereal *) CJ_spice);
+      xpose_c(CJ_spice, CJ_spice);
 
-    // call ckgpav from spicelib
-    ckgpav_c( inst_w, sclkdp_w, tol_w, ref_w, cmat, av, &clkout, &found );
-
-    std::cout << clkout << std::endl;                  // TODO remove prints
-    std::cout << cmat[0][0] << " " << cmat[0][1] << " " << cmat[0][2] << std::endl;
-    std::cout << av[0] << " " << av[1] << " " << av[2] << std::endl;
-
-    if(!found) {
-      throw invalid_argument("Cannot find target orientation with provided kernels"); // TODO ?
+      has_av = false;
     }
 
-
-    // convert matrix to quat
-    SpiceDouble quat[4];
-    m2q_c(cmat, quat);
-
-    // convert clock output to et
-    SpiceDouble etout;
-    sct2e_c(inst, clkout, &etout);
-
-    // convert SpiceDouble arrs to std::array for output
-    array<double,3> av_d;
-    for(int i=0;i<3;i++) {
-      av_d[i] = av[i];
+    // Translate matrix to std:array quaternion
+    m2q_c(CJ_spice, quat_spice);
+    for(int i = 0; i < 4; i++) {
+      quat[i] = quat_spice[i];
     }
 
-    array<double,4> quat_d;
-    for(int i=0;i<4;i++) {
-      quat_d[i] = quat[i];
-    }
-
-    return {av_d, quat_d, etout};
+    if(has_av) return {quat, av};
+    return {quat, nullopt};
   }
 
 

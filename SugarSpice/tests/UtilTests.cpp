@@ -19,28 +19,24 @@ TEST(UtilTests, GetFrameName) {
 }
 
 TEST(UtilTests, getTargetState) {
-  unique_ptr<Kernel> ka(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/spk/msgr_20040803_20150328_od397sc_0.bsp"));
-  unique_ptr<Kernel> kb(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_1504_v01.bc"));  // 482828147.5645907 is a good et for this
+  unique_ptr<Kernel> spk(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/spk/msgr_20040803_20150328_od397sc_0.bsp"));
+  unique_ptr<Kernel> ck(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_1504_v01.bc"));  // 482828147.5645907 is a good et for this
 
-  // double lt;
-  // double state[6];
   targetState ts = getTargetState(482828147.5645907, "Mercury", "Messenger");
   
 
-  cout << "lt: " << ts.lt << endl;
-  cout << "state: " << ts.starg[0] << " " << ts.starg[1] <<  " " << ts.starg[2] << " " <<  ts.starg[3] << " " <<  ts.starg[4] << " " << ts.starg[5] << std::endl;
-
   EXPECT_NEAR(ts.lt, 0.0320471, 0.00001);
   EXPECT_NEAR(ts.starg[0], 8954.19, 0.01);
+  EXPECT_NEAR(ts.starg[1], -3025.57, 0.01);
+  EXPECT_NEAR(ts.starg[2], 1723.98, 0.01);
+  EXPECT_NEAR(ts.starg[3], 0.583899, 1.0e-5);
+  EXPECT_NEAR(ts.starg[4], -0.540947, 1.0e-5);
+  EXPECT_NEAR(ts.starg[5], 1.08804, 1.0e-5);
 }
 
 TEST(UtilTests, getTargetOrientation) {
-  // unique_ptr<Kernel> ka(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/spk/msgr_20040803_20150328_od397sc_0.bsp"));
-  // unique_ptr<Kernel> kc(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/sclk/messenger_2548.tsc"));
-  // unique_ptr<Kernel> kd(new Kernel("/usgs/cpkgs/isis3/data/base/kernels/lsk/naif0012.tls"));
-  // unique_ptr<Kernel> ke(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_1504_v01.bc"));  // 482828147.5645907 is a good et for this
-  
-  furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_0508_v04.bc");
+  // TODO some of these probably aren't used here.
+  furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_0508_v04.bc");   // 176293972.98331 is a good time
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_sc050727_100302_sub_v1.bc");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_gm040819_150430v1.bc");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/fk/msgr_v231.tf");
@@ -50,18 +46,24 @@ TEST(UtilTests, getTargetOrientation) {
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/iak/mdisAddendum009.ti");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_0508_v04.bc");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_sc040812_150430v1.bc"); 
-  // furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_sc050727_100302_sub_v1.bc");
-  // furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_gm040819_150430v1.bc"); // repeat
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/fk/msgr_v231.tf");
   furnsh_c("/usgs/cpkgs/isis3/data/base/kernels/spk/de405.bsp");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/spk/msgr_20040803_20150430_od431sc_2.bsp");
-  // furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/");
-  // furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/");
 
 
-  targetOrientation to = getTargetOrientation(-236, 176293972.98331, 0.0);
-  cout << to.etout << endl;
-  EXPECT_NEAR(to.etout, 1.0, 0.1);
+  targetOrientation orientation = getTargetOrientation(176293972.98331, -236000);
+  if( !orientation.av ) {
+    FAIL();
+  }
+
+  double av_truth[3] = {-2.83036e-05, -4.11081e-05, -6.51215e-05};
+  double quat_truth[4] = {0.716887, 0.0942421, -0.57821, -0.377975};
+
+  for(int i = 0; i < 4; i++) {
+    if(i < 3)  EXPECT_NEAR(orientation.av.value()[i], av_truth[i], 1.0e-5);
+    EXPECT_NEAR(orientation.quat[i], quat_truth[i], 1.0e-5);
+  }
+  
 }
 
 TEST(UtilTests, findKeywords) {

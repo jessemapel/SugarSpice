@@ -58,29 +58,20 @@ namespace SugarSpice {
   std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
 
 
-  // TODO
-
-  // class targetState {
-  //   double lt;
-  //   std::array<double, 6> starg;
-  //   targetState(double lt_in, std::array<double,6> starg_in) {
-  //     lt = lt_in;
-  //     starg = starg_in;
-  //   }
-  // }
-  
   /**
-   * wraps spkezr_c
+   * @brief cpp wrap for spkezr_c
   **/
   struct targetState {double lt; std::array<double,6> starg;};
   targetState getTargetState(double et, std::string target, std::string observer, std::string frame="J2000", std::string abcorr="NONE");
 
 
   /**
-   * wraps ckgpav_c but uses ephemeris time for i/o, and returns quat instead of matrix
+   * @brief Gives quaternion and angular velocity for a given frame at a given ephemeris time
+   * 
+   * @returns quat and optional angular velocity
   **/
-  struct targetOrientation {std::array<double,3> av; std::array<double,4> quat; double etout;};
-  targetOrientation getTargetOrientation(int inst, double et, double tol, std::string ref="J2000");
+  struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
+  targetOrientation getTargetOrientation(double et, int toframe, int refframe=1); // use j2000 for default reference frame
 
   /**
     * @brief finds key:values in kernel pool
