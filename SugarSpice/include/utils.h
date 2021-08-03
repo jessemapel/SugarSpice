@@ -59,6 +59,21 @@ namespace SugarSpice {
 
 
   /**
+   * @brief cpp wrap for spkezr_c
+  **/
+  struct targetState {double lt; std::array<double,6> starg;};
+  targetState getTargetState(double et, std::string target, std::string observer, std::string frame="J2000", std::string abcorr="NONE");
+
+
+  /**
+   * @brief Gives quaternion and angular velocity for a given frame at a given ephemeris time
+   * 
+   * @returns quat and optional angular velocity
+  **/
+  struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
+  targetOrientation getTargetOrientation(double et, int toframe, int refframe=1); // use j2000 for default reference frame
+
+  /**
     * @brief finds key:values in kernel pool
     *
     * Given a key template, returns matching key:values from the kernel pool

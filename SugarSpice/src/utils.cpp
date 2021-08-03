@@ -8,6 +8,9 @@
 #include <fstream>
 
 #include <SpiceUsr.h>
+#include <SpiceZfc.h>
+#include <SpiceZmc.h>
+
 #include <nlohmann/json.hpp>
 
 #include "utils.h"
@@ -17,7 +20,6 @@ using json = nlohmann::json;
 using namespace std;
 
 string calForm = "YYYY MON DD HR:MN:SC.###### TDB ::TDB";
-
 
 // FMT formatter for fs::path, this enables passing path objects to FMT calls.
 template <> struct fmt::formatter<fs::path> {
@@ -49,6 +51,77 @@ template <> struct fmt::formatter<fs::path> {
 
 
 namespace SugarSpice {
+
+  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
+    
+    // convert params to spice types
+    ConstSpiceChar *target_spice = target.c_str();  // better way to do this?
+    ConstSpiceChar *observer_spice = observer.c_str();
+    ConstSpiceChar *frame_spice = frame.c_str();
+    ConstSpiceChar *abcorr_spice = abcorr.c_str();
+
+    // define outputs
+    SpiceDouble lt;
+    SpiceDouble starg_spice[6];
+
+    spkezr_c( target_spice, et, frame_spice, abcorr_spice, observer_spice, starg_spice, &lt );
+
+    // convert to std::array for output
+    array<double, 6> starg;
+    for(int i = 0; i < 6; i++) {
+      starg[i] = starg_spice[i];
+    }
+
+    return {lt, starg};
+  }
+
+  targetOrientation getTargetOrientation(double et, int toFrame, int refFrame) {
+    // Much of this function is from ISIS SpiceRotation.cpp
+    SpiceDouble stateCJ[6][6];
+    SpiceDouble CJ_spice[3][3];
+    SpiceDouble av_spice[3];
+    SpiceDouble quat_spice[4];
+
+    array<double,4> quat;
+    array<double,3> av;
+
+    bool has_av = true;
+
+    // First try getting the entire state matrix (6x6), which includes CJ and the angular velocity
+    frmchg_((int *) &refFrame, (int *) &toFrame, &et, (doublereal *) stateCJ);
+
+    if (!failed_c()) {
+      // Transpose and isolate CJ and av
+      xpose6_c(stateCJ, stateCJ);
+      xf2rav_c(stateCJ, CJ_spice, av_spice);
+
+      // Convert to std::array for output
+      for(int i = 0; i < 3; i++) {
+        av[i] = av_spice[i];
+      }
+
+    }
+    else {  // TODO This case is untested
+      // Recompute CJ_spice ignoring av
+      
+      reset_c(); // reset frmchg_ failure
+       
+      refchg_((int *) &refFrame, (int *) &toFrame, &et, (doublereal *) CJ_spice);
+      xpose_c(CJ_spice, CJ_spice);
+
+      has_av = false;
+    }
+
+    // Translate matrix to std:array quaternion
+    m2q_c(CJ_spice, quat_spice);
+    for(int i = 0; i < 4; i++) {
+      quat[i] = quat_spice[i];
+    }
+
+    if(has_av) return {quat, av};
+    return {quat, nullopt};
+  }
+
 
   // Given a string keyname template, search the kernel pool for matching keywords and their values
   // returns json with up to ROOM=50 matching keynames:values
