@@ -16,4 +16,4 @@ Writing Kernels
 Utils 
 =====
 
-.. doxygenfile :: utils.cpp
+.. doxygenfile :: utils.h
