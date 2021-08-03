@@ -9,7 +9,7 @@ using namespace SugarSpice;
 
 TEST_F(TempTestingFiles, UnitTestWriteCk) {
   fs::path path;
-  path = "/tmp/test_ck.bsp";
+  path = tempDir / "test_ck.bsp";
 
   std::vector<std::vector<double>> orientations = {{0.2886751, 0.2886751, 0.5773503, 0.7071068 }, {0.4082483, 0.4082483, 0.8164966, 0 }};
   std::vector<std::vector<double>> av = {{1,1,1}, {1,2,3}};

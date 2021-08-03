@@ -190,7 +190,6 @@ namespace SugarSpice {
             segments[0].angularVelocities,
             segments[0].comment);
 
-    return;
   }
 
 

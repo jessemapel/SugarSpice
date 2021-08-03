@@ -124,7 +124,7 @@ namespace SugarSpice {
      * @param path path to file to write the segment to 
      * @param segments spkSegments to be writte
      */
-    void writeCk(fs::path path, 
+    void writeCk(fs::path fileName, 
                  std::vector<CkSegment> segments);
   
   }
