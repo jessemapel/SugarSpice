@@ -18,10 +18,19 @@ import subprocess, os
 
 breathe_projects = {}
 
-output_dir = 'build'
-subprocess.call('doxygen', shell=True)
-breathe_projects['SugarSpice'] = output_dir + '/xml'
+# Check if we're running on Read the Docs' servers
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
+# go into main build directory 
+# os.chdir('../build')
+
+# Print some debug stuff
+print("READ THE DOCS SERVER FLAG: ", read_the_docs_build)
+print("WORKING DIR: ", os.getcwd())
+
+output_dir = 'docs'
+# subprocess.call('doxygen', shell=True)
+breathe_projects['SugarSpice'] = output_dir + '/xml'
 
 # -- Project information -----------------------------------------------------
 
@@ -100,3 +109,6 @@ html_sidebars = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
+
+if read_the_docs_build:
+    subprocess.call('doxygen', shell=True)
