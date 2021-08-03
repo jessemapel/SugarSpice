@@ -18,8 +18,8 @@ file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
 
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
                    DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
-                   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile 
-                   # WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT} 
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    MAIN_DEPENDENCY Doxyfile
                    COMMENT "Generating docs"
                    VERBATIM)

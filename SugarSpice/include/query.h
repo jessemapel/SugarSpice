@@ -13,26 +13,33 @@
 #include <ghc/fs_std.hpp>
 
 
-
 namespace SugarSpice {
   /** 
-    * @brief 
-    * 
+    * @brief get the latest kernel in a list 
+    *  
+    * Returns the kernel with the latest version string (e.g. the highest v??? or similar
+    * sub-string in a kernel path name) in the input list and returns it as a path object.   
     *
-    *
-    *
+    * @param kernels vector of strings, should be a list of kernel paths. 
+    * @returns path object to latest Kernel 
    **/
   fs::path getLatestKernel(std::vector<std::string> kernels);
   
+
    /** 
-    * @brief 
+    * @brief returns a JSON object of only the latest version of each kernel type
+    *  
+    * Recursively iterates Kernel groups in the input JSON and gets the kernels 
+    * with the latest version string (e.g. the highest v??? sub-string in a kernel path name). 
     * 
-    *
-    *
-    *
-   **/ 
+    * New JSON is returned. 
+    * 
+    * @param kernels A Kernel JSON object 
+    * @returns A new Kernel JSON object with reduced kernel sets 
+   **/  
   nlohmann::json getLatestKernels(nlohmann::json kernels);
-  
+
+
   /**
    * @brief Returns all kernels available for a mission
    *
