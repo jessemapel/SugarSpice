@@ -18,6 +18,8 @@ TEST(UtilTests, GetFrameCode) {
 TEST(UtilTests, GetFrameName) {  
 }
 
+/*
+ * needs local test data
 TEST(UtilTests, getTargetState) {
   unique_ptr<Kernel> spk(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/spk/msgr_20040803_20150328_od397sc_0.bsp"));
   unique_ptr<Kernel> ck(new Kernel("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_1504_v01.bc"));  // 482828147.5645907 is a good et for this
@@ -33,9 +35,11 @@ TEST(UtilTests, getTargetState) {
   EXPECT_NEAR(ts.starg[4], -0.540947, 1.0e-5);
   EXPECT_NEAR(ts.starg[5], 1.08804, 1.0e-5);
 }
+*/
 
+/*
+ * needs local test data
 TEST(UtilTests, getTargetOrientation) {
-  // TODO some of these probably aren't used here.
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_0508_v04.bc");   // 176293972.98331 is a good time
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_sc050727_100302_sub_v1.bc");
   furnsh_c("/usgs/cpkgs/isis3/data/messenger/kernels/ck/msgr_mdis_gm040819_150430v1.bc");
@@ -65,6 +69,7 @@ TEST(UtilTests, getTargetOrientation) {
   }
   
 }
+*/
 
 TEST(UtilTests, findKeywords) {
   unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
