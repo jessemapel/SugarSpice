@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <regex>
+#include <optional>
 
 #include <fmt/chrono.h>
 #include <fmt/format.h>
@@ -50,16 +51,42 @@ namespace SugarSpice {
   
   
   /**
+    * @brief Get start and stop times a kernel. 
     *
-    *
-    *
-    *
+    * For each segment in the kernel, get all start and stop times as a vector of double pairs. 
+    * This gets all start and stop times regardless of the frame associated with it.
+    * 
+    * Input kernel is assumed to be a binary kernel with time dependant external orientation data. 
+    * 
+    * @param kpath Path to the kernel 
+    * @returns std::vector of start and stop times  
    **/
   std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
 
 
   /**
-   * @brief cpp wrap for spkezr_c
+   * @brief Gives the position and velocity for a given frame at some ephemeris time
+   * 
+   * Mostly a C++ wrap for NAIF's spkezr_c 
+   * 
+   * @param et ephemeris time at which you want to optain the target state 
+   * @param target NAIF ID for the target frame 
+   * @param observer NAIF ID for the observing frame 
+   * @param frame The reference frame in which to get the positions in 
+   * @param abcorr aborration correction flag, default it NONE. 
+   *        This can set to:           
+   *           "NONE" - No correction 
+   *        For the "reception" case, i.e. photons from the target being recieved by the observer at the given time.           
+   *           "LT"   - One way light time correction 
+   *           "LT+S" - Correct for one-way light time and stellar aberration correction 
+   *           "CN"   - Converging Newtonian light time correction
+   *           "CN+S" - Converged Newtonian light time correction and stellar aberration correction  
+   *        For the "transmission" case, i.e. photons emitted from the oberver hitting at target at the given time  
+   *           "XLT"   - One-way light time correction using a newtonian formulation  
+   *           "XLT+S" - One-way light time and stellar aberration correction using a newtonian formulation  
+   *           "XCN"   - converged Newtonian light time correction
+   *           "XCN+S" - converged Newtonian light time correction and stellar aberration correction.
+   *  @return A TargetState struct with the light time adjustment and a Nx6 state vector of positions and velocities in x,y,z,vx,vy,vz format.   
   **/
   struct targetState {double lt; std::array<double,6> starg;};
   targetState getTargetState(double et, std::string target, std::string observer, std::string frame="J2000", std::string abcorr="NONE");
@@ -68,10 +95,18 @@ namespace SugarSpice {
   /**
    * @brief Gives quaternion and angular velocity for a given frame at a given ephemeris time
    * 
-   * @returns quat and optional angular velocity
+   * Orientations for an input frame in some reference frame. 
+   * The orientations returned from this function can be used to transform a position
+   * in the source frame to the ref frame. 
+   * 
+   * @param et ephemeris time at which you want to optain the target pointing 
+   * @param toframe the source frame's NAIF code. 
+   * @param refframe the reference frame's NAIF code, orientations are relative to this reference frame
+   * @returns SPICE-style quaternions (w,x,y,z) and optional angular velocity
   **/
   struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
   targetOrientation getTargetOrientation(double et, int toframe, int refframe=1); // use j2000 for default reference frame
+
 
   /**
     * @brief finds key:values in kernel pool
@@ -99,6 +134,7 @@ namespace SugarSpice {
    **/
   std::vector<nlohmann::json::json_pointer> findKeyInJson(nlohmann::json in, std::string key, bool recursive=true);
   
+
   /**
     * @brief This is a short description
     *
@@ -114,10 +150,11 @@ namespace SugarSpice {
   
   
   /** 
+    * @brief get the Kernel type (CK, SPK, etc.) 
     * 
     *
-    *
-    *
+    * @param kernelPath path to kernel 
+    * @returns Kernel type as a string 
    **/
    std::string getKernelType(fs::path kernelPath);
   

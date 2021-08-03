@@ -11,3 +11,9 @@ Writing Kernels
 ===============
 
 .. doxygenfile :: io.h
+
+
+Utils 
+=====
+
+.. doxygenfile :: utils.cpp
