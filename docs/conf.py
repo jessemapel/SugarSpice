@@ -111,6 +111,5 @@ html_sidebars = {
 # html_static_path = ['_static']
 
 if read_the_docs_build:
-    os.chdir('../build')
     subprocess.call('cmake ..', shell=True) 
-    subprocess.call('make docs', shell=True)
+    subprocess.call('make Sphinx', shell=True)
