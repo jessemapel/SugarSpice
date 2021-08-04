@@ -111,4 +111,6 @@ html_sidebars = {
 # html_static_path = ['_static']
 
 if read_the_docs_build:
-    subprocess.call('doxygen', shell=True)
+    os.chdir('../build')
+    subprocess.call('cmake ..', shell=True) 
+    subprocess.call('make docs', shell=True)
