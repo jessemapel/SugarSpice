@@ -1,8 +1,8 @@
 channels:
-  - tudat-team
   - defaults
   - conda-forge
   - usgs-astrogeology
+  - tudat-team
 
 dependencies:
   - cmake 
