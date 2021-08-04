@@ -12,8 +12,15 @@ requirements:
     - {{ compiler('cxx') }}  # [linux]
     - vc 14  # [win]
     - cmake >=3.10
+#    - cspice-cmake
   run:
     - vc  # [win]
+    - cpp-filesystem
+    - doxygen
+    - fmt
+    - ninja
+    - pip
+    - python
 
 test:
   commands:
