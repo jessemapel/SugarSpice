@@ -20,6 +20,7 @@ breathe_projects = {}
 
 # Check if we're running on Read the Docs' servers
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+build_started = os.environ.get('SUGARSPICEDOCSBUILD', None) == 'True'
 
 # go into main build directory 
 # os.chdir('../build')
@@ -111,5 +112,6 @@ html_sidebars = {
 # html_static_path = ['_static']
 
 if read_the_docs_build:
+    os.environ["SUGARSPICEDOCSBUILD"] = "True"
     subprocess.call('cmake ..', shell=True) 
     subprocess.call('make Sphinx', shell=True)

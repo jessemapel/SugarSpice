@@ -52,7 +52,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                    ${SPHINX_RST_FILES}
                    ${CMAKE_CURRENT_SOURCE_DIR}/../README.md # Docs insert the readme, so it's a dep
                    ${DOXYGEN_INDEX_FILE}
-                   MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
+                   # MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
                    COMMENT "Generating documentation with Sphinx")
 
 
