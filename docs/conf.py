@@ -20,13 +20,14 @@ breathe_projects = {}
 
 # Check if we're running on Read the Docs' servers
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-build_started = os.environ.get('SUGARSPICEDOCSBUILD', None) == 'True'
+build_started = os.path.isfile("CMakeCache.txt")
 
 # go into main build directory 
 # os.chdir('../build')
 
 # Print some debug stuff
 print("READ THE DOCS SERVER FLAG: ", read_the_docs_build)
+print("BUILD FLAG: ", build_started)
 print("WORKING DIR: ", os.getcwd())
 
 output_dir = 'docs'
@@ -111,7 +112,7 @@ html_sidebars = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
-if read_the_docs_build and not os.environ["SUGARSPICEDOCSBUILD"]:
+if read_the_docs_build and not build_started:
         subprocess.call('cmake ..', shell=True) 
         subprocess.call('make Sphinx', shell=True)
         os.environ["SUGARSPICEDOCSBUILD"] = "True"
