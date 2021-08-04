@@ -111,7 +111,7 @@ html_sidebars = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
-if read_the_docs_build:
-    os.environ["SUGARSPICEDOCSBUILD"] = "True"
-    subprocess.call('cmake ..', shell=True) 
-    subprocess.call('make Sphinx', shell=True)
+if read_the_docs_build and not os.environ["SUGARSPICEDOCSBUILD"]:
+        subprocess.call('cmake ..', shell=True) 
+        subprocess.call('make Sphinx', shell=True)
+        os.environ["SUGARSPICEDOCSBUILD"] = "True"
