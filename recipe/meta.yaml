@@ -10,17 +10,15 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}  # [linux]
-    - vc 14  # [win]
     - cmake >=3.10
     - pip
     - python
-#    - doxygen  # for building docs
-#    - breathe
-#    - sphinx-material
-#    - m2r2
-  run:
-    - vc  # [win]
     - cspice-cmake
+  run:
+    - cpp-filesystem
+    - fmt
+    - ninja
+  host:
     - cpp-filesystem
     - fmt
     - ninja
