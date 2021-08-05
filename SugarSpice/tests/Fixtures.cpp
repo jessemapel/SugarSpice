@@ -9,9 +9,10 @@
 
 
 #include "utils.h"
+#include "io.h"
 
 using namespace std;
-
+using namespace SugarSpice; 
 
 void TempTestingFiles::SetUp() {
   int max_tries = 10;
@@ -57,4 +58,29 @@ void KernelDataDirectories::SetUp() {
 
 
 void KernelDataDirectories::TearDown() {
+  
+}
+
+void KernelSet::SetUp() { 
+  TempTestingFiles::SetUp();
+
+  fs::create_directory(tempDir / "ck");
+  fs::path ckPath1 = tempDir / "ck" / "soc31.0001.bc";
+
+  std::vector<std::vector<double>> orientations = {{0.2886751, 0.2886751, 0.5773503, 0.7071068 }, {0.4082483, 0.4082483, 0.8164966, 0 }};
+  std::vector<std::vector<double>> av = {{1,1,1}, {2,2,2}};
+  std::vector<double> times = {1000, 2000};
+  
+  int bodyCode = -85000; 
+  
+  std::string referenceFrame = "j2000";
+  std::string segmentId = "Messenger CK Code";
+
+  writeCk(ckPath1, orientations, times, bodyCode, referenceFrame, segmentId, av);
+
+
+}
+
+void KernelSet::TearDown() { 
+  
 }
