@@ -4,8 +4,12 @@
 #include "SpiceUsr.h"
 
 #include "io.h"
+#include "utils.h"
+
 
 using namespace std; 
+
+using json = nlohmann::json;
 
 namespace SugarSpice {
 
@@ -191,6 +195,89 @@ namespace SugarSpice {
             segments[0].comment);
 
   }
+  
 
+  void writeTextKernel(fs::path &fileName, string &type, string &comment, json &keywords) { 
 
+    /**
+     * @brief Return an adjusted string such that it multi-lined if longer than some max length. 
+     *
+     * This generates a string that is compatible with the requirements my NAIF text kernels 
+     * to be multi-line. 
+     */
+    auto adjustStringLengths = [](string s, size_t maxLen = 100, bool isComment = true) -> string {         
+      // first, escape single quotes 
+      s = replaceAll(s, "'", "''");
+
+      if (s.size() <= maxLen && isComment) {          
+        return s;
+      }
+      else if (s.size() <= maxLen && !isComment) { 
+        return "'" + s + "'";
+      }
+
+      string newString; 
+      string formatString = (isComment) ? "{}\n" : "( '{}' // )";
+      
+      for(int i = 0; i < s.size()/maxLen; i++) { 
+        newString.append(fmt::format(formatString, s.substr(i*maxLen, maxLen)) + "\n");
+      }
+      newString.append(fmt::format(formatString, s.substr(s.size()-(s.size()%maxLen), s.size()%maxLen)));
+
+      return newString; 
+    };
+
+    /**
+     * @brief Given a JSON primitive, return a text kernel freindly string representation
+     */
+    auto json2String = [&](json keyword, size_t maxStrLen) -> string {
+        if (!keyword.is_primitive()) {            
+          throw invalid_argument("Input JSON must be a primitive, not an array or object.");
+        }
+
+        if(keyword.is_string()) {
+          return adjustStringLengths(keyword.get<string>(), maxStrLen); 
+        }
+        else { 
+          return keyword.get<string>(); 
+        }
+    };
+
+    static unsigned int MAX_TEXT_KERNEL_LINE_LEN = 132; 
+
+    ofstream textKernel;
+    textKernel.open(fileName);
+    string typeUpper = toUpper(type);
+    
+    vector<string> supportedTextKernels = {"FK", "IK", "LSK", "MK", "PCK", "SCLK"};
+    
+    if (std::find(supportedTextKernels.begin(), supportedTextKernels.end(), type) == supportedTextKernels.end()) {
+      throw invalid_argument(fmt::format("{} is not a valid text kernel type", type));  
+    }
+    
+    textKernel << "KPL/" + toUpper(type) << endl << endl;
+    textKernel << "\\begintext" << endl << endl;
+    textKernel << adjustStringLengths(comment, 100, true) << endl << endl;
+    textKernel << "\\begindata" << endl << endl;
+
+    for(auto it = keywords.begin(); it != keywords.end(); it++) {
+      
+      if (it.value().is_array()) {            
+        textKernel << fmt::format("{} = {}",  it.key(), json2String(it.value(), MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl; 
+        for(auto ar = it.value().begin()+1; ar!=it.value().end();ar++) { 
+          textKernel << fmt::format("{} += {}", it.key(), json2String(it.value(),  MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl;  
+        }
+      }
+      else if(it.value().is_primitive()) {
+        textKernel << fmt::format("{} = {}",  it.key(), json2String(it.value(),  MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl;
+      }
+      else {
+        // must be another object, skip.
+        continue;
+      }
+    }
+
+    textKernel.close();
+  }
+  
 }

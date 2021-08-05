@@ -22,6 +22,37 @@
 namespace SugarSpice {
   
   /**
+   * @brief force a string to upper case
+   * 
+   * @param s input string
+   * @return copy of input string, in upper case
+   */
+  std::string toUpper(std::string s);
+  
+
+  /**
+   * @brief force a string to lower case
+   * 
+   * @param s input string
+   * @return copy of input string, in lower case
+   */
+  std::string toLower(std::string s);
+  
+
+  /**
+   * @brief find and replace one substring with another
+   * 
+   * 
+   *
+   * @param str input string to search
+   * @param from substring to find
+   * @param to substring to replace "from" instances to
+   * @return std::string 
+   */
+  std::string replaceAll(std::string str, const std::string &from, const std::string &to);
+  
+  
+  /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
     * Iterates the input path and returning a list of files. Optionally, recursively. 
@@ -63,10 +94,12 @@ namespace SugarSpice {
    **/
   std::vector<std::pair<double, double>> getTimeIntervals(fs::path kpath);
 
+
   /**
    * @brief Simple struct for holding target states  
    */
   struct targetState {double lt; std::array<double,6> starg;};
+
 
   /**
    * @brief Gives the position and velocity for a given frame at some ephemeris time

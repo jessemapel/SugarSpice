@@ -10,6 +10,8 @@
 #include <vector>
 #include <ghc/fs_std.hpp>
 
+#include <nlohmann/json.hpp>
+
 namespace SugarSpice {
 
   class SpkSegment {
@@ -131,5 +133,16 @@ namespace SugarSpice {
      */
     void writeCk(fs::path fileName, 
                  std::vector<CkSegment> segments);
+
+
+  /**
+   * @brief Write json key value pairs into a NAIF text kernel
+   *          
+   * @param fileName pull path to the text kernel
+   * @param type kernel type string, valid text kernel types: FK, IK, LSK, MK, PCK, SCLK
+   * @param comment the comment to add to the top of the kernel 
+   * @param keywords json object containing key/value pairs to write to the text kernel
+   */
+  void writeTextKernel(fs::path &fileName, std::string &type, std::string &comment, nlohmann::json &keywords);
   
   }
