@@ -41,8 +41,6 @@ namespace SugarSpice {
 
   /**
    * @brief find and replace one substring with another
-   * 
-   * 
    *
    * @param str input string to search
    * @param from substring to find
