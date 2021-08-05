@@ -22,6 +22,35 @@
 namespace SugarSpice {
   
   /**
+   * @brief force a string to upper case
+   * 
+   * @param s input string
+   * @return copy of input string, in upper case
+   */
+  std::string toUpper(std::string s);
+  
+
+  /**
+   * @brief force a string to lower case
+   * 
+   * @param s input string
+   * @return copy of input string, in lower case
+   */
+  std::string toLower(std::string s);
+  
+
+  /**
+   * @brief find and replace one substring with another
+   *
+   * @param str input string to search
+   * @param from substring to find
+   * @param to substring to replace "from" instances to
+   * @return std::string 
+   */
+  std::string replaceAll(std::string str, const std::string &from, const std::string &to);
+  
+  
+  /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
     * Iterates the input path and returning a list of files. Optionally, recursively. 
@@ -65,6 +94,12 @@ namespace SugarSpice {
 
 
   /**
+   * @brief Simple struct for holding target states  
+   */
+  struct targetState {double lt; std::array<double,6> starg;};
+
+
+  /**
    * @brief Gives the position and velocity for a given frame at some ephemeris time
    * 
    * Mostly a C++ wrap for NAIF's spkezr_c 
@@ -88,8 +123,13 @@ namespace SugarSpice {
    *           "XCN+S" - converged Newtonian light time correction and stellar aberration correction.
    *  @return A TargetState struct with the light time adjustment and a Nx6 state vector of positions and velocities in x,y,z,vx,vy,vz format.   
   **/
-  struct targetState {double lt; std::array<double,6> starg;};
   targetState getTargetState(double et, std::string target, std::string observer, std::string frame="J2000", std::string abcorr="NONE");
+
+
+  /**
+   * @brief simple struct for holding target orientations 
+   */
+  struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
 
 
   /**
@@ -104,7 +144,6 @@ namespace SugarSpice {
    * @param refframe the reference frame's NAIF code, orientations are relative to this reference frame
    * @returns SPICE-style quaternions (w,x,y,z) and optional angular velocity
   **/
-  struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
   targetOrientation getTargetOrientation(double et, int toframe, int refframe=1); // use j2000 for default reference frame
 
 
@@ -117,7 +156,7 @@ namespace SugarSpice {
     * @param keytpl input key template to search for
     * 
     * @returns json list of found key:values
-  **/
+   **/
   nlohmann::json findKeywords(std::string keytpl);
 
   
@@ -126,7 +165,7 @@ namespace SugarSpice {
     *
     * Given a root and a regular expression, give all the files that match.  
     *
-    * @param root input json to search
+    * @param in input json to search
     * @param key key to search for   
     * @param recursive recursively iterates through objects if true 
     * 

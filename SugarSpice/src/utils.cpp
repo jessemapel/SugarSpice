@@ -53,8 +53,29 @@ template <> struct fmt::formatter<fs::path> {
 
 namespace SugarSpice {
 
-  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
-    
+  string toUpper(string s) {
+    transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return toupper(c); });
+    return s;
+  }
+
+
+  string toLower(string s) {
+    transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return tolower(c); });
+    return s;
+  }
+
+
+  string replaceAll(string str, const string& from, const string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+  }
+
+
+  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {    
     // convert params to spice types
     ConstSpiceChar *target_spice = target.c_str();  // better way to do this?
     ConstSpiceChar *observer_spice = observer.c_str();

@@ -19,8 +19,7 @@ using json = nlohmann::json;
 namespace SugarSpice {
 
   /**
-   * Used here to do reverse lookups of enum stringss
-   *
+   * @brief Used here to do reverse lookups of enum stringss
    **/
   template < typename T> pair<bool, int > findInVector(const std::vector<T>  & vecOfElements, const T  & element) {
     pair<bool, int > result;
