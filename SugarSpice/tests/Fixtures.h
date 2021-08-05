@@ -15,6 +15,7 @@ class TempTestingFiles : public ::testing::Test {
     void TearDown() override; 
 };
 
+
 class KernelDataDirectories : public ::testing::Test {
   protected:
 
@@ -25,4 +26,7 @@ class KernelDataDirectories : public ::testing::Test {
 };
 
 
+class CkKernels : public ::testing::Test { 
+
+}
 

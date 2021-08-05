@@ -1,4 +1,10 @@
 #pragma once
+/** 
+ * @file
+ * 
+ * Functions for reading and writing Kernels
+ *
+ **/
 
 #include <string>
 #include <vector>
@@ -12,17 +18,17 @@ namespace SugarSpice {
       /**
        * Constructs a fully populated SpkSegment
        *
-       * @param segmentComment The comment string for the new segment
+       * @param statePositions Time ordered vector of state positions X,Y,Z
+       * @param stateTimes Time ordered vector of state ephemeris times (TDB)
        * @param bodyCode Naif body code of an object whose state is described by the segments
        * @param centerOfMotion Naif body code of an object which is the center of motion for
        *                      bodyCode
        * @param referenceFrame Naif name of the reference system relative to which the state is
-       * @param segmentId SPK segment identifier (max size 40)
+       * @param id SPK segment identifier (max size 40)
        * @param degree Degree of the Hermite polynomials used to interpolate the states
-       * @param statePositions Time ordered vector of state positions X,Y,Z
        * @param stateVelocities Time ordered vector of state velocities dX, dY, dZ
-       * @param stateTimes Time ordered vector of state ephemeris times (TDB)
-       */
+       * @param segmentComment The comment string for the new segment
+       **/
       SpkSegment(std::vector<std::vector<double>> statePositions,
                  std::vector<double> stateTimes,
                  int bodyCode,
@@ -61,7 +67,7 @@ namespace SugarSpice {
          * @param bodyCode Naif body code of an object whose state is described by the segments
          * @param referenceFrame Naif name of the reference system relative to which the state is
          * @param id SPK segment identifier (max size 40)
-         * @param anglularVelocity Time ordered vector of state velocities dX, dY, dZ
+         * @param anglularVelocities Time ordered vector of state velocities dX, dY, dZ
          * @param comment The comment string for the new segment
          */
         CkSegment(std::vector<std::vector<double>> quats, std::vector<double> times,  int bodyCode, 
@@ -85,7 +91,6 @@ namespace SugarSpice {
       * Given a vector of SPK segments, write them to the requested SPK file.
       *
       * @param fileName file specification to have the SPK segments written to
-      * @param comment comment to add to segment
       * @param segments spkSegments to be written
       */
     void writeSpk (fs::path fileName,
@@ -112,7 +117,7 @@ namespace SugarSpice {
                  int bodyCode, 
                  std::string referenceFrame, 
                  std::string segmentId, 
-                 std::optional<std::vector<std::vector<double>>> anglularVelocity = std::nullopt, 
+                 std::optional<std::vector<std::vector<double>>> angularVelocity = std::nullopt, 
                  std::optional<std::string> comment= std::nullopt);
   
   
@@ -121,7 +126,7 @@ namespace SugarSpice {
      *
      * Given orientations, angular velocities, times, target and reference frames, write data as a segment in a CK kernel. 
      *
-     * @param path path to file to write the segment to 
+     * @param fileName path to file to write the segment to 
      * @param segments spkSegments to be writte
      */
     void writeCk(fs::path fileName, 
