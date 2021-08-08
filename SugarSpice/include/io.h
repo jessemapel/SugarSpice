@@ -30,7 +30,7 @@ namespace SugarSpice {
        * @param degree Degree of the Hermite polynomials used to interpolate the states
        * @param stateVelocities Time ordered vector of state velocities dX, dY, dZ
        * @param segmentComment The comment string for the new segment
-       **/
+      **/
       SpkSegment(std::vector<std::vector<double>> statePositions,
                  std::vector<double> stateTimes,
                  int bodyCode,
@@ -97,8 +97,34 @@ namespace SugarSpice {
       */
     void writeSpk (fs::path fileName,
                    std::vector<SpkSegment> segments);
-  
-  
+
+
+    /**
+     * @brief Write SPK to path
+     * 
+     * @param fileName full path to file to write the segment to  
+     * @param statePositions Nx3 array of positions in X,Y,Z order
+     * @param stateTimes Nx1 array of times
+     * @param bodyCode NAIF integer code for the body the states belong to
+     * @param centerOfMotion is the NAIF integer code for the center of motion of the object identified by body.
+     * @param referenceFrame The NAIF code the states are relative to
+     * @param segmentId ID for the segment
+     * @param polyDegree degree of the hermite polynomials used for interpolation
+     * @param stateVelocities Nx3 array of state velocities in VX, VY, VZ order, optional
+     * @param segmentComment Comment associated with the segment, optional
+     */
+    void writeSpk(fs::path fileName, 
+                  std::vector<std::vector<double>> statePositions,
+                  std::vector<double> stateTimes,
+                  int bodyCode,
+                  int centerOfMotion,
+                  std::string referenceFrame,
+                  std::string segmentId, 
+                  int polyDegree,
+                  std::optional<std::vector<std::vector<double>>> stateVelocities = std::nullopt,
+                  std::optional<std::string> segmentComment = std::nullopt);
+
+
     /**
       * @brief Write CK segments to a file
       *
@@ -119,6 +145,8 @@ namespace SugarSpice {
                  int bodyCode, 
                  std::string referenceFrame, 
                  std::string segmentId, 
+                 fs::path sclk, 
+                 fs::path lsk,
                  std::optional<std::vector<std::vector<double>>> angularVelocity = std::nullopt, 
                  std::optional<std::string> comment= std::nullopt);
   
@@ -129,10 +157,14 @@ namespace SugarSpice {
      * Given orientations, angular velocities, times, target and reference frames, write data as a segment in a CK kernel. 
      *
      * @param fileName path to file to write the segment to 
+     * @param sclk path to SCLK kernel matching the segments' frame code
+     * @param lsk path to LSK kernel 
      * @param segments spkSegments to be writte
      */
-    void writeCk(fs::path fileName, 
-                 std::vector<CkSegment> segments);
+  void writeCk(fs::path fileName, 
+               fs::path sclk, 
+               fs::path lsk,
+               std::vector<CkSegment> segments);
 
 
   /**
@@ -143,6 +175,6 @@ namespace SugarSpice {
    * @param comment the comment to add to the top of the kernel 
    * @param keywords json object containing key/value pairs to write to the text kernel
    */
-  void writeTextKernel(fs::path &fileName, std::string &type, std::string &comment, nlohmann::json &keywords);
+  void writeTextKernel(fs::path fileName, std::string type, nlohmann::json &keywords, std::optional<std::string> comment = std::nullopt);
   
   }

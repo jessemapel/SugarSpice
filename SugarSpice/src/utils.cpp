@@ -223,12 +223,40 @@ namespace SugarSpice {
         string str_cval;
         if (nvals == 1) {
           str_cval.assign(&cvals[0][0]);
-          jresultVal = str_cval; 
+          string lower = toLower(str_cval);
+
+          // if null or boolean, do a conversion 
+          if (lower == "true") {
+            jresultVal = true;
+          }
+          else if (lower == "false") {
+            jresultVal = false;
+          } 
+          else if (lower == "null") {
+            jresultVal = nullptr;
+          }
+          else {
+            jresultVal = str_cval; 
+          }
         }
         else {
           for(int j=0; j<nvals; j++) {
             str_cval.assign(&cvals[j][0]);
-            jresultVal.push_back(str_cval);
+            string lower = toLower(str_cval);
+            
+            // if null or boolean, do a conversion 
+            if (lower == "true") {
+              jresultVal.push_back(true);
+            }
+            else if (lower == "false") {
+              jresultVal.push_back(false);
+            } 
+            else if (lower == "null") {
+              jresultVal.push_back(nullptr);
+            }
+            else {
+              jresultVal.push_back(str_cval);
+            }
           }
         }
       }
@@ -265,6 +293,7 @@ namespace SugarSpice {
 
   vector<string> jsonArrayToVector(json arr) {
     vector<string> res;
+    
     if (arr.is_array()) {
       for(auto it : arr) {
         res.emplace_back(it);
@@ -416,7 +445,7 @@ namespace SugarSpice {
       ptr = getenv("ALESPICEROOT");
       fs::path aleDataDir = ptr == NULL ? "" : ptr;
   
-      ptr = getenv("SPICEROOT");;
+      ptr = getenv("SPICEROOT");
       fs::path spiceDataDir = ptr == NULL ? "" : ptr;
   
       if (fs::is_directory(spiceDataDir)) {
@@ -446,7 +475,7 @@ namespace SugarSpice {
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
 
     if (!fs::is_directory(dbPath)) {
-      throw runtime_error("Config Directory Not Found.");;
+      throw runtime_error("Config Directory Not Found.");
     }
 
     vector<fs::path> paths = glob(dbPath, basic_regex("json"));

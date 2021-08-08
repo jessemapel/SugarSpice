@@ -78,10 +78,22 @@ namespace SugarSpice {
                int bodyCode, 
                string referenceFrame, 
                string segmentId, 
+               fs::path sclk, 
+               fs::path lsk,
                optional<vector<vector<double>>> angularVelocities, 
-               optional<string> comment) {
+               optional<string> comment) {                 
 
     SpiceInt handle; 
+
+    // convert times, but first, we need SCLK+LSK kernels
+    StackKernel sclkKernel(new Kernel(sclk));
+    StackKernel lskKernel(new Kernel(lsk));
+
+    for(auto &et : times) {
+      double sclkdp; 
+      sce2c_c(bodyCode/1000, et, &sclkdp);
+      et = sclkdp; 
+    }
 
     ckopn_c(path.c_str(), "CK", comment.value_or("CK Kernel").size(), &handle);
 
@@ -98,6 +110,8 @@ namespace SugarSpice {
              (angularVelocities) ? angularVelocities->data() : nullptr,
              times.size(),
              times.data());
+    
+    ckcls_c(handle);
   }
 
 
@@ -125,25 +139,19 @@ namespace SugarSpice {
     
     states = concatStates(statePositions, *stateVelocities);
 
-    vector<double*> ptrs;
-    for (auto& vec : states) {
-        ptrs.push_back(vec.data());
-    }
-    double **statePtrs = ptrs.data();
-
     SpiceInt handle;
     spkopn_c(fileName.string().c_str(), "SPK", 512, &handle);
-
+    
     spkw13_c(handle,
              bodyCode,
              centerOfMotion,
              referenceFrame.c_str(),
              stateTimes[0],
-             stateTimes.size() - 1,
+             stateTimes[stateTimes.size() - 1],
              segmentId.c_str(),
              polyDegree,
              stateTimes.size(),
-             statePtrs,
+             states.data(),
              stateTimes.data());
 
     spkcls_c(handle);
@@ -176,7 +184,7 @@ namespace SugarSpice {
     return;
   }
 
-  void writeCk(fs::path fileName, vector<CkSegment> segments) {
+  void writeCk(fs::path fileName, fs::path sclk, fs::path lsk, vector<CkSegment> segments) {
 
     // TODO:
     //   write all segments not just first
@@ -192,13 +200,15 @@ namespace SugarSpice {
             segments[0].bodyCode,
             segments[0].referenceFrame,
             segments[0].id,
+            sclk, 
+            lsk,
             segments[0].angularVelocities,
             segments[0].comment);
 
   }
   
 
-  void writeTextKernel(fs::path &fileName, string &type, string &comment, json &keywords) { 
+  void writeTextKernel(fs::path fileName, string type, json &keywords, optional<string> comment) { 
 
     /**
      * @brief Return an adjusted string such that it multi-lined if longer than some max length. 
@@ -213,8 +223,8 @@ namespace SugarSpice {
       if (s.size() <= maxLen && isComment) {          
         return s;
       }
-      else if (s.size() <= maxLen && !isComment) { 
-        return "'" + s + "'";
+      else if (s.size() <= maxLen - 5 && !isComment) { 
+        return "( '" + s + "' )";
       }
 
       string newString; 
@@ -237,36 +247,47 @@ namespace SugarSpice {
         }
 
         if(keyword.is_string()) {
-          return adjustStringLengths(keyword.get<string>(), maxStrLen); 
+          return adjustStringLengths(keyword.get<string>(), maxStrLen, false); 
         }
-        else { 
-          return keyword.get<string>(); 
+        if(keyword.is_number_integer()) {
+          return to_string(keyword.get<int>());  
         }
-    };
+        if(keyword.is_number_float()) {
+          return to_string(keyword.get<double>());  
+        }
+        if(keyword.is_boolean()) {
+          return (keyword.get<bool>()) ? "'true'" : "'false'";  
+        }
+        if(keyword.is_null()) {
+          return "'null'";  
+        } 
+        
+        // theoritically should never throw 
+        throw invalid_argument("in json2string, input keyword is not a viable primitive type.");
+    };            
 
     static unsigned int MAX_TEXT_KERNEL_LINE_LEN = 132; 
 
     ofstream textKernel;
     textKernel.open(fileName);
     string typeUpper = toUpper(type);
-    
     vector<string> supportedTextKernels = {"FK", "IK", "LSK", "MK", "PCK", "SCLK"};
     
-    if (std::find(supportedTextKernels.begin(), supportedTextKernels.end(), type) == supportedTextKernels.end()) {
+    if (std::find(supportedTextKernels.begin(), supportedTextKernels.end(), typeUpper) == supportedTextKernels.end()) {
       throw invalid_argument(fmt::format("{} is not a valid text kernel type", type));  
     }
     
     textKernel << "KPL/" + toUpper(type) << endl << endl;
     textKernel << "\\begintext" << endl << endl;
-    textKernel << adjustStringLengths(comment, 100, true) << endl << endl;
+    textKernel << comment.value_or("") << endl << endl;
     textKernel << "\\begindata" << endl << endl;
 
     for(auto it = keywords.begin(); it != keywords.end(); it++) {
       
       if (it.value().is_array()) {            
-        textKernel << fmt::format("{} = {}",  it.key(), json2String(it.value(), MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl; 
+        textKernel << fmt::format("{} = {}",  it.key(), json2String(it.value().at(0), MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl; 
         for(auto ar = it.value().begin()+1; ar!=it.value().end();ar++) { 
-          textKernel << fmt::format("{} += {}", it.key(), json2String(it.value(),  MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl;  
+          textKernel << fmt::format("{} += {}", it.key(), json2String(ar.value(),  MAX_TEXT_KERNEL_LINE_LEN - it.key().size() + 5)) << endl;  
         }
       }
       else if(it.value().is_primitive()) {

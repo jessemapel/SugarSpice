@@ -10,8 +10,7 @@
               "deps" : {}
             },
             "deps" : {
-                "sclk" : "messenger_[0-9]{4}.tsc",
-                "objs" : ["/mess/ck", "/mdis_att/ck", "/base/lsk"]
+                "objs" : ["/mess/ck", "/mdis_att/ck", "/base/lsk", "/mess/sclk"]
             }
         },
         "spk" : {
@@ -21,7 +20,7 @@
             },
             "deps" : {
                 "lsk" : "naif[0-9]{4}.tls",
-                "objs" : []
+                "objs" : ["/base/lsk", "/mess/sclk"]
             }
         },
         "tspk" : {
@@ -51,8 +50,7 @@
             },
             "deps" : {
                 "sclk" : "messenger_[0-9]{4}.tsc",
-                "lsk" : "naif[0-9]{4}.tls",
-                "objs" : []
+                "objs" : ["/base/lsk", "/mess/sclk"]
             }
         }
     },
@@ -63,10 +61,11 @@
               "deps" : {}
             },
             "deps" : {
-                "sclk" : "messenger_[0-9]{4}.tsc",
-                "lsk" : "naif[0-9]{4}.tls",
-                "objs" : []
+                "objs" : ["/base/lsk", "/mess/sclk"]
             }
+        },
+        "sclk" : {
+          "kernels" : "messenger_[0-9]{4}.tsc"
         }
     }
 }

@@ -29,8 +29,7 @@ class KernelDataDirectories : public ::testing::Test {
 class KernelSet : public TempTestingFiles { 
   protected: 
 
-    std::vector<fs::path> cks; 
-    std::vector<fs::path> spks; 
+    fs::path root;
     
     void SetUp() override; 
     void TearDown() override; 
