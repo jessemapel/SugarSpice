@@ -141,6 +141,15 @@ namespace SugarSpice {
 
 
   /**
+   * @brief typedef of std::unique_ptr<Kernel> 
+   * 
+   * This basically allows the Kernel to exist only within the 
+   * call stack it is used in. 
+   */
+  typedef std::unique_ptr<Kernel> StackKernel;
+
+
+  /**
    * @brief convert a UTC string to an ephemeris time
    *  
    * Basically a wrapper around NAIF's cspice str2et function except it also temporarily loads the required kernels. 

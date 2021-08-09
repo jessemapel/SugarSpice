@@ -60,6 +60,9 @@ namespace SugarSpice {
 
     vector<json::json_pointer> pointers = findKeyInJson(kernels, "sclk", true);
     for(auto &p : pointers) {
+      if(kernels.at(p).contains("kernels")) {
+        p /= "kernels";
+      }
       fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]));
       kernels[p] = latest; 
     }
@@ -82,7 +85,7 @@ namespace SugarSpice {
       vector<string> regexes = jsonArrayToVector(r);
       regex reg(fmt::format("({})", fmt::join(regexes, "|")));
       vector<fs::path> paths = glob(root, reg, true);
-  
+      
       return paths;
   };
   
@@ -95,7 +98,7 @@ namespace SugarSpice {
     // iterate pointers
     for(auto pointer : pointers) {      
       json category = conf[pointer];
-  
+
       if (category.contains("kernels")) {
         ret[pointer]["kernels"] = getPathsFromRegex(root, category.at("kernels"));
       }
@@ -142,7 +145,7 @@ namespace SugarSpice {
     json kernels;
   
     // the kernels group is now the conf with 
-    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk"}) {
+    for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk", "sclk"}) {
         kernels.merge_patch(globKernels(root, conf, kernelType));
     }
   
@@ -162,7 +165,6 @@ namespace SugarSpice {
   
       json baseConf = getMissionConfig("base");
       fs::path dataDir = getDataDirectory();
-      
       baseConf = searchMissionKernels(dataDir, baseConf);
       p = findKeyInJson(baseConf, "lsk", true);
       
@@ -170,7 +172,7 @@ namespace SugarSpice {
       sort(lsks.begin(), lsks.end(), greater<string>());
       
       vector<shared_ptr<Kernel>> timeKernels(2);
-  
+      
       if(lsks.size()) {
         timeKernels.emplace_back(new Kernel(lsks.at(0)));
       }
@@ -209,7 +211,6 @@ namespace SugarSpice {
         
         for(auto &kernel : ckQual) {
           vector<pair<double, double>> intervals = getTimeIntervals(kernel);
-
           for(auto &interval : intervals) {
             auto isInRange = [&interval](double d) -> bool {return d >= interval.first && d <= interval.second;};
   
