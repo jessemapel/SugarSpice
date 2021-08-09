@@ -86,8 +86,8 @@ namespace SugarSpice {
     SpiceInt handle; 
 
     // convert times, but first, we need SCLK+LSK kernels
-    StackKernel sclkKernel(new Kernel(sclk));
-    StackKernel lskKernel(new Kernel(lsk));
+    unique_ptr<Kernel> sclkKernel(new Kernel(sclk));
+    unique_ptr<Kernel> lskKernel(new Kernel(lsk));
 
     for(auto &et : times) {
       double sclkdp; 
