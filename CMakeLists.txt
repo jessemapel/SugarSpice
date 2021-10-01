@@ -16,24 +16,23 @@ cmake_dependent_option (SUGARSPICE_BUILD_TESTS "Build the SugarSpice Tests" ON S
 # Variables required by multiple build options
 set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include/")
 
+set(default_build_type "Release")
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
+      STRING "Choose the type of build." FORCE)
+endif()
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "$ENV{CONDA_PREFIX}")
+endif()
+message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
+
 #################
 # Library Build #
 #################
 
 if(SUGARSPICE_BUILD_LIB)
-
-  # Set a default build type if none was specified
-  set(default_build_type "Release")
-  if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
-    set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
-        STRING "Choose the type of build." FORCE)
-  endif()
-
-  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "$ENV{CONDA_PREFIX}")
-  endif()
-  message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 
   set(JSON_BuildTests OFF CACHE INTERNAL "")
 
@@ -43,7 +42,6 @@ if(SUGARSPICE_BUILD_LIB)
   find_package(CSpice REQUIRED)
   find_package(fmt REQUIRED)
 
-  # Library setup
   set(SUGARSPICE_INSTALL_INCLUDE_DIR "include/SugarSpice")
   set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/io.cpp

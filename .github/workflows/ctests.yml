@@ -7,7 +7,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build-unix:
+  build-library:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -27,32 +27,54 @@ jobs:
           environment-file: environment.yml
           auto-activate-base: false
           auto-update-conda: true
+
     - name: Conda info
       run: |
           conda info
           conda list
+
     - name: Checkout submodules
       uses: snickerbockers/submodules-init@v4
 
     - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
+      # Some projects don't allow in-source building, so create separate build and install
+      # directorie; we'll use them as our working directories for subsequent commands.
+      run: |
+          cmake -E make_directory ${{github.workspace}}/build
+          cmake -E make_directory ${{github.workspace}}/install
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCSpice_DIR=$CONDA/envs/sugar_spice/lib/cmake/cspice/ -Dfmt_DIR=$CONDA/envs/sugar_spice/lib/cmake/fmt/ -DSUGARSPICE_BUILD_DOCS=OFF
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCSpice_DIR=$CONDA/envs/sugar_spice/lib/cmake/cspice/ -Dfmt_DIR=$CONDA/envs/sugar_spice/lib/cmake/fmt/ -DSUGARSPICE_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
       working-directory: ${{github.workspace}}/build
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: |
         cmake --build . --config $BUILD_TYPE
+
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -VV -C $BUILD_TYPE
+
+    - name: Install
+      working-directory: ${{github.workspace}}/build
+      # Execute the install.  You can specify a specific target with "--target <NAME>"
+      run: |
+        cmake --install . --config $BUILD_TYPE
+
+    - name: Check install
+      working-directory: ${{github.workspace}}/install
+      # Check that the library installed properly
+      run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            test -e lib/libSugarSpice.dylib
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            test -e lib/libSugarSpice.so
+          fi
+          test -e include/SugarSpice/sugar_spice.h
 
   build-docs:
 
@@ -69,28 +91,47 @@ jobs:
           environment-file: environment.yml
           auto-activate-base: false
           auto-update-conda: true
+
     - name: Conda info
       run: |
           conda info
           conda list
+
     - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
+      # Some projects don't allow in-source building, so create separate build and install
+      # directorie; we'll use them as our working directories for subsequent commands.
+      run: |
+          cmake -E make_directory ${{github.workspace}}/build
+          cmake -E make_directory ${{github.workspace}}/install
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSUGARSPICE_BUILD_LIB=OFF
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSUGARSPICE_BUILD_LIB=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
       working-directory: ${{github.workspace}}/build
       # Execute the build.
       run: |
         cmake --build . --config $BUILD_TYPE
-    - name: Check Docs
+
+    - name: Check Build Docs
       working-directory: ${{github.workspace}}/build/docs/sphinx/
       # Check for the built docs
       run: |
           test -e index.html
           test -e reference/api.html
           test -e reference/tutorials.html
+
+    - name: Install Docs
+      working-directory: ${{github.workspace}}/build
+      # Install the build.
+      run: |
+        cmake --install . --config $BUILD_TYPE
+
+    - name: Check Install Docs
+      working-directory: ${{github.workspace}}/build/docs/sphinx/
+      # Check for the built docs
+      run: |
+          test -e share/doc/SugarSpice/sphinx/index.html
+          test -e share/doc/SugarSpice/sphinx/reference/api.html
+          test -e share/doc/SugarSpice/sphinx/reference/tutorials.html
