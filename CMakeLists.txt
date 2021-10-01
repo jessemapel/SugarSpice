@@ -6,6 +6,10 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 20)
 # set(CMAKE_CXX_COMPILER "$ENV{PREFIX}/bin/clang")
 
+# Build options
+option (SUGARSPICE_BUILD_DOCS "Build Docs" ON)
+option (SUGARSPICE_BUILD_TESTS "Build tests" ON)
+
 # Set a default build type if none was specified
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -32,7 +36,7 @@ set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include
 set(SUGARSPICE_INSTALL_INCLUDE_DIR "include/SugarSpice")
 set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/io.cpp
-                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/query.cpp 
+                         ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/query.cpp
                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/spice_types.cpp)
 
 set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
@@ -61,25 +65,24 @@ target_include_directories(SugarSpice
                            $<INSTALL_INTERFACE:include>
                            PRIVATE)
 
-target_link_libraries(SugarSpice 
+target_link_libraries(SugarSpice
                       PUBLIC
-                      ghc_filesystem 
-                      fmt::fmt-header-only 
+                      ghc_filesystem
+                      fmt::fmt-header-only
                       nlohmann_json::nlohmann_json
-                      PRIVATE 
-                      CSpice::cspice 
+                      PRIVATE
+                      CSpice::cspice
                       )
 
 install(TARGETS SugarSpice LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY ${SUGARSPICE_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Optional build tests
-option (SUGARSPICE_BUILD_TESTS "Build tests" ON)
 if(SUGARSPICE_BUILD_TESTS)
   include(GoogleTest)
   include(cmake/gtest.cmake)
   include(CTest)
-  
+
   find_package (Threads)
   enable_testing()
   add_subdirectory(SugarSpice/tests)
@@ -88,7 +91,6 @@ else()
 endif()
 
 # Setup Docs
-option (SUGARSPICE_BUILD_DOCS "Build Docs" ON)
 if(SUGARSPICE_BUILD_DOCS)
   add_subdirectory ("docs")
 else()
