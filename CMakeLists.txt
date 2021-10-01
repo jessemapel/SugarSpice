@@ -1,16 +1,10 @@
+include(CMakeDependentOption)
 cmake_minimum_required(VERSION 3.10)
 project(SugarSpice VERSION 0.0.1 DESCRIPTION "Syntax Sugar for cspice")
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 set(CMAKE_CXX_STANDARD 20)
-
-include(CMakeDependentOption)
-
-# Build options
-option (SUGARSPICE_BUILD_LIB "Build the SugarSpice Library" ON)
-option (SUGARSPICE_BUILD_DOCS "Build the SugarSpice Docs" ON)
-cmake_dependent_option (SUGARSPICE_BUILD_TESTS "Build the SugarSpice Tests" ON SUGARSPICE_BUILD_LIB OFF)
 
 # Variables required by multiple build options
 set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include/")
@@ -30,6 +24,8 @@ message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 #################
 # Library Build #
 #################
+
+option (SUGARSPICE_BUILD_LIB "Build the SugarSpice Library" ON)
 
 if(SUGARSPICE_BUILD_LIB)
 
@@ -119,6 +115,8 @@ endif()
 # Tests Build #
 ###############
 
+cmake_dependent_option (SUGARSPICE_BUILD_TESTS "Build the SugarSpice Tests" ON SUGARSPICE_BUILD_LIB OFF)
+
 if(SUGARSPICE_BUILD_TESTS)
   include(GoogleTest)
   include(cmake/gtest.cmake)
@@ -134,6 +132,8 @@ endif()
 ##############
 # Docs Build #
 ##############
+
+option (SUGARSPICE_BUILD_DOCS "Build the SugarSpice Docs" ON)
 
 if(SUGARSPICE_BUILD_DOCS)
   add_subdirectory ("docs")
