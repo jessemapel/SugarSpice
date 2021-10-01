@@ -115,7 +115,7 @@ jobs:
         cmake --build . --config $BUILD_TYPE
 
     - name: Check Build Docs
-      working-directory: ${{github.workspace}}/build/docs/sphinx/
+      working-directory: ${{github.workspace}}/build/docs/sphinx
       # Check for the built docs
       run: |
           test -e index.html
@@ -129,7 +129,7 @@ jobs:
         cmake --install . --config $BUILD_TYPE
 
     - name: Check Install Docs
-      working-directory: ${{github.workspace}}/build/docs/sphinx/
+      working-directory: ${{github.workspace}}/install
       # Check for the built docs
       run: |
           test -e share/doc/SugarSpice/sphinx/index.html
