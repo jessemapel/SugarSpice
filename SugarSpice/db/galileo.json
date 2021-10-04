@@ -1,5 +1,8 @@
 {
   "galileo" : {
+    "sclk" : {
+      "kernels" : "mk00062b.tsc"
+    },
     "ck" : {
       "reconstructed" : {
         "kernels" : ["ck[0-9]{5}.*\\.bc", "CKmerge_type3.plt.bck"],
@@ -12,9 +15,7 @@
         }
       },
       "deps" : {
-          "sclk" : "mk00062b.tsc",
-          "lsk" : "naif[0-9]{4}.tls",
-          "objs" : []
+          "objs" : ["/base/lsk", "/galileo/sclk"]
       }
     },
     "spk" : {
@@ -23,8 +24,7 @@
           "deps" : {}
         },
         "deps" : {
-            "lsk" : "naif[0-9]{4}.tls",
-            "objs" : []
+            "objs" : ["/base/lsk", "/galileo/sclk"]
         }
     },
     "iak" : {
