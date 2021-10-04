@@ -5,33 +5,33 @@
 #include "gtest/gtest.h"
 #include <ghc/fs_std.hpp>
 
-using namespace std; 
+using namespace std;
 
 class TempTestingFiles : public ::testing::Test {
   protected:
     fs::path tempDir;
 
     void SetUp() override;
-    void TearDown() override; 
+    void TearDown() override;
 };
 
 
 class KernelDataDirectories : public ::testing::Test {
   protected:
 
-    vector<fs::path> paths; 
-    
+    vector<string> paths;
+
     void SetUp() override;
     void TearDown() override;
 };
 
 
-class KernelSet : public TempTestingFiles { 
-  protected: 
+class KernelSet : public TempTestingFiles {
+  protected:
 
-    fs::path root;
-    
-    void SetUp() override; 
-    void TearDown() override; 
+    string root;
+
+    void SetUp() override;
+    void TearDown() override;
 };
 

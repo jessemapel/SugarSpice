@@ -12,6 +12,8 @@
 #include <SpiceZfc.h>
 #include <SpiceZmc.h>
 
+#include <ghc/fs_std.hpp>
+
 #include <nlohmann/json.hpp>
 
 #include "utils.h"
@@ -38,7 +40,7 @@ template <> struct fmt::formatter<fs::path> {
     // Return an iterator past the end of the parsed range:
     return it;
   }
-  
+
   template <typename FormatContext>
   auto format(const fs::path& p, FormatContext& ctx) {
   // auto format(const point &p, FormatContext &ctx) -> decltype(ctx.out()) // c++11
@@ -75,7 +77,7 @@ namespace SugarSpice {
   }
 
 
-  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {    
+  targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
     // convert params to spice types
     ConstSpiceChar *target_spice = target.c_str();  // better way to do this?
     ConstSpiceChar *observer_spice = observer.c_str();
@@ -125,9 +127,9 @@ namespace SugarSpice {
     }
     else {  // TODO This case is untested
       // Recompute CJ_spice ignoring av
-      
+
       reset_c(); // reset frmchg_ failure
-       
+
       refchg_((int *) &refFrame, (int *) &toFrame, &et, (doublereal *) CJ_spice);
       xpose_c(CJ_spice, CJ_spice);
 
@@ -167,7 +169,7 @@ namespace SugarSpice {
 
     // Call gXpool for each key found in gnpool
     // accumulate results to json allResults
-    
+
     // Define gXpool params
     ConstSpiceChar *fkey;
     SpiceInt nvals;
@@ -175,21 +177,21 @@ namespace SugarSpice {
     SpiceDouble dvals[ROOM];
     SpiceInt ivals[ROOM];
     SpiceBoolean gcfound = false, gdfound = false, gifound = false;
-    
+
     json allResults;
 
     // iterate over kvals;
-    for(int i = 0; i < nkeys; i++) {  
+    for(int i = 0; i < nkeys; i++) {
       json jresultVal;
 
       fkey = &kvals[i][0];
 
-      gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound); 
-      
+      gdpool_c(fkey, START, ROOM, &nvals, dvals, &gdfound);
+
       if (gdfound) {
         // format output
         if (nvals == 1) {
-          jresultVal = dvals[0]; 
+          jresultVal = dvals[0];
         }
         else {
           for(int j=0; j<nvals; j++) {
@@ -205,7 +207,7 @@ namespace SugarSpice {
       if (gifound) {
         // format output
         if (nvals == 1) {
-          jresultVal = ivals[0]; 
+          jresultVal = ivals[0];
         }
         else {
           for(int j=0; j<nvals; j++) {
@@ -214,7 +216,7 @@ namespace SugarSpice {
         }
       }
 
-      if (!gifound || !gdfound) { 
+      if (!gifound || !gdfound) {
         gcpool_c(fkey, START, ROOM, LENOUT, &nvals, cvals, &gcfound);
       }
 
@@ -225,32 +227,32 @@ namespace SugarSpice {
           str_cval.assign(&cvals[0][0]);
           string lower = toLower(str_cval);
 
-          // if null or boolean, do a conversion 
+          // if null or boolean, do a conversion
           if (lower == "true") {
             jresultVal = true;
           }
           else if (lower == "false") {
             jresultVal = false;
-          } 
+          }
           else if (lower == "null") {
             jresultVal = nullptr;
           }
           else {
-            jresultVal = str_cval; 
+            jresultVal = str_cval;
           }
         }
         else {
           for(int j=0; j<nvals; j++) {
             str_cval.assign(&cvals[j][0]);
             string lower = toLower(str_cval);
-            
-            // if null or boolean, do a conversion 
+
+            // if null or boolean, do a conversion
             if (lower == "true") {
               jresultVal.push_back(true);
             }
             else if (lower == "false") {
               jresultVal.push_back(false);
-            } 
+            }
             else if (lower == "null") {
               jresultVal.push_back(nullptr);
             }
@@ -260,7 +262,7 @@ namespace SugarSpice {
           }
         }
       }
-      
+
       // append to allResults:
       //     key:list-of-values
       string resultKey(fkey);
@@ -293,7 +295,7 @@ namespace SugarSpice {
 
   vector<string> jsonArrayToVector(json arr) {
     vector<string> res;
-    
+
     if (arr.is_array()) {
       for(auto it : arr) {
         res.emplace_back(it);
@@ -310,8 +312,8 @@ namespace SugarSpice {
   }
 
 
-  vector<fs::path> ls(fs::path const & root, bool recursive) {
-    vector<fs::path> paths;
+  vector<string> ls(string const & root, bool recursive) {
+    vector<string> paths;
 
     if (fs::exists(root) && fs::is_directory(root)) {
       for (auto i = fs::recursive_directory_iterator(root); i != fs::recursive_directory_iterator(); ++i ) {
@@ -330,9 +332,9 @@ namespace SugarSpice {
   }
 
 
-  vector<fs::path> glob(fs::path const & root, regex const & reg, bool recursive) {
-    vector<fs::path> paths;
-    vector<fs::path> files_to_search = ls(root, recursive);
+  vector<string> glob(string const & root, regex const & reg, bool recursive) {
+    vector<string> paths;
+    vector<string> files_to_search = ls(root, recursive);
 
     for (auto &f : files_to_search) {
       if (regex_search(f.c_str(), reg)) {
@@ -344,7 +346,7 @@ namespace SugarSpice {
   }
 
 
-  vector<pair<double, double>> getTimeIntervals(fs::path kpath) {
+  vector<pair<double, double>> getTimeIntervals(string kpath) {
     auto formatIntervals = [&](SpiceCell &coverage) -> vector<pair<double, double>> {
       //Get the number of intervals in the object.
       int niv = card_c(&coverage) / 2;
@@ -371,7 +373,7 @@ namespace SugarSpice {
 
     Kernel k(kpath);
 
-    kinfo_c(kpath.string().c_str(), 32, 2048, fileType, source, &handle, &found);
+    kinfo_c(kpath.c_str(), 32, 2048, fileType, source, &handle, &found);
     string currFile = fileType;
 
     //create a spice cell capable of containing all the objects in the kernel.
@@ -385,10 +387,10 @@ namespace SugarSpice {
     SPICEDOUBLE_CELL(cover, 200000);
 
     if (currFile == "SPK") {
-      spkobj_c(kpath.string().c_str(), &currCell);
+      spkobj_c(kpath.c_str(), &currCell);
     }
     else if (currFile == "CK") {
-      ckobj_c(kpath.string().c_str(), &currCell);
+      ckobj_c(kpath.c_str(), &currCell);
     }
     else if (currFile == "TEXT") {
       throw invalid_argument("Input Kernel is a text kernel which has no intervals");
@@ -410,7 +412,7 @@ namespace SugarSpice {
           SPICEDOUBLE_CELL(cover, 200000);
           ssize_c(0, &cover);
           ssize_c(200000, &cover);
-          spkcov_c(kpath.string().c_str(), body, &cover);
+          spkcov_c(kpath.c_str(), body, &cover);
           times = formatIntervals(cover);
         }
         else if(currFile == "CK") {
@@ -420,7 +422,7 @@ namespace SugarSpice {
           ssize_c(200000, &cover);
 
           // A SPICE SEGMENT is composed of SPICE INTERVALS
-          ckcov_c(kpath.string().c_str(), body, SPICEFALSE, "SEGMENT", 0.0, "TDB", &cover);
+          ckcov_c(kpath.c_str(), body, SPICEFALSE, "SEGMENT", 0.0, "TDB", &cover);
 
           times = formatIntervals(cover);
         }
@@ -438,33 +440,33 @@ namespace SugarSpice {
   }
 
 
-  fs::path getDataDirectory() {
+  string getDataDirectory() {
       char* ptr = getenv("ISISDATA");
       fs::path isisDataDir = ptr == NULL ? "" : ptr;
-  
+
       ptr = getenv("ALESPICEROOT");
       fs::path aleDataDir = ptr == NULL ? "" : ptr;
-  
+
       ptr = getenv("SPICEROOT");
       fs::path spiceDataDir = ptr == NULL ? "" : ptr;
-  
+
       if (fs::is_directory(spiceDataDir)) {
          return spiceDataDir;
       }
-  
+
       if (fs::is_directory(aleDataDir)) {
-        return aleDataDir; 
+        return aleDataDir;
       }
-  
+
       if (fs::is_directory(isisDataDir)) {
-        return isisDataDir; 
-      }  
-      
+        return isisDataDir;
+      }
+
       throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
   }
 
 
-  fs::path getMissionConfigFile(string mission) {
+  string getMissionConfigFile(string mission) {
     // If running tests or debugging locally
     char* condaPrefix = std::getenv("CONDA_PREFIX");
 
@@ -478,9 +480,9 @@ namespace SugarSpice {
       throw runtime_error("Config Directory Not Found.");
     }
 
-    vector<fs::path> paths = glob(dbPath, basic_regex("json"));
+    vector<string> paths = glob(dbPath, basic_regex("json"));
 
-    for(auto p : paths) {
+    for(const fs::path &p : paths) {
       if (p.filename() == fmt::format("{}.json", mission)) {
         return p;
       }
@@ -490,22 +492,22 @@ namespace SugarSpice {
   }
 
 
-  json getMissionConfig(string mission) { 
+  json getMissionConfig(string mission) {
     fs::path dbPath = getMissionConfigFile(mission);
-  
+
     ifstream i(dbPath);
     json conf;
     i >> conf;
-    return conf; 
+    return conf;
   }
 
-  string getKernelType(fs::path kernelPath) {
+  string getKernelType(string kernelPath) {
     SpiceChar type[6];
     SpiceChar source[6];
     SpiceInt handle;
     SpiceBoolean found;
 
-    furnsh_c(kernelPath.c_str());
+    Kernel k(kernelPath);
 
     kinfo_c(kernelPath.c_str(), 6, 6, type, source, &handle, &found);
 
@@ -513,7 +515,6 @@ namespace SugarSpice {
       throw domain_error("Kernel Type not found");
     }
 
-    unload_c(kernelPath.c_str());
     return string(type);
   }
 

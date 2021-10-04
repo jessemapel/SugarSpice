@@ -11,7 +11,7 @@ using namespace std;
 using namespace SugarSpice;
 
 
-TEST(QueryTests, UnitTestGetLatestKernel) { 
+TEST(QueryTests, UnitTestGetLatestKernel) {
   vector<string> kernels = {
     "iak.0001.ti",
     "iak.0003.ti",
@@ -23,19 +23,19 @@ TEST(QueryTests, UnitTestGetLatestKernel) {
 }
 
 
-TEST(QueryTests, UnitTestGetLatestKernelError) { 
+TEST(QueryTests, UnitTestGetLatestKernelError) {
   vector<string> kernels = {
     "iak.0001.ti",
     "iak.0003.ti",
     "different/place/iak.0002.ti",
     "test/iak.4.ti",
     // different extension means different filetype and therefore error
-    "test/error.tf" 
+    "test/error.tf"
   };
 
-  try { 
+  try {
     getLatestKernel(kernels);
-    FAIL() << "expected invalid argument error"; 
+    FAIL() << "expected invalid argument error";
   }
   catch(invalid_argument &e) {
     SUCCEED();
@@ -44,7 +44,7 @@ TEST(QueryTests, UnitTestGetLatestKernelError) {
 
 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
-  fs::path dbPath = getMissionConfigFile("mess");
+  string dbPath = getMissionConfigFile("mess");
 
   ifstream i(dbPath);
   nlohmann::json conf;
@@ -54,7 +54,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-  
+
   ASSERT_EQ(res["mdis"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["smithed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["deps"]["objs"].size(), 4);
@@ -98,7 +98,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
 
   ASSERT_EQ(res["uvvis"]["iak"]["kernels"].size(), 2);
 }
- 
+
 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   fs::path dbPath = getMissionConfigFile("galileo");

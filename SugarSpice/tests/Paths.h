@@ -3,14 +3,14 @@
 
 
 // paths for testing base / shared kernel queries
-std::vector<fs::path> base_paths = {
+std::vector<std::string> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
     "/isis_data/base/kernels/sclk/naif0002.tls",
     "/kernels/pck/pck00006.tpc"
 };
 
 // paths for testing messenger kernel queries
-std::vector<fs::path> mess_paths = {
+std::vector<std::string> mess_paths = {
     "/isis_data/messenger/kernels/ck/msgr_1234_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v02.bc",
@@ -49,7 +49,7 @@ std::vector<fs::path> mess_paths = {
 };
 
 // paths for testing clementine kernel queries
-std::vector<fs::path> clem1_paths = {
+std::vector<std::string> clem1_paths = {
     "/isis_data/clementine1/kernels/ck/clem_123.bck",
     "/isis_data/clementine1/kernels/ck/clem_124.bck",
     "/isis_data/clementine1/kernels/ck/clem_125.bck",
@@ -74,7 +74,7 @@ std::vector<fs::path> clem1_paths = {
 };
 
 
-std::vector<fs::path> galileo_paths = {
+std::vector<std::string> galileo_paths = {
     "/isis_data/galileo/kernels/ck/ck90342a_plt.bc",
     "/isis_data/galileo/kernels/ck/ck90342b_plt.bc",
     "/isis_data/galileo/kernels/ck/ck90343a_plt.bc",
