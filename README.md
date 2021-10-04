@@ -59,3 +59,9 @@ make install
 # Optional, Run tests
 ctest -j8
 ```
+
+You can disable different components of the build by setting the CMAKE variables `SUGARSPICE_BUILD_DOCS`, `SUGARSPICE_BUILD_TESTS`, or `SUGARSPICE_BUILD_LIB` to `OFF`. For example, the following cmake configuration command will not build the documentation or the tests:
+
+```
+cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DSUGARSPICE_BUILD_DOCS=OFF -DSUGARSPICE_BUILD_TESTS=OFF
+```
