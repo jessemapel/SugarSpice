@@ -59,7 +59,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 # note SSPICE_DEBUG can be set to anything as long as it is defined
 export SSPICE_DEBUG=True
 
-# The following environment variables are used by default in order of priority:  # 
+# The following environment variables are used by default in order of priority: 
 # $SPICEROOT, $ALESPICEROOT, $ISISDATA. Thse variabels are used by both ALE and 
 # ISIS respectively. 
 # note you can set each of these environment variables path to point to the
