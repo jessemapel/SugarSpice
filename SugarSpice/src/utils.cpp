@@ -463,7 +463,7 @@ namespace SugarSpice {
       }
 
       throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
-  }
+}
 
 
   string getMissionConfigFile(string mission) {
