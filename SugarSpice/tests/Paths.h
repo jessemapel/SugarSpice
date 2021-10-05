@@ -93,3 +93,60 @@ std::vector<fs::path> galileo_paths = {
 
     "/isis_data/galileo/kernels/pck/pck00010_msgr_v23_europa2020.tpc"
 };
+
+std::vector<fs::path> lro_paths = {
+    "/isis_data/lro/kernels/tspk/de421.bsp",
+    "/isis_data/lro/kernels/tspk/moon_pa_de421_1900-2050.bpc",
+
+    "/isis_data/lro/kernels/fk/lro_frames_2012255_v02.tf",
+    "/isis_data/lro/kernels/fk/lro_frames_2014049_v01.tf",
+
+    "/isis_data/lro/kernels/ik/lro_lroc_v17.ti",
+    "/isis_data/lro/kernels/ik/lro_lroc_v18.ti",
+
+    "/isis_data/lro/kernels/iak/lro_instrumentAddendum_v03.ti",
+    "/isis_data/lro/kernels/iak/lro_instrumentAddendum_v04.ti",
+
+    "/isis_data/lro/kernels/pck/moon_080317.tf",
+    "/isis_data/lro/kernels/pck/moon_assoc_me.tf",
+
+    "/isis_data/lro/kernels/ck/moc42_2021272_2021273_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021273_2021274_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021274_2021275_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021275_2021276_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021120_2021152_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021151_2021182_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021181_2021213_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021212_2021244_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021120_2021152_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021151_2021182_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021181_2021213_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021212_2021244_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021273_2021274_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021274_2021275_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021275_2021276_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021276_2021277_v01.bc",
+
+    "/isis_data/lro/kernels/spk/fdf29_2021273_2021274_b01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021274_2021275_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021275_2021276_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021276_2021277_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021121_2021152_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021152_2021182_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021182_2021213_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021213_2021244_v01.bsp",
+    "/isis_data/lro/kernels/spk/LRO_CO_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_CO_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_08_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_ES_09_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_NO_12_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_NO_13_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_SM_25_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_SM_26_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_85_201910_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_86_201910_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_NO_12_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_NO_13_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_SM_25_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_SM_26_201308_GRGM660PRIMAT270.bsp"
+};
