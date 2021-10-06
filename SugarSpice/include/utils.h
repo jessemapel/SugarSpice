@@ -17,6 +17,10 @@
 
 #include "spice_types.h"
 
+/**
+ * @namespace SugarSpice 
+ * 
+ */
 namespace SugarSpice {
 
   /**
@@ -94,8 +98,9 @@ namespace SugarSpice {
   /**
    * @brief Simple struct for holding target states
    */
+  //! @cond Doxygen_Suppress
   struct targetState {double lt; std::array<double,6> starg;};
-
+  //! @endcond
 
   /**
    * @brief Gives the position and velocity for a given frame at some ephemeris time
@@ -127,8 +132,9 @@ namespace SugarSpice {
   /**
    * @brief simple struct for holding target orientations
    */
+  //! @cond Doxygen_Suppress
   struct targetOrientation {std::array<double,4> quat; std::optional<std::array<double,3>> av;};
-
+  //! @endcond
 
   /**
    * @brief Gives quaternion and angular velocity for a given frame at a given ephemeris time
