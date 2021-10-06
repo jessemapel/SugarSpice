@@ -61,8 +61,9 @@ export SSPICE_DEBUG=True
 
 # Set the environment variable(s) to point to your kernel install 
 # The following environment variables are used by default in order of priority: 
-# $SPICEROOT, $ALESPICEROOT, $ISISDATA. These variabels are used by both ALE and 
-# ISIS respectively. 
+# $SPICEROOT, $ALESPICEROOT, $ISISDATA. 
+# SPICEROOT is unique to this lib, while ALESPICEROOT, and ISISDATA are used 
+# by both ALE and ISIS respectively. 
 # note you can set each of these environment variables path to point to the
 # correspoding kernels downloaded location, ie 
 SPICEROOT=~/sugarSpice/Kernals/spiceRootKernel
