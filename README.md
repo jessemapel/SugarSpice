@@ -53,14 +53,15 @@ cd build
 # Configure the project, install directory can be anything, here, it's the conda env
 cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 
-# DB files are installed by default in $CONDA_PREFIX/etc/SugarSpice/db to 
+# Optional: DB files are installed by default in $CONDA_PREFIX/etc/SugarSpice/db to 
 # use files that are included within the repo, you must create and define 
 # an environment variable named SSPICE_DEBUG. 
 # note SSPICE_DEBUG can be set to anything as long as it is defined
 export SSPICE_DEBUG=True
 
+# Set the environment variable(s) to point to your kernel install 
 # The following environment variables are used by default in order of priority: 
-# $SPICEROOT, $ALESPICEROOT, $ISISDATA. Thse variabels are used by both ALE and 
+# $SPICEROOT, $ALESPICEROOT, $ISISDATA. These variabels are used by both ALE and 
 # ISIS respectively. 
 # note you can set each of these environment variables path to point to the
 # correspoding kernels downloaded location, ie 
