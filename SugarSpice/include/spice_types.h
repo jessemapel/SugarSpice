@@ -7,6 +7,10 @@
 
 #include <iostream>
 
+/**
+ * @namespace SugarSpice types
+ * 
+ */
 namespace SugarSpice {
 
   /**
@@ -42,7 +46,14 @@ namespace SugarSpice {
                            // we dont care about quality (e.g. CK of any quality)
       };
 
+      /**
+       * used for converting string and int kernal quality
+       */
       const static std::vector<std::string> QUALITIES;
+      
+      /**
+       * used for converting between string and int kernal types
+       */
       const static std::vector<std::string> TYPES;
 
 
@@ -123,9 +134,12 @@ namespace SugarSpice {
       **/
       ~Kernel();
 
-      std::string path;   // path to the kernel
-      Type type;       // type of kernel
-      Quality quality; // quality of the kernel
+      /*! path to the kernel */
+      std::string path; 
+      /*! type of kernel */
+      Type type; 
+      /*! quality of the kernel */
+      Quality quality;
   };
 
 
