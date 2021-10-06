@@ -29,6 +29,4 @@ TEST_F(KernelSet, FunctionalTestSearchMissionKernels) {
   ASSERT_EQ( fs::path(kernels["moc"]["ik"]["kernels"].get<string>()).filename(), "lro_instruments_v11.ti");
   ASSERT_EQ( fs::path(kernels["moc"]["fk"]["kernels"].get<string>()).filename(), "lro_frames_1111111_v01.tf"); 
   ASSERT_EQ( fs::path(kernels["moc"]["sclk"]["kernels"].get<string>()).filename(), "lro_clkcor_2020184_v00.tsc"); 
-
-
 }
