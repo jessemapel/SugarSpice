@@ -13,6 +13,15 @@
 
 namespace SugarSpice {
 
+
+  /**
+  * @brief C++ object repersenting NAIF spice SPK Segment and it's metadata  
+  * 
+  * SPK kernels consist of multiple CK segments. These specifically define a 
+  * type 13 SPK segment which consists of parallel arrary of ephemeris times
+  * in a 6 element state array's of x, y, z, vx, vy, vz
+  * 
+  */
   class SpkSegment {
     public:
 
@@ -45,7 +54,7 @@ namespace SugarSpice {
        * @return Single vector with {X1, Y1, Z1, dX1, dY1, dZ1, X2, Y2, Z2, dX2, dY2, dZ2, ...}
        */
       static std::vector<std::vector<double>> concatStates (std::vector<std::vector<double>> statePositions, std::vector<std::vector<double>> stateVelocities);
-
+      //! @cond Doxygen_Suppress
       std::vector<double> stateTimes;
       int bodyCode;
       int centerOfMotion;
@@ -55,9 +64,20 @@ namespace SugarSpice {
       std::vector<std::vector<double>> statePositions;
       std::optional<std::vector<std::vector<double>>> stateVelocities;
       std::optional<std::string> comment;
+      //! @endcond
   };
 
 
+  /**
+  * @brief C++ object repersenting NAIF spice CK Segment and it's metadata  
+  * 
+  * CK kernels consist of multiple CK segments. These specifically define a 
+  * type 3 CK segment which consists of two parallel arrays of ephemeris times 
+  * and orientations as SPICE quaternions. 
+  * 
+  * @see: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/q2m_c.html
+  * 
+  */
   class CkSegment {
       public:
 
@@ -76,6 +96,7 @@ namespace SugarSpice {
                   std::optional<std::vector<std::vector<double>>> anglularVelocities = std::nullopt,
                   std::optional<std::string> comment = std::nullopt);
 
+        //! @cond Doxygen_Suppress
         std::vector<double> times;
         std::vector<std::vector<double>> quats;
         int bodyCode;
@@ -83,6 +104,7 @@ namespace SugarSpice {
         std::string id;
         std::optional<std::vector<std::vector<double>>> angularVelocities = std::nullopt;
         std::optional<std::string> comment = std::nullopt;
+        //! @endcond
     };
 
 
@@ -135,6 +157,8 @@ namespace SugarSpice {
       * @param bodyCode NAIF body code identifying the orientations belong to
       * @param referenceFrame NAIF string for the reference frame the orientations are in
       * @param segmentId Some ID to give the segment
+      * @param sclk path to S clock kernal to convert to and from ephemeris time
+      * @param lsk path to leap second kernal 
       * @param angularVelocity optional, nx3 array of angular velocities
       * @param comment optional, comment to be associated with the segment
       */
