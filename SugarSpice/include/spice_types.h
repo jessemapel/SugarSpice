@@ -147,6 +147,72 @@ namespace SugarSpice {
    */
   typedef std::unique_ptr<Kernel> StackKernel;
 
+  class KernelPool {
+    public:
+    
+    /**
+     * Delete constructors and such as this is a static class
+     */
+    KernelPool(KernelPool &other) = delete;
+    KernelPool() = delete;
+    ~KernelPool() = delete;
+
+
+    /**
+     * @brief 
+     * 
+     * @param key 
+     * @return unsigned int 
+     */
+    unsigned int useCounts(string key);
+
+
+    /**
+     * @brief get reference counts for all kernels in the pool 
+     * 
+     * @return std::map<std::string, int> 
+     */
+    std::map<std::string, int> useCounts();
+
+
+    /**
+     * @brief load kernel into the kernel pool 
+     * 
+     * This should be called for furnshing kernel instead of furnsh_c directly 
+     * so that they are tracked throughout the process. 
+     *
+     *
+     * @param kernel Path to the kernel to load 
+     * @param force_furnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is False. 
+     */
+    void load(std::string kernelPath, bool force_refurnsh);
+
+
+    /**
+     * @brief 
+     * 
+     * @param kernelPath 
+     */
+    void unload(std::string kernelPath);
+
+    private: 
+
+    /**
+     * @brief 
+     * 
+     */
+    std::map<std::string, int> refCounts; 
+    
+    protected:
+    
+  };
+
+  class KernelSet {
+    public:
+    KernelSet(json kernels);
+    ~KernelSet(json kernels);
+  };
+
 
   /**
    * @brief convert a UTC string to an ephemeris time
@@ -158,4 +224,5 @@ namespace SugarSpice {
    * @returns double precision ephemeris time
    **/
   double utcToEt(std::string et);
+
 }

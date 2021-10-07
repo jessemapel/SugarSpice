@@ -108,13 +108,12 @@ namespace SugarSpice {
 
 
   Kernel::Kernel(string path) {
-    this->path = path;
-    furnsh_c(path.c_str());
+    KernelPool::load(path);
   }
 
 
   Kernel::~Kernel() {
-    unload_c(this->path.c_str());
+    KernelPool::unload(this->path);
   }
 
 
@@ -130,4 +129,50 @@ namespace SugarSpice {
   }
 
 
+  int KernelPool::load(string path, bool force_refurnsh) {
+    int refCount; 
+    auto it = refCounts.find(path);
+
+    if (it != refCounts.end()) {
+      // it's been furnished before, increment ref count
+      it->second += 1;
+      refCount = it->second; 
+
+      if (force_refurnsh) {
+        furnsh_c(path.c_str());
+      } 
+    }
+    else {  
+      // load the kernel and register in onto the kernel map 
+      refCounts.emplace(path, 1);
+    }
+
+    return k;
+  }
+
+
+  int KernelPool::unload(string path) {
+    try { 
+      int &refcount = refCounts.at(path);
+      
+      // if the map contains the last copy of the kernel, delete it
+      if (refcount == 1) {
+        // unfurnsh the kernel
+        unload_c(path.c_str());
+        int ndeleted = kernelMap.erase(path);
+        return 0;
+      }
+      else {
+        return refcount;
+      }
+    }
+    catch(out_of_range &e) {
+      throw out_of_range(path + " is not a kernel that has been loaded."); 
+    }    
+  }
+
+  KernelSet::KernelSet(json kernels) {
+     // get all kernel groups
+  }
 }
+ 

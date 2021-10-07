@@ -223,7 +223,7 @@ namespace SugarSpice {
     *
     * @param mission mission name of the config file
     *
-    * @returns path object of the condig file
+    * @returns path object of the config file
    **/
    nlohmann::json getMissionConfig(std::string mission);
 
