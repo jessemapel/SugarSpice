@@ -118,7 +118,9 @@ namespace SugarSpice {
       /**
         * @brief Instantiate a kernel from path
         *
-        * Load a kernel into memory by opening the kernel and furnishing
+        * Load a kernel into memory by opening the kernel and furnishing.
+        * This also increases the reference count of the kernel. If the kernel
+        * has alrady been furnished, it is refurnshed.  
         *
         * @param path path to a kernel.
         *
@@ -127,9 +129,10 @@ namespace SugarSpice {
 
 
       /**
-        * @brief unfurnsh the kernel
+        * @brief Delete the kernel object and decrease it's reference count
         *
-        * Delete a kernel from memory by deleting the object and unfurnshing.
+        * Deletes the kernel object and decrements it's reference count. If the reference count hits 0,
+        * the kernel is unloaded. 
         *
       **/
       ~Kernel();
@@ -158,6 +161,7 @@ namespace SugarSpice {
    *
    * This basically allows the Kernel to exist only within the
    * call stack it is used in.
+   *
    */
   typedef std::unique_ptr<Kernel> StackKernel;
 
@@ -173,20 +177,27 @@ namespace SugarSpice {
 
 
     /**
-     * @brief 
+     * @brief get a kernel's reference count
      * 
-     * @param key 
-     * @return unsigned int 
+     * Everytime KernelPool::load is called, the reference count is increased by one. 
+     * This returns the number of Kernel objects currently are currently referencing the 
+     * input kernel.  
+     *
+     * @param key key for the kernel to get the ref count for, usually the complete file path
+     * @return unsigned int The number of references to the input kernel. If key doesn't exist, this is 0. 
      */
-    unsigned int useCounts(std::string key);
+    unsigned int refCount(std::string key);
 
 
     /**
      * @brief get reference counts for all kernels in the pool 
      * 
-     * @return std::map<std::string, int> 
+     * Everytime KernelPool::load is called, the reference count is increased by one. 
+     * This returns the number of Kernel objects referencing every Kernel in the pool.
+     *
+     * @return std::map<std::string, int> Map of kernel path to reference count.
      */
-    static std::map<std::string, int> useCounts();
+    static std::map<std::string, int> refCounts();
 
 
     /**
@@ -203,9 +214,13 @@ namespace SugarSpice {
 
 
     /**
-     * @brief 
+     * @brief reduce the reference count for a kernel 
      * 
-     * @param kernelPath 
+     * This reduces the ref count by one, and if the ref count hits 0, 
+     * the kernel is unfurnished. Use this instead of calling unload_c 
+     * directly as you cause errors. 
+     * 
+     * @param kernelPath path to the kernel
      */
     static int unload(std::string kernelPath);
 

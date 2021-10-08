@@ -108,7 +108,7 @@ namespace SugarSpice {
 
 
   Kernel::Kernel(string path) {
-    KernelPool::load(path);
+    KernelPool::load(path, true);
   }
 
 
@@ -174,6 +174,21 @@ namespace SugarSpice {
     }
   }
 
+
+  unsigned int KernelPool::refCount(std::string key) {
+    try {
+      return refCounts.at(key);
+    } catch(out_of_range e&) {
+      return 0;
+    }
+  }
+
+
+  map<string, int> refCounts() {
+    return refMap;
+  }
+
+
   KernelSet::KernelSet(json kernels) {
       this->kernels = kernels; 
 
@@ -188,5 +203,5 @@ namespace SugarSpice {
         loadedKernels.emplace(p, res);
       } 
   }
-}
+} 
  
