@@ -11,7 +11,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace SugarSpice {
+namespace SpiceQL {
 
 
   /**

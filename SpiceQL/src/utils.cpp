@@ -53,7 +53,7 @@ template <> struct fmt::formatter<fs::path> {
 };
 
 
-namespace SugarSpice {
+namespace SpiceQL {
 
   string toUpper(string s) {
     transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return toupper(c); });
@@ -470,8 +470,8 @@ namespace SugarSpice {
     // If running tests or debugging locally
     char* condaPrefix = std::getenv("CONDA_PREFIX");
 
-    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SugarSpice" / "db";
-    fs::path installDbPath = fs::absolute(condaPrefix) / "etc" / "SugarSpice" / "db";
+    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SpiceQL" / "db";
+    fs::path installDbPath = fs::absolute(condaPrefix) / "etc" / "SpiceQL" / "db";
 
     // Use installDbPath unless $SSPICE_DEBUG is set
     fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
