@@ -18,10 +18,10 @@
 #include "spice_types.h"
 
 /**
- * @namespace SugarSpice 
+ * @namespace SpiceQL 
  * 
  */
-namespace SugarSpice {
+namespace SpiceQL {
 
   /**
    * @brief force a string to upper case

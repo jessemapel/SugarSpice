@@ -12,7 +12,7 @@
 #include "io.h"
 
 using namespace std;
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 void TempTestingFiles::SetUp() {
   int max_tries = 10;

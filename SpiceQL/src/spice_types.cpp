@@ -18,7 +18,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-namespace SugarSpice {
+namespace SpiceQL {
 
   /**
    * @brief Used here to do reverse lookups of enum stringss

@@ -5,7 +5,7 @@
 #include "spice_types.h"
 #include "SpiceUsr.h"
 
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 TEST(UtilTests, GetKernelType) { 
 }

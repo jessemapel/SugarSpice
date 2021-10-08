@@ -9,7 +9,7 @@
 #include "utils.h"
 
 using namespace std;
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 
 TEST_F(LroKernelSet, FunctionalTestSearchMissionKernels) { 

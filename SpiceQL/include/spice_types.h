@@ -8,10 +8,10 @@
 #include <iostream>
 
 /**
- * @namespace SugarSpice types
+ * @namespace SpiceQL types
  * 
  */
-namespace SugarSpice {
+namespace SpiceQL {
 
   /**
    * @brief Base Kernel class
