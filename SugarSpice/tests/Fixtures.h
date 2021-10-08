@@ -26,7 +26,7 @@ class KernelDataDirectories : public ::testing::Test {
 };
 
 
-class KernelSet : public TempTestingFiles {
+class LroKernelSet : public TempTestingFiles {
   protected:
 
     string root;

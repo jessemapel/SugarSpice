@@ -178,7 +178,7 @@ namespace SugarSpice {
      * @param key 
      * @return unsigned int 
      */
-    unsigned int useCounts(string key);
+    unsigned int useCounts(std::string key);
 
 
     /**
@@ -186,7 +186,7 @@ namespace SugarSpice {
      * 
      * @return std::map<std::string, int> 
      */
-    std::map<std::string, int> useCounts();
+    static std::map<std::string, int> useCounts();
 
 
     /**
@@ -199,7 +199,7 @@ namespace SugarSpice {
      * @param kernel Path to the kernel to load 
      * @param force_furnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is False. 
      */
-    void load(std::string kernelPath, bool force_refurnsh);
+    static int load(std::string kernelPath, bool force_refurnsh=false);
 
 
     /**
@@ -207,7 +207,7 @@ namespace SugarSpice {
      * 
      * @param kernelPath 
      */
-    void unload(std::string kernelPath);
+    static int unload(std::string kernelPath);
 
     private: 
 
@@ -215,16 +215,18 @@ namespace SugarSpice {
      * @brief 
      * 
      */
-    std::map<std::string, int> refCounts; 
+    static std::unordered_map<std::string, int> refCounts; 
     
-    protected:
-    
+ 
   };
 
   class KernelSet {
     public:
-    KernelSet(json kernels);
-    ~KernelSet(json kernels);
+    KernelSet(nlohmann::json kernels);
+    ~KernelSet();
+
+    std::unordered_map<std::string, std::vector<Kernel>> loadedKernels;
+    nlohmann::json kernels; 
   };
 
 

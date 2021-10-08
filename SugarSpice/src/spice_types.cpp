@@ -128,7 +128,8 @@ namespace SugarSpice {
       return et;
   }
 
-
+  std::unordered_map<std::string, int> KernelPool::refCounts;
+  
   int KernelPool::load(string path, bool force_refurnsh) {
     int refCount; 
     auto it = refCounts.find(path);
@@ -143,11 +144,12 @@ namespace SugarSpice {
       } 
     }
     else {  
+      furnsh_c(path.c_str());
       // load the kernel and register in onto the kernel map 
       refCounts.emplace(path, 1);
     }
 
-    return k;
+    return refCount;
   }
 
 
@@ -159,20 +161,32 @@ namespace SugarSpice {
       if (refcount == 1) {
         // unfurnsh the kernel
         unload_c(path.c_str());
-        int ndeleted = kernelMap.erase(path);
+        int ndeleted = refCounts.erase(path);
         return 0;
       }
       else {
+        refcount--;
         return refcount;
       }
     }
     catch(out_of_range &e) {
       throw out_of_range(path + " is not a kernel that has been loaded."); 
-    }    
+    }
   }
 
   KernelSet::KernelSet(json kernels) {
-     // get all kernel groups
+      this->kernels = kernels; 
+
+      vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels", true);
+
+      for(auto &p : pointers) { 
+        json jkernels = kernels[p]; 
+        vector<Kernel> res; 
+        for(auto & k : jkernels) { 
+          res.emplace_back(Kernel(k));
+        }
+        loadedKernels.emplace(p, res);
+      } 
   }
 }
  

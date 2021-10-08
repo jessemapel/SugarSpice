@@ -61,7 +61,7 @@ void KernelDataDirectories::TearDown() {
 
 }
 
-void KernelSet::SetUp() {
+void LroKernelSet::SetUp() {
   TempTestingFiles::SetUp();
   root = tempDir;
 
@@ -151,6 +151,6 @@ void KernelSet::SetUp() {
   writeTextKernel(fkPath, "fk", jKeywords);
 }
 
-void KernelSet::TearDown() {
+void LroKernelSet::TearDown() {
 
 }
