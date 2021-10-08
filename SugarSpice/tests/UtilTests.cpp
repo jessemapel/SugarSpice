@@ -74,6 +74,8 @@ TEST(UtilTests, getTargetOrientation) {
 TEST(UtilTests, findKeywords) {
   unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
 
+  std::cout << KernelPool::refCounts.at("data/msgr_mdis_v010.ti") << std::endl;
+
   nlohmann::json res = findKeywords("*");
   EXPECT_EQ(res.at("INS-236810_FOV_SHAPE"), "RECTANGLE");
   EXPECT_EQ(res.at("INS-236800_WAVELENGTH_RANGE")[1], 1040);

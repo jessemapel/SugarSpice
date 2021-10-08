@@ -186,7 +186,7 @@ namespace SugarSpice {
      * @param key key for the kernel to get the ref count for, usually the complete file path
      * @return unsigned int The number of references to the input kernel. If key doesn't exist, this is 0. 
      */
-    unsigned int refCount(std::string key);
+    unsigned int getRefCount(std::string key);
 
 
     /**
@@ -197,7 +197,7 @@ namespace SugarSpice {
      *
      * @return std::map<std::string, int> Map of kernel path to reference count.
      */
-    static std::map<std::string, int> refCounts();
+    static std::unordered_map<std::string, int> getRefCounts();
 
 
     /**
@@ -223,8 +223,6 @@ namespace SugarSpice {
      * @param kernelPath path to the kernel
      */
     static int unload(std::string kernelPath);
-
-    private: 
 
     /**
      * @brief 
