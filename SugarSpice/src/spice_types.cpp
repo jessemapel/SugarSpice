@@ -113,6 +113,12 @@ namespace SugarSpice {
   }
 
 
+  Kernel::Kernel(Kernel &other) {
+    KernelPool::load(other.path);
+    this->path = other.path;
+  }
+
+
   Kernel::~Kernel() {
     KernelPool::unload(this->path);
   }
@@ -190,19 +196,30 @@ namespace SugarSpice {
   }
 
 
+  vector<string> KernelPool::getLoadedKernels() {
+    vector<string> res;
+
+    for( const auto& [key, value] : KernelPool::refCounts ) {
+      res.emplace_back(key);
+    }
+    return res;
+  }
+
+
   KernelSet::KernelSet(json kernels) {
-      this->kernels = kernels; 
+    this->kernels = kernels; 
 
-      vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels", true);
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels", true);
 
-      for(auto &p : pointers) { 
-        json jkernels = kernels[p]; 
-        vector<Kernel> res; 
-        for(auto & k : jkernels) { 
-          res.emplace_back(Kernel(k));
-        }
-        loadedKernels.emplace(p, res);
-      } 
+    for(auto &p : pointers) { 
+      json jkernels = kernels[p]; 
+      vector<SharedKernel> res; 
+      for(auto & k : jkernels) {
+        SharedKernel sk(new Kernel(k));
+        res.emplace_back(sk);
+      }
+      loadedKernels.emplace(p, res);
+    } 
   }
 } 
  

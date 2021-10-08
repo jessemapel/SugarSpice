@@ -30,6 +30,15 @@ class LroKernelSet : public TempTestingFiles {
   protected:
 
     string root;
+    string lskPath;
+    string sclkPath;
+    string ckPath1; 
+    string ckPath2;
+    string spkPath1;
+    string spkPath2; 
+    string ikPath1; 
+    string ikPath2;
+    string fkPath;
 
     void SetUp() override;
     void TearDown() override;

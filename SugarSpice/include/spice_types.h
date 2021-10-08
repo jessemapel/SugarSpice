@@ -116,16 +116,27 @@ namespace SugarSpice {
 
 
       /**
-        * @brief Instantiate a kernel from path
-        *
-        * Load a kernel into memory by opening the kernel and furnishing.
-        * This also increases the reference count of the kernel. If the kernel
-        * has alrady been furnished, it is refurnshed.  
-        *
-        * @param path path to a kernel.
-        *
+       * @brief Instantiate a kernel from path
+       *
+       * Load a kernel into memory by opening the kernel and furnishing.
+       * This also increases the reference count of the kernel. If the kernel
+       * has alrady been furnished, it is refurnshed.  
+       *
+       * @param path path to a kernel.
+       *
       **/
       Kernel(std::string path);
+
+
+      /**
+       * @brief Construct a new Kernel object from another
+       * 
+       * Ensures the reference counter is incremented when a copy of
+       * the kernel is created
+       * 
+       * @param other some other Kernel instance
+       */
+      Kernel(Kernel &other);
 
 
       /**
@@ -186,7 +197,7 @@ namespace SugarSpice {
      * @param key key for the kernel to get the ref count for, usually the complete file path
      * @return unsigned int The number of references to the input kernel. If key doesn't exist, this is 0. 
      */
-    unsigned int getRefCount(std::string key);
+    static unsigned int getRefCount(std::string key);
 
 
     /**
@@ -198,6 +209,14 @@ namespace SugarSpice {
      * @return std::map<std::string, int> Map of kernel path to reference count.
      */
     static std::unordered_map<std::string, int> getRefCounts();
+
+
+    /**
+     * @brief Get the list of Loaded Kernels. 
+     * 
+     * @return std::vector<std::string> list of loaded kernels.
+     */
+    static std::vector<std::string> getLoadedKernels(); 
 
 
     /**
@@ -233,12 +252,22 @@ namespace SugarSpice {
  
   };
 
+  /**
+   * @brief 
+   * 
+   */
   class KernelSet {
     public:
-    KernelSet(nlohmann::json kernels);
-    ~KernelSet();
 
-    std::unordered_map<std::string, std::vector<Kernel>> loadedKernels;
+    /**
+     * @brief Construct a new Kernel Set object
+     * 
+     * @param kernels 
+     */
+    KernelSet(nlohmann::json kernels);
+    ~KernelSet() = default;
+
+    std::unordered_map<std::string, std::vector<SharedKernel>> loadedKernels;
     nlohmann::json kernels; 
   };
 
@@ -249,7 +278,7 @@ namespace SugarSpice {
    * Basically a wrapper around NAIF's cspice str2et function except it also temporarily loads the required kernels.
    * See Also: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/str2et_c.html
    *
-   * @param et UTC string, e.g. "1988 June 13, 12:29:48 TDB"
+   * nparam et UTC string, e.g. "1988 June 13, 12:29:48 TDB"
    * @returns double precision ephemeris time
    **/
   double utcToEt(std::string et);

@@ -7,6 +7,7 @@ set (SUGARSPICE_TEST_SOURCE ${SUGARSPICE_TEST_DIRECTORY}/Fixtures.cpp
                             ${SUGARSPICE_TEST_DIRECTORY}/UtilTests.cpp
                             ${SUGARSPICE_TEST_DIRECTORY}/QueryTests.cpp
                             ${SUGARSPICE_TEST_DIRECTORY}/IoTests.cpp
+                            ${SUGARSPICE_TEST_DIRECTORY}/KernelTests.cpp
                             ${SUGARSPICE_TEST_DIRECTORY}/FunctionalTestsSpiceQueries.cpp)
 
 # setup test executable
