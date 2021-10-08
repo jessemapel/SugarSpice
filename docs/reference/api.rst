@@ -2,5 +2,5 @@
 API
 ###
 
-.. doxygennamespace:: SugarSpice
-    :project: SugarSpice
+.. doxygennamespace:: SpiceQL
+    :project: SpiceQL

@@ -32,11 +32,11 @@ print("WORKING DIR: ", os.getcwd())
 
 output_dir = 'docs'
 # subprocess.call('doxygen', shell=True)
-breathe_projects['SugarSpice'] = output_dir + '/xml'
+breathe_projects['SpiceQL'] = output_dir + '/xml'
 
 # -- Project information -----------------------------------------------------
 
-project = 'SugarSpice'
+project = 'SpiceQL'
 copyright = '2021, USGS'
 author = 'USGS Astrogeology'
 
@@ -52,7 +52,7 @@ release = '0.1'
 extensions = [ "breathe", "m2r2", "sphinx_material", "sphinxcontrib.gist"]
 
 # Breathe Configuration
-breathe_default_project = "SugarSpice"
+breathe_default_project = "SpiceQL"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -83,7 +83,7 @@ html_theme_options = {
 
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    # 'base_url': 'https://github.com/USGS-Astrogeology/SugarSpice',
+    # 'base_url': 'https://github.com/USGS-Astrogeology/SpiceQL',
 
     # Set the color and the accent color
     'color_primary': '#000000',
@@ -92,7 +92,7 @@ html_theme_options = {
     'logo_icon': '&#xe87a',
 
     # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/USGS-Astrogeology/SugarSpice',
+    'repo_url': 'https://github.com/USGS-Astrogeology/SpiceQL',
     'repo_name': 'Project',
 
     # Visible levels of the global TOC; -1 means unlimited
@@ -115,4 +115,4 @@ html_sidebars = {
 if read_the_docs_build and not build_started:
         subprocess.call('cmake ..', shell=True) 
         subprocess.call('make Sphinx', shell=True)
-        os.environ["SUGARSPICEDOCSBUILD"] = "True"
+        os.environ["SPICEQLDOCSBUILD"] = "True"

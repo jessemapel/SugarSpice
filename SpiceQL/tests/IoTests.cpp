@@ -5,7 +5,7 @@
 #include "io.h"
 #include "utils.h"
 
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 
 TEST_F(TempTestingFiles, UnitTestWriteCkTest) {
