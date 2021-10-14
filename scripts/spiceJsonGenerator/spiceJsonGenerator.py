@@ -9,9 +9,6 @@ import fnmatch
 import argparse
 import warnings
 
-
-
-
 # kernel class object declaration 
 # will be used for storing all the specific kernel data associated with each kernel directory ie: kernels/fk
 class kernel:
@@ -78,8 +75,6 @@ class kernel:
 
         return value
 
-
-
     # get's the most recent kernel to for any specific kernel type 
     def get_most_recent_kernel(self):
 
@@ -102,18 +97,13 @@ class kernel:
         self.path = self.path + f"/{self.file}"
 
     def parse_kernel(self,input_json):
-        
         self.get_most_recent_kernel()
 
-
         if self.is_make_db_file:
-            
             return self.parse_make_db_file(input_json)
 
         elif not self.is_make_db_file:
             return self.parse_kernel_db_file(input_json)
-            
-
             
     def parse_make_db_file(self,input_json):
         # open file access
@@ -122,7 +112,6 @@ class kernel:
         # read in all lines of file
         lines = file.readlines()
         
-
         #change to look for these but also default to look for 
         things_we_care_about = ["predictfilter", "reconfilter", "smithedfilter"]
 
@@ -144,7 +133,6 @@ class kernel:
                             else:
                                 line = line.strip(" ")
 
-
                             key = self.kernel_type
 
                             if self.kernel_type not in input_json[self.mission_name]:
@@ -156,8 +144,7 @@ class kernel:
                                 key_val = []
                                 for string in value:
                                     key_val.append(self.format_kernel_file_name(string))
-
-                                    
+ 
                                 if len(value) > 1:
                                     value = f"{[self.format_kernel_file_name(val) for val in value]}".replace("'","")
                                 else:
@@ -211,34 +198,25 @@ class kernel:
 
                 # line is a special case, add a new json object to end of config
                 elif line.__contains__(special_match):
-
                     self.is_special_case = True
-
                     key = line.split(",")[-1]
                     key = key.strip('\n)"')
-
                     kernels = self.get_next_line_of_kernel_file(lines, index + 1)
-
                     kernel_deps_list = []
                     kernel_values = []
 
                     for kernel in kernels:
-
                         # check to see if kernel types match 
                         if kernel[0] == self.kernel_type:
                             # add to special cases kernel list
                             kernel_values.append(kernel[1])
 
-
                         elif kernel[0] != self.kernel_type:
                             # is a dep for the special cases kernel
                             kernel_deps_list.append(kernel)
                             
-
-                
                     special_case_json = {} 
                     kernel_type_json = {} 
-
 
                     # check to see if there are any dependencies 
                     if len( kernel_deps_list) > 0:
@@ -256,8 +234,7 @@ class kernel:
                     # store json values  
                     kernel_type_json["kernels"]=  kernel_values
                     special_case_json = kernel_type_json
-
-                        
+  
                     # check if the key is already in the final json
                     if key not in input_json:
                         input_json[key] = special_case_json
@@ -265,7 +242,6 @@ class kernel:
                     elif key in input_json:
                         pass
                     
-
                 # line is kernel file, add to mission json object 
                 elif line.__contains__(kernel_file) and not self.is_special_case:
 
@@ -293,12 +269,8 @@ class kernel:
                     # close file access 
                     file.close
                 
-
     def get_json(self):
         return self.json_object
-
- 
-
 
 class mission:
     def __init__(self, path):
@@ -323,11 +295,6 @@ class mission:
         for kernel in self.kernel_list:
             kernel.parse_kernel(self.json)
 
-
-
-
-
-
 # arg parse (basic help stuff too)
 # make scripts folder, and env .yml that has deps for running 
 
@@ -337,7 +304,6 @@ def main(mission_path, log_to_code):
     new_mission = mission(mission_path)
     new_mission.get_kernels()
     new_mission.generate_mission_json_config()
-
 
     if log_to_code.lower() == "file":
         file = open(spice_home_dir + f"/SpiceQL/db/{new_mission.name}.json", "w+")
@@ -354,9 +320,6 @@ def main(mission_path, log_to_code):
         print("to file")
         file.close()
         print(json.dumps(new_mission.json,indent=4))
-
-
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "A script to automatically generate mission json files the file will be placed in the SpiceQL/db folder\n\
