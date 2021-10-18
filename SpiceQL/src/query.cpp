@@ -5,13 +5,11 @@
   *
   *
  **/
-
 #include <fstream>
 #include <algorithm>
 
 #include <SpiceUsr.h>
-#include <SpiceZfc.h>
-#include <SpiceZmc.h>
+
 
 #include <ghc/fs_std.hpp>
 
