@@ -25,6 +25,7 @@ namespace SpiceQL {
   std::string getLatestKernel(std::vector<std::string> kernels);
 
 
+
    /**
     * @brief returns a JSON object of only the latest version of each kernel type
     *
@@ -37,6 +38,10 @@ namespace SpiceQL {
     * @returns A new Kernel JSON object with reduced kernel sets
    **/
   nlohmann::json getLatestKernels(nlohmann::json kernels);
+
+  std::vector<std::string> getKernelVectorValue(std::string key);
+  std::string getKernelStringValue(std::string key);
+
 
 
   /**
