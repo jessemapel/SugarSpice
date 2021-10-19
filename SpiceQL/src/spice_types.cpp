@@ -138,6 +138,7 @@ namespace SpiceQL {
   std::unordered_map<std::string, int> KernelPool::refCounts;
   
   int KernelPool::load(string path, bool force_refurnsh) {
+
     int refCount; 
     auto it = refCounts.find(path);
 
@@ -168,7 +169,7 @@ namespace SpiceQL {
       if (refcount == 1) {
         // unfurnsh the kernel
         unload_c(path.c_str());
-        int ndeleted = refCounts.erase(path);
+        refCounts.erase(path);
         return 0;
       }
       else {

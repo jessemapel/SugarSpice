@@ -84,17 +84,16 @@ namespace SpiceQL {
                optional<string> comment) {
 
     SpiceInt handle;
-
+    
     // convert times, but first, we need SCLK+LSK kernels
     unique_ptr<Kernel> sclkKernel(new Kernel(sclk));
     unique_ptr<Kernel> lskKernel(new Kernel(lsk));
-
+    
     for(auto &et : times) {
       double sclkdp;
       sce2c_c(bodyCode/1000, et, &sclkdp);
       et = sclkdp;
     }
-
     ckopn_c(path.c_str(), "CK", comment.value_or("CK Kernel").size(), &handle);
 
     ckw03_c (handle,

@@ -5,7 +5,6 @@
               "kernels": ["soc31.*.bc", "lrolc.*.bc"]
           },
           "deps" : {
-            "sclk" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"],
             "objs" : ["/base/lsk", "/moc/sclk"]
           }
       },
@@ -17,7 +16,6 @@
           "kernels" : ["LRO_.*_GRGM660.*.bsp", "LRO_.*_GRGM900C.*.BSP"]
         },
         "deps" : {
-          "sclk" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"],
           "objs" : ["/base/lsk", "/moc/sclk"]
         } 
       },

@@ -191,7 +191,7 @@ namespace SpiceQL {
      * @brief get a kernel's reference count
      * 
      * Everytime KernelPool::load is called, the reference count is increased by one. 
-     * This returns the number of Kernel objects currently are currently referencing the 
+     * This returns the number of Kernel objects currently referencing the 
      * input kernel.  
      *
      * @param key key for the kernel to get the ref count for, usually the complete file path
@@ -278,7 +278,7 @@ namespace SpiceQL {
    * Basically a wrapper around NAIF's cspice str2et function except it also temporarily loads the required kernels.
    * See Also: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/str2et_c.html
    *
-   * nparam et UTC string, e.g. "1988 June 13, 12:29:48 TDB"
+   * @param et UTC string, e.g. "1988 June 13, 12:29:48 TDB"
    * @returns double precision ephemeris time
    **/
   double utcToEt(std::string et);

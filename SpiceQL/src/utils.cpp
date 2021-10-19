@@ -463,10 +463,10 @@ namespace SpiceQL {
       }
 
       throw runtime_error(fmt::format("Please set env var SPICEROOT, ISISDATA or ALESPICEROOT in order to proceed."));
-}
+  }
 
 
-  string getMissionConfigFile(string mission) {
+  string getConfigDirectory() {
     // If running tests or debugging locally
     char* condaPrefix = std::getenv("CONDA_PREFIX");
 
@@ -480,7 +480,31 @@ namespace SpiceQL {
       throw runtime_error("Config Directory Not Found.");
     }
 
-    vector<string> paths = glob(dbPath, basic_regex("json"));
+    return dbPath; 
+  }  
+
+
+  vector<string> getAvailableConfigFiles() {
+    vector<string> confs; 
+    fs::path dbDir = getConfigDirectory();
+    return glob(dbDir, basic_regex("json"), false);
+  }
+
+  vector<json> getAvailableConfigs() {
+    vector<string> confPaths = getAvailableConfigFiles();
+    vector<json> confs;
+
+    for(auto & c: confPaths) {
+      ifstream ifs(c);
+      json jf = json::parse(ifs);
+      confs.emplace_back(jf);
+    }
+    return confs; 
+  }
+
+  string getMissionConfigFile(string mission) {
+  
+    vector<string> paths = getAvailableConfigFiles();
 
     for(const fs::path &p : paths) {
       if (p.filename() == fmt::format("{}.json", mission)) {
@@ -500,6 +524,7 @@ namespace SpiceQL {
     i >> conf;
     return conf;
   }
+
 
   string getKernelType(string kernelPath) {
     SpiceChar type[6];

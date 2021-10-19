@@ -8,13 +8,13 @@
 
 #include "SpiceUsr.h"
 
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 
 TEST_F(LroKernelSet, UnitTestStackedKernelConstructorDestructor) { 
   int nkernels;
 
-  // This should create local kernels that get unfurnished when they lave 
+  // This should create local kernels that get unfurnished when the stack is popped 
   {
     Kernel k(lskPath);
     
@@ -34,7 +34,7 @@ TEST_F(LroKernelSet, UnitTestStackedKernelConstructorDestructor) {
 TEST_F(LroKernelSet, UnitTestStackedKernelCopyConstructor) { 
   int nkernels;
 
-  // This should create local kernels that get unfurnished when they lave 
+  // This should create local kernels that get unfurnished when the stack is popped 
   {
     Kernel k(lskPath);
     Kernel k2 = k; 
@@ -64,7 +64,12 @@ TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
   
   // do a time query
   kernels = searchMissionKernels(kernels, {110000000, 120000001}, false);
+  
+  // get only latest versions
   kernels = getLatestKernels(kernels);
+  
+  // all the kernels in the group are now furnished. 
+  KernelSet ks(kernels);
 
   int nkernels;
   
@@ -127,4 +132,15 @@ TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
   ASSERT_TRUE(std::find(kv.begin(), kv.end(), spkPath1) != kv.end());
   ASSERT_TRUE(std::find(kv.begin(), kv.end(), sclkPath) != kv.end());
   ASSERT_TRUE(std::find(kv.begin(), kv.end(), ikPath2) != kv.end());
+}
+
+
+TEST_F(LroKernelSet, UnitTestLoadTimeKernels) {
+  setenv("SPICEROOT", tempDir.c_str(), true);
+
+  std::shared_ptr<KernelSet> k = loadTimeKernels();
+
+  std::vector<string> kv = KernelPool::getLoadedKernels();
+  ASSERT_EQ(kv.at(0), k->kernels.at("/moc/sclk/kernels/0"_json_pointer));
+  ASSERT_EQ(kv.at(1), k->kernels.at("/base/lsk/kernels"_json_pointer)); 
 }

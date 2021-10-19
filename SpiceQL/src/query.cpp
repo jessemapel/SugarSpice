@@ -156,34 +156,39 @@ namespace SpiceQL {
   }
 
 
-  json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
-    auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> {
+  shared_ptr<KernelSet> loadTimeKernels()  {
+    vector<json> confs = getAvailableConfigs();
+    json clocks;
+    
+    // get SCLKs
+    for(auto &j : confs) {
       vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
-      vector<string> sclks;
-
       if (!p.empty()) {
-        sclks = jsonArrayToVector(j[p.at(0)]);
-        sort(sclks.begin(), sclks.end(), greater<string>());
+        json sclks = j[p.at(0)];
+        clocks[p.at(0)] = sclks;
       }
+    }
+    
+    clocks = searchMissionKernels(clocks);
+    
+    // get the distribution's LSK
+    fs::path dbPath = getConfigDirectory();
+    string lskPath = dbPath / "kernels" / "naif0011.tls";
 
-      json baseConf = getMissionConfig("base");
-      string dataDir = getDataDirectory();
-      baseConf = searchMissionKernels(dataDir, baseConf);
-      p = findKeyInJson(baseConf, "lsk", true);
+    // have to create the tree manually for some reason, using a json pointer 
+    // causes a compile error somewhere deep inside the json headers 
+    clocks["base"] = json::object(); 
+    clocks["base"]["lsk"] = json::object(); 
+    clocks["base"]["lsk"]["kernels"] = lskPath;
 
-      vector<string> lsks = jsonArrayToVector(baseConf.at(p.at(0))["kernels"]);
-      sort(lsks.begin(), lsks.end(), greater<string>());
+    shared_ptr<KernelSet> clockSet(new KernelSet(clocks));
 
-      vector<shared_ptr<Kernel>> timeKernels(2);
+    return clockSet;
+  }
 
-      if(lsks.size()) {
-        timeKernels.emplace_back(new Kernel(lsks.at(0)));
-      }
-      if (sclks.size()) {
-        timeKernels.emplace_back(new Kernel(sclks.at(0)));
-      }
-      return timeKernels;
-    };
+
+  json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
+     
 
     json reducedKernels;
 
@@ -200,9 +205,6 @@ namespace SpiceQL {
       if(cks.is_null() ) {
         continue;
       }
-
-      // load time kernels
-      vector<shared_ptr<Kernel>> timeKernels = loadTimeKernels(cks);
 
       for(auto qual: Kernel::QUALITIES) {
         if(!cks.contains(qual)) {
@@ -232,5 +234,10 @@ namespace SpiceQL {
     }
     kernels.merge_patch(reducedKernels);
     return kernels;
+  }
+
+  json searchMissionKernels(json conf) {
+    fs::path root = getDataDirectory();
+    return searchMissionKernels(root, conf);
   }
 }

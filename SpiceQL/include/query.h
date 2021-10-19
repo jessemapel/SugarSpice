@@ -11,6 +11,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+#include "spice_types.h"
 
 namespace SpiceQL {
   /**
@@ -55,6 +56,20 @@ namespace SpiceQL {
 
 
   /**
+   * @brief Returns all kernels available for a mission
+   *
+   * Returns a structured json object containing all available kernels for a specified mission
+   * along with their dependencies.
+   *
+   * TODO: Add a "See Also" on json format after the format matures a bit more.
+   *
+   * @param conf json conf file
+   * @returns list of paths matching ext
+  **/
+  nlohmann::json searchMissionKernels(nlohmann::json conf);
+
+
+  /**
    * @brief Returns all kernels available in the time range
    *
    * Returns a structured json object containing all available kernels for a specified time
@@ -83,5 +98,13 @@ namespace SpiceQL {
     * @param kernelType Some CK kernel type, see Kernel::TYPES
    **/
   nlohmann::json globKernels(std::string root, nlohmann::json conf, std::string kernelType);
+
+
+  /**
+   * @brief 
+   * 
+   * @return std::shared_ptr<KernelSet> 
+   */
+  std::shared_ptr<KernelSet> loadTimeKernels();
 
 }
