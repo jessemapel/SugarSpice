@@ -142,5 +142,4 @@ TEST_F(LroKernelSet, UnitTestLoadTimeKernels) {
   for (auto & e: kv) {
     EXPECT_TRUE(expected.find(static_cast<fs::path>(e).filename()) != expected.end());
   }
-
 }

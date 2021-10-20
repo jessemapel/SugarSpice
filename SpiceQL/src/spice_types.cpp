@@ -137,8 +137,6 @@ namespace SpiceQL {
 
 
   int KernelPool::load(string path, bool force_refurnsh) {
-    // static shared_ptr<KernelSet> timeKernels = loadTimeKernels(); 
-
     int refCount; 
     KernelRefMap refCounts = getRefCounts();
 
@@ -154,8 +152,8 @@ namespace SpiceQL {
       } 
     }
     else {  
-      furnsh_c(path.c_str());
       // load the kernel and register in onto the kernel map 
+      furnsh_c(path.c_str());
       refCounts.emplace(path, 1);
     }
 

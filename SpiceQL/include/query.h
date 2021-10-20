@@ -13,6 +13,7 @@
 
 #include "spice_types.h"
 
+
 namespace SpiceQL {
   /**
     * @brief get the latest kernel in a list

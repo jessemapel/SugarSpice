@@ -12,7 +12,8 @@
  * 
  */
 namespace SpiceQL {
-
+   
+  //! typedef for the Kernel reference map singleton. 
   typedef std::unordered_map<std::string, int>& KernelRefMap;
   
   /**
@@ -178,6 +179,13 @@ namespace SpiceQL {
    */
   typedef std::unique_ptr<Kernel> StackKernel;
 
+
+  /**
+   * @brief Static class for interacting with the cspice kernel pool 
+   * 
+   * Contains static functions required to load and unload kernels and 
+   * keep track of furnished kernels. 
+   */
   class KernelPool {
     public:
     
@@ -227,11 +235,10 @@ namespace SpiceQL {
      * This should be called for furnshing kernel instead of furnsh_c directly 
      * so that they are tracked throughout the process. 
      *
-     *
-     * @param kernel Path to the kernel to load 
-     * @param force_furnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is False. 
+     * @param kernelPath Path to the kernel to load 
+     * @param force_refurnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is True. 
      */
-    static int load(std::string kernelPath, bool force_refurnsh=false);
+    static int load(std::string kernelPath, bool force_refurnsh=true);
 
 
     /**
@@ -239,16 +246,22 @@ namespace SpiceQL {
      * 
      * This reduces the ref count by one, and if the ref count hits 0, 
      * the kernel is unfurnished. Use this instead of calling unload_c 
-     * directly as you cause errors. 
+     * directly as you cause errors from desyncs. 
      * 
      * @param kernelPath path to the kernel
      */
     static int unload(std::string kernelPath);    
   };
 
+
   /**
-   * @brief 
+   * @brief Class for furnishing kernels in bulk 
    * 
+   * Given a json object, furnish every kernel under a 
+   * "kernels" key. The kernels are unloaded as soon as the object 
+   * goes out of scope. 
+   *
+   * Generally used on results from a kernel query. 
    */
   class KernelSet {
     public:
@@ -261,7 +274,10 @@ namespace SpiceQL {
     KernelSet(nlohmann::json kernels);
     ~KernelSet() = default;
 
+    //! map of path to kernel pointers
     std::unordered_map<std::string, std::vector<SharedKernel>> loadedKernels;
+    
+    //! json used to populate the loadedKernels object
     nlohmann::json kernels; 
   };
 
