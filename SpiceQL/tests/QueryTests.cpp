@@ -26,7 +26,18 @@ TEST(QueryTests, getKernelStringValue){
   unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
   // INS-236810_CCD_CENTER        =  (  511.5, 511.5 )
   EXPECT_EQ(getKernelStringValue("INS-236810_FOV_SHAPE"), "RECTANGLE");
-  // EXPECT_EQ(getKernelStringValue("INS-236810_CCD_CENTER "), "511.5");
+
+
+     try {
+        getKernelStringValue("aKeyThatWillNotBeInTheResults");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
 }
 
 TEST(QueryTests, getKernelVectorValue){
@@ -45,6 +56,17 @@ TEST(QueryTests, getKernelVectorValue){
   for (int j = 0; j < actualResultsTwo.size(); ++j) {
     EXPECT_EQ(actualResultsTwo[j], expectedResultsTwo[j]) << "Vectors x and y differ at index " << j;
   }
+
+   try {
+        getKernelVectorValue("aKeyThatWillNotBeInTheResults");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
 }
 
 TEST(QueryTests, UnitTestGetLatestKernelError) {

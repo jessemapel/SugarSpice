@@ -33,8 +33,15 @@ namespace SpiceQL {
     * @returns string of value associated with key
    **/
  std::string getKernelStringValue(std::string key) {
-    json results = findKeywords(key);
-    return results[key] ;
+   // check to make sure the key exists when calling findKeyWords(key) 
+   if (findKeywords(key).contains(key)){
+      json results = findKeywords(key);
+      return results[key] ;
+    }
+    // throw exception 
+    else{
+      throw std::invalid_argument("key not in results");
+    }
   }
  
 
@@ -49,13 +56,24 @@ namespace SpiceQL {
    **/
   std::vector<string> getKernelVectorValue(std::string key) {
     
-    json results = findKeywords(key);
-    vector<string> kernelValues;    
+    // check to make sure the key exists when calling findKeyWords(key) 
+    if (findKeywords(key).contains(key)){
 
-    for(auto i : results[key]){
-      kernelValues.push_back(to_string(i));
+      // get json results of key 
+      json results = findKeywords(key);
+      vector<string> kernelValues;    
+
+      // iterate over results @ key
+      for(auto i : results[key]){
+        // push values to vector 
+        kernelValues.push_back(to_string(i));
+      }
+      return kernelValues;
     }
-    return kernelValues;
+    // throw exception 
+    else{
+      throw std::invalid_argument("key not in results");
+    }
   }
 
   
