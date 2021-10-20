@@ -168,43 +168,6 @@ namespace SpiceQL {
   }
 
 
-  void loadTimeKernels()  {
-    KernelRefMap refCounts = KernelPool::getRefCounts(); 
-
-    vector<json> confs = getAvailableConfigs();
-    json clocks;
-    
-    // get SCLKs
-    for(auto &j : confs) {
-      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
-      
-      if (!p.empty()) {
-        json sclks = j[p.at(0)];
-        clocks[p.at(0)] = sclks;
-      }
-    }
-    
-    clocks = searchMissionKernels(clocks);
-    clocks = getLatestKernels(clocks);
-
-    vector<json::json_pointer> kpointers = findKeyInJson(clocks, "kernels", true);
-    for (auto &p : kpointers) {
-        json sclks = clocks[p];
-        
-        for (auto &e : sclks) { 
-          furnsh_c(e.get<string>().c_str());
-          refCounts.emplace(e.get<string>().c_str(), 1);
-        }
-    }
-
-    // get the distribution's LSK
-    fs::path dbPath = getConfigDirectory();
-    string lskPath = dbPath / "kernels" / "naif0011.tls";
-    furnsh_c(lskPath.c_str());
-    refCounts.emplace(lskPath.c_str(), 1);
-  }
-
-
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
     json reducedKernels;
 
@@ -256,4 +219,42 @@ namespace SpiceQL {
     fs::path root = getDataDirectory();
     return searchMissionKernels(root, conf);
   }
+
+
+  void loadTimeKernels()  {
+    KernelRefMap refCounts = KernelPool::getRefCounts(); 
+
+    vector<json> confs = getAvailableConfigs();
+    json clocks;
+  
+    // get SCLKs
+    for(auto &j : confs) {
+      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      
+      if (!p.empty()) {
+        json sclks = j[p.at(0)];
+        clocks[p.at(0)] = sclks;
+      }
+    }
+  
+    clocks = searchMissionKernels(clocks);
+    clocks = getLatestKernels(clocks);
+
+    vector<json::json_pointer> kpointers = findKeyInJson(clocks, "kernels", true);
+    for (auto &p : kpointers) {
+        json sclks = clocks[p];
+        
+        for (auto &e : sclks) { 
+          furnsh_c(e.get<string>().c_str());
+          refCounts.emplace(e.get<string>().c_str(), 1);
+        }
+    }
+
+    // get the distribution's LSK
+    fs::path dbPath = getConfigDirectory();
+    string lskPath = dbPath / "kernels" / "naif0011.tls";
+    furnsh_c(lskPath.c_str());
+    refCounts.emplace(lskPath.c_str(), 1);
+  }
+
 }

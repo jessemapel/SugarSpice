@@ -136,7 +136,11 @@ TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
 TEST_F(LroKernelSet, UnitTestLoadTimeKernels) {
   loadTimeKernels();
 
-  std::vector<string> kv = KernelPool::getLoadedKernels();
-  EXPECT_EQ(static_cast<fs::path>(kv.at(0)).filename(), "naif0011.tls");
-  EXPECT_EQ(static_cast<fs::path>(kv.at(1)).filename(), "lro_clkcor_2020184_v00.tsc"); 
+  vector<string> kv = KernelPool::getLoadedKernels();
+  set<string> expected = {"naif0011.tls", "lro_clkcor_2020184_v00.tsc"}; 
+
+  for (auto & e: kv) {
+    EXPECT_TRUE(expected.find(static_cast<fs::path>(e).filename()) != expected.end());
+  }
+
 }
