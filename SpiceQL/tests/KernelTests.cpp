@@ -44,7 +44,8 @@ TEST_F(LroKernelSet, UnitTestStackedKernelCopyConstructor) {
     // should match what spice counts
     ktotal_c("text", &nkernels);
 
-    EXPECT_EQ(nkernels, 3);
+    // 5 total text kernels, but the lsk should have been loaded 3 times
+    EXPECT_EQ(nkernels, 5);
     EXPECT_EQ(KernelPool::getRefCounts().at(lskPath), 3);
   }
   
