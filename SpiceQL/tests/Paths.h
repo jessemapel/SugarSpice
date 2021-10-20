@@ -6,7 +6,7 @@
 std::vector<std::string> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
     "/isis_data/base/kernels/sclk/naif0002.tls",
-    "/kernels/pck/pck00006.tpc"
+    "/isis_data/base/kernels/pck/pck00006.tpc"
 };
 
 // paths for testing messenger kernel queries
@@ -94,7 +94,7 @@ std::vector<std::string> galileo_paths = {
     "/isis_data/galileo/kernels/pck/pck00010_msgr_v23_europa2020.tpc"
 };
 
-// paths for testing apollo16 kernel queries 
+// paths for testing apollo16 kernel queries
 std::vector<std::string> apollo16_paths = {
     "/isis_data/apollo16/kernels/sclk/apollo16.0002.tsc",
 
@@ -117,4 +117,25 @@ std::vector<std::string> apollo16_paths = {
     "/isis_data/apollo16/kernels/iak/apolloPanAddendum701.ti",
 
     "/isis_data/apollo16/kernels/iak/apollo16MetricAddendum123.ti"
+
+std::vector<std::string> juno_paths = {
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110915_110917_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110918_110924_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110925_111001_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_111002_111008_v03.bc",
+
+    "/isis_data/juno/kernels/spk/juno_rec_110805_111026_120302.bsp",
+    "/isis_data/juno/kernels/spk/juno_rec_111026_120308_120726.bsp",
+
+    "/isis_data/juno/kernels/sclk/jno_sclkscet_00058.tsc",
+
+    "/isis_data/juno/kernels/tspk/de436s.bsp",
+    "/isis_data/juno/kernels/tspk/de438s.bsp",
+    "/isis_data/juno/kernels/tspk/juno_struct_v04.bsp",
+
+    "/isis_data/juno/kernels/fk/juno_v12.tf",
+    "/isis_data/juno/kernels/ik/juno_junocam_v03.ti",
+    "/isis_data/juno/kernels/iak/junoAddendum005.ti",
+
+    "/isis_data/juno/kernels/pck/pck00010.tpc"
 };
