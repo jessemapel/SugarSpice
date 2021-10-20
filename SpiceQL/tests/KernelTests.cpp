@@ -21,13 +21,14 @@ TEST_F(LroKernelSet, UnitTestStackedKernelConstructorDestructor) {
     // should match what spice counts
     ktotal_c("text", &nkernels);
 
-    ASSERT_EQ(nkernels, 1);
-    ASSERT_EQ(KernelPool::refCounts.at(lskPath), 1);
+    EXPECT_EQ(nkernels, 3);
+    EXPECT_EQ(KernelPool::getRefCounts().at(lskPath), 1);
   }
 
+  // SCLKs and LSKs are considered text kernels, so they should stay loaded
   ktotal_c("text", &nkernels);
-  ASSERT_EQ(nkernels, 0); 
-  ASSERT_EQ(KernelPool::getRefCount(lskPath), 0);
+  EXPECT_EQ(nkernels, 2); 
+  EXPECT_EQ(KernelPool::getRefCount(lskPath), 0);
 }
 
 
@@ -43,20 +44,18 @@ TEST_F(LroKernelSet, UnitTestStackedKernelCopyConstructor) {
     // should match what spice counts
     ktotal_c("text", &nkernels);
 
-    ASSERT_EQ(nkernels, 1);
-    ASSERT_EQ(KernelPool::refCounts.at(lskPath), 3);
+    EXPECT_EQ(nkernels, 3);
+    EXPECT_EQ(KernelPool::getRefCounts().at(lskPath), 3);
   }
-
+  
+  // SCLKs and LSKs are considered text kernels, so they should stay loaded
   ktotal_c("text", &nkernels);
-  ASSERT_EQ(nkernels, 0); 
-  ASSERT_EQ(KernelPool::getRefCount(lskPath), 0);
+  EXPECT_EQ(nkernels, 2); 
+  EXPECT_EQ(KernelPool::getRefCount(lskPath), 0);
 }
 
 
 TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
-  // Complete a kernel search
-  setenv("SPICEROOT", tempDir.c_str(), true);
-
   nlohmann::json conf = getMissionConfig("lro");
 
   // load all available kernels
@@ -72,48 +71,47 @@ TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
   KernelSet ks(kernels);
 
   int nkernels;
-  
+
   // load kernels in a closed call stack
   {
-    KernelSet ks(kernels);
+    // kernels are now loaded twice
+    KernelSet k(kernels);
+
     // should match what spice counts
     ktotal_c("text", &nkernels);
-    ASSERT_EQ(nkernels, 3);
+    EXPECT_EQ(nkernels, 8);
     ktotal_c("ck", &nkernels);
-    ASSERT_EQ(nkernels, 1);
+    EXPECT_EQ(nkernels, 2);
     ktotal_c("spk", &nkernels);
-    ASSERT_EQ(nkernels, 1);
+    EXPECT_EQ(nkernels, 2);
     
     // 5 because LSK is not being loaded (yet)
-    ASSERT_EQ(KernelPool::refCounts.size(), 5);
-    ASSERT_EQ(KernelPool::getRefCount(fkPath), 1); 
-    ASSERT_EQ(KernelPool::getRefCount(ckPath1), 1); 
-    ASSERT_EQ(KernelPool::getRefCount(spkPath1), 1); 
-    ASSERT_EQ(KernelPool::getRefCount(sclkPath), 1); 
-    ASSERT_EQ(KernelPool::getRefCount(ikPath2), 1); 
+    EXPECT_EQ(KernelPool::getRefCounts().size(), 6);
+    EXPECT_EQ(KernelPool::getRefCount(fkPath), 2); 
+    EXPECT_EQ(KernelPool::getRefCount(ckPath1), 2); 
+    EXPECT_EQ(KernelPool::getRefCount(spkPath1), 2); 
+    EXPECT_EQ(KernelPool::getRefCount(sclkPath), 3); 
+    EXPECT_EQ(KernelPool::getRefCount(ikPath2), 2); 
   }
 
-  // All kernels should be unfurnished
+  // All kernels in previous stack should be unfurnished
   ktotal_c("text", &nkernels);
-  ASSERT_EQ(nkernels, 0);
+  EXPECT_EQ(nkernels, 5);
   ktotal_c("ck", &nkernels);
-  ASSERT_EQ(nkernels, 0);
+  EXPECT_EQ(nkernels, 1);
   ktotal_c("spk", &nkernels);
-  ASSERT_EQ(nkernels, 0);
+  EXPECT_EQ(nkernels, 1);
   
-  ASSERT_EQ(KernelPool::refCounts.size(), 0);
-  ASSERT_EQ(KernelPool::getRefCount(fkPath), 0); 
-  ASSERT_EQ(KernelPool::getRefCount(ckPath1), 0); 
-  ASSERT_EQ(KernelPool::getRefCount(spkPath1), 0); 
-  ASSERT_EQ(KernelPool::getRefCount(sclkPath), 0); 
-  ASSERT_EQ(KernelPool::getRefCount(ikPath2), 0); 
+  EXPECT_EQ(KernelPool::getRefCounts().size(), 6);
+  EXPECT_EQ(KernelPool::getRefCount(fkPath), 1); 
+  EXPECT_EQ(KernelPool::getRefCount(ckPath1), 1); 
+  EXPECT_EQ(KernelPool::getRefCount(spkPath1), 1); 
+  EXPECT_EQ(KernelPool::getRefCount(sclkPath), 2); 
+  EXPECT_EQ(KernelPool::getRefCount(ikPath2), 1); 
 }
 
 
 TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
-  // Complete a kernel search
-  setenv("SPICEROOT", tempDir.c_str(), true);
-
   nlohmann::json conf = getMissionConfig("lro");
 
   // load all available kernels
@@ -126,21 +124,19 @@ TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
   KernelSet k(kernels);
 
   std::vector<string> kv = KernelPool::getLoadedKernels();
-  ASSERT_EQ(kv.size(), 5);
-  ASSERT_TRUE(std::find(kv.begin(), kv.end(), fkPath) != kv.end()); 
-  ASSERT_TRUE(std::find(kv.begin(), kv.end(), ckPath1) != kv.end());
-  ASSERT_TRUE(std::find(kv.begin(), kv.end(), spkPath1) != kv.end());
-  ASSERT_TRUE(std::find(kv.begin(), kv.end(), sclkPath) != kv.end());
-  ASSERT_TRUE(std::find(kv.begin(), kv.end(), ikPath2) != kv.end());
+  EXPECT_EQ(kv.size(), 6);
+  EXPECT_TRUE(std::find(kv.begin(), kv.end(), fkPath) != kv.end()); 
+  EXPECT_TRUE(std::find(kv.begin(), kv.end(), ckPath1) != kv.end());
+  EXPECT_TRUE(std::find(kv.begin(), kv.end(), spkPath1) != kv.end());
+  EXPECT_TRUE(std::find(kv.begin(), kv.end(), sclkPath) != kv.end());
+  EXPECT_TRUE(std::find(kv.begin(), kv.end(), ikPath2) != kv.end());
 }
 
 
 TEST_F(LroKernelSet, UnitTestLoadTimeKernels) {
-  setenv("SPICEROOT", tempDir.c_str(), true);
-
-  std::shared_ptr<KernelSet> k = loadTimeKernels();
+  loadTimeKernels();
 
   std::vector<string> kv = KernelPool::getLoadedKernels();
-  ASSERT_EQ(kv.at(0), k->kernels.at("/moc/sclk/kernels/0"_json_pointer));
-  ASSERT_EQ(kv.at(1), k->kernels.at("/base/lsk/kernels"_json_pointer)); 
+  EXPECT_EQ(static_cast<fs::path>(kv.at(0)).filename(), "naif0011.tls");
+  EXPECT_EQ(static_cast<fs::path>(kv.at(1)).filename(), "lro_clkcor_2020184_v00.tsc"); 
 }

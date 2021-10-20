@@ -135,11 +135,13 @@ namespace SpiceQL {
       return et;
   }
 
-  std::unordered_map<std::string, int> KernelPool::refCounts;
-  
+
   int KernelPool::load(string path, bool force_refurnsh) {
+    // static shared_ptr<KernelSet> timeKernels = loadTimeKernels(); 
 
     int refCount; 
+    KernelRefMap refCounts = getRefCounts();
+
     auto it = refCounts.find(path);
 
     if (it != refCounts.end()) {
@@ -163,6 +165,7 @@ namespace SpiceQL {
 
   int KernelPool::unload(string path) {
     try { 
+      KernelRefMap refCounts = getRefCounts(); 
       int &refcount = refCounts.at(path);
       
       // if the map contains the last copy of the kernel, delete it
@@ -173,7 +176,9 @@ namespace SpiceQL {
         return 0;
       }
       else {
+        unload_c(path.c_str());
         refcount--;
+        
         return refcount;
       }
     }
@@ -185,22 +190,24 @@ namespace SpiceQL {
 
   unsigned int KernelPool::getRefCount(std::string key) {
     try {
-      return refCounts.at(key);
+      return getRefCounts().at(key);
     } catch(out_of_range &e) {
       return 0;
     }
   }
 
 
-  unordered_map<string, int> getRefCounts() {
-    return KernelPool::refCounts;
+  unordered_map<string, int>& KernelPool::getRefCounts() {
+    static unordered_map<string, int> refCounts;
+    return refCounts;
   }
 
 
   vector<string> KernelPool::getLoadedKernels() {
     vector<string> res;
+    KernelRefMap refCounts = getRefCounts();
 
-    for( const auto& [key, value] : KernelPool::refCounts ) {
+    for( const auto& [key, value] : refCounts ) {
       res.emplace_back(key);
     }
     return res;

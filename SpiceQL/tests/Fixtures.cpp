@@ -10,6 +10,7 @@
 
 #include "utils.h"
 #include "io.h"
+#include "query.h"
 
 using namespace std;
 using namespace SpiceQL;
@@ -63,8 +64,12 @@ void KernelDataDirectories::TearDown() {
 
 void LroKernelSet::SetUp() {
   TempTestingFiles::SetUp();
-  root = tempDir;
+
+  // make tempdir the root
+  setenv("SPICEROOT", tempDir.c_str(), true);
   
+  root = tempDir;
+
   // Move Clock kernels
   // TODO: Programmatic clock kernels
   lskPath = fs::path("data") / "naif0012.tls";
@@ -77,7 +82,10 @@ void LroKernelSet::SetUp() {
   // reassign member vars to temp dir
   lskPath = tempDir / "clocks" / "naif0012.tls";
   sclkPath = tempDir / "clocks" / "lro_clkcor_2020184_v00.tsc";
-  
+
+  // manually load time kernels 
+  loadTimeKernels();
+
   // Write CK1 ------------------------------------------
   fs::create_directory(tempDir / "ck");
 

@@ -105,6 +105,6 @@ namespace SpiceQL {
    * 
    * @return std::shared_ptr<KernelSet> 
    */
-  std::shared_ptr<KernelSet> loadTimeKernels();
+  void loadTimeKernels();
 
 }

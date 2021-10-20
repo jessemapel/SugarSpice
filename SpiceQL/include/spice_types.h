@@ -13,6 +13,8 @@
  */
 namespace SpiceQL {
 
+  typedef std::unordered_map<std::string, int>& KernelRefMap;
+  
   /**
    * @brief Base Kernel class
    *
@@ -208,7 +210,7 @@ namespace SpiceQL {
      *
      * @return std::map<std::string, int> Map of kernel path to reference count.
      */
-    static std::unordered_map<std::string, int> getRefCounts();
+    static std::unordered_map<std::string, int>& getRefCounts();
 
 
     /**
@@ -241,15 +243,7 @@ namespace SpiceQL {
      * 
      * @param kernelPath path to the kernel
      */
-    static int unload(std::string kernelPath);
-
-    /**
-     * @brief 
-     * 
-     */
-    static std::unordered_map<std::string, int> refCounts; 
-    
- 
+    static int unload(std::string kernelPath);    
   };
 
   /**

@@ -24,6 +24,10 @@ using namespace std;
 namespace SpiceQL {
 
   string getLatestKernel(vector<string> kernels) {
+    if(kernels.empty()) {
+      throw invalid_argument("Can't get latest kernel from empty vector");  
+    }
+
     string extension = static_cast<fs::path>(kernels.at(0)).extension();
     // ensure everything is different versions of the same file
     for(const fs::path &k : kernels) {
@@ -45,6 +49,7 @@ namespace SpiceQL {
             if(!kernels[p].contains(qual)){
               continue;
             }
+ 
             std::vector<string> l = jsonArrayToVector(kernels[p][qual]["kernels"]);
             fs::path latest;
 
@@ -55,8 +60,11 @@ namespace SpiceQL {
           }
 
           if(kernels[p].contains("kernels")) {
-            fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]["kernels"]));
-            kernels[p]["kernels"] = latest;
+            vector<string> k = jsonArrayToVector(kernels[p]["kernels"]);
+            if(!k.empty()) {
+              fs::path latest = getLatestKernel(k);
+              kernels[p]["kernels"] = latest;
+            }
           }
         }
     }
@@ -66,8 +74,12 @@ namespace SpiceQL {
       if(kernels.at(p).contains("kernels")) {
         p /= "kernels";
       }
-      fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]));
-      kernels[p] = latest;
+
+      vector<string> k = jsonArrayToVector(kernels[p]);
+      if(!k.empty()) { 
+        fs::path latest = getLatestKernel(k);
+        kernels[p] = latest;
+      }
     }
 
     return kernels;
@@ -156,13 +168,16 @@ namespace SpiceQL {
   }
 
 
-  shared_ptr<KernelSet> loadTimeKernels()  {
+  void loadTimeKernels()  {
+    KernelRefMap refCounts = KernelPool::getRefCounts(); 
+
     vector<json> confs = getAvailableConfigs();
     json clocks;
     
     // get SCLKs
     for(auto &j : confs) {
       vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      
       if (!p.empty()) {
         json sclks = j[p.at(0)];
         clocks[p.at(0)] = sclks;
@@ -170,26 +185,27 @@ namespace SpiceQL {
     }
     
     clocks = searchMissionKernels(clocks);
-    
+    clocks = getLatestKernels(clocks);
+
+    vector<json::json_pointer> kpointers = findKeyInJson(clocks, "kernels", true);
+    for (auto &p : kpointers) {
+        json sclks = clocks[p];
+        
+        for (auto &e : sclks) { 
+          furnsh_c(e.get<string>().c_str());
+          refCounts.emplace(e.get<string>().c_str(), 1);
+        }
+    }
+
     // get the distribution's LSK
     fs::path dbPath = getConfigDirectory();
     string lskPath = dbPath / "kernels" / "naif0011.tls";
-
-    // have to create the tree manually for some reason, using a json pointer 
-    // causes a compile error somewhere deep inside the json headers 
-    clocks["base"] = json::object(); 
-    clocks["base"]["lsk"] = json::object(); 
-    clocks["base"]["lsk"]["kernels"] = lskPath;
-
-    shared_ptr<KernelSet> clockSet(new KernelSet(clocks));
-
-    return clockSet;
+    furnsh_c(lskPath.c_str());
+    refCounts.emplace(lskPath.c_str(), 1);
   }
 
 
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
-     
-
     json reducedKernels;
 
     vector<json::json_pointer> ckpointers = findKeyInJson(kernels, "ck", true);
