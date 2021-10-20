@@ -36,7 +36,7 @@
         "deps" : []
       },
       "na" : {
-        "kernels" : "pck[0-9]{5}.tpc",
+        "kernels" : "pck0000[0-9].tpc",
         "deps" : []
       }
     }
