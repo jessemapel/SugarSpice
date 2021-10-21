@@ -13,7 +13,7 @@ using namespace SpiceQL;
 
 TEST_F(LroKernelSet, UnitTestStackedKernelConstructorDestructor) { 
   int nkernels;
-
+  
   // This should create local kernels that get unfurnished when the stack is popped 
   {
     Kernel k(lskPath);
@@ -21,14 +21,15 @@ TEST_F(LroKernelSet, UnitTestStackedKernelConstructorDestructor) {
     // should match what spice counts
     ktotal_c("text", &nkernels);
 
+    // base LSK still loaded
     EXPECT_EQ(nkernels, 3);
-    EXPECT_EQ(KernelPool::getRefCounts().at(lskPath), 1);
+    EXPECT_EQ(pool.getRefCounts().at(lskPath), 1);
   }
 
   // SCLKs and LSKs are considered text kernels, so they should stay loaded
   ktotal_c("text", &nkernels);
   EXPECT_EQ(nkernels, 2); 
-  EXPECT_EQ(KernelPool::getRefCount(lskPath), 0);
+  EXPECT_EQ(pool.getRefCount(lskPath), 0);
 }
 
 
@@ -46,13 +47,13 @@ TEST_F(LroKernelSet, UnitTestStackedKernelCopyConstructor) {
 
     // 5 total text kernels, but the lsk should have been loaded 3 times
     EXPECT_EQ(nkernels, 5);
-    EXPECT_EQ(KernelPool::getRefCounts().at(lskPath), 3);
+    EXPECT_EQ(pool.getRefCounts().at(lskPath), 3);
   }
   
   // SCLKs and LSKs are considered text kernels, so they should stay loaded
   ktotal_c("text", &nkernels);
   EXPECT_EQ(nkernels, 2); 
-  EXPECT_EQ(KernelPool::getRefCount(lskPath), 0);
+  EXPECT_EQ(pool.getRefCount(lskPath), 0);
 }
 
 
@@ -87,12 +88,12 @@ TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
     EXPECT_EQ(nkernels, 2);
     
     // 5 because LSK is not being loaded (yet)
-    EXPECT_EQ(KernelPool::getRefCounts().size(), 6);
-    EXPECT_EQ(KernelPool::getRefCount(fkPath), 2); 
-    EXPECT_EQ(KernelPool::getRefCount(ckPath1), 2); 
-    EXPECT_EQ(KernelPool::getRefCount(spkPath1), 2); 
-    EXPECT_EQ(KernelPool::getRefCount(sclkPath), 3); 
-    EXPECT_EQ(KernelPool::getRefCount(ikPath2), 2); 
+    EXPECT_EQ(pool.getRefCounts().size(), 6);
+    EXPECT_EQ(pool.getRefCount(fkPath), 2); 
+    EXPECT_EQ(pool.getRefCount(ckPath1), 2); 
+    EXPECT_EQ(pool.getRefCount(spkPath1), 2); 
+    EXPECT_EQ(pool.getRefCount(sclkPath), 3); 
+    EXPECT_EQ(pool.getRefCount(ikPath2), 2); 
   }
 
   // All kernels in previous stack should be unfurnished
@@ -103,12 +104,12 @@ TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
   ktotal_c("spk", &nkernels);
   EXPECT_EQ(nkernels, 1);
   
-  EXPECT_EQ(KernelPool::getRefCounts().size(), 6);
-  EXPECT_EQ(KernelPool::getRefCount(fkPath), 1); 
-  EXPECT_EQ(KernelPool::getRefCount(ckPath1), 1); 
-  EXPECT_EQ(KernelPool::getRefCount(spkPath1), 1); 
-  EXPECT_EQ(KernelPool::getRefCount(sclkPath), 2); 
-  EXPECT_EQ(KernelPool::getRefCount(ikPath2), 1); 
+  EXPECT_EQ(pool.getRefCounts().size(), 6);
+  EXPECT_EQ(pool.getRefCount(fkPath), 1); 
+  EXPECT_EQ(pool.getRefCount(ckPath1), 1); 
+  EXPECT_EQ(pool.getRefCount(spkPath1), 1); 
+  EXPECT_EQ(pool.getRefCount(sclkPath), 2); 
+  EXPECT_EQ(pool.getRefCount(ikPath2), 1); 
 }
 
 
@@ -124,7 +125,7 @@ TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
 
   KernelSet k(kernels);
 
-  std::vector<string> kv = KernelPool::getLoadedKernels();
+  std::vector<string> kv = pool.getLoadedKernels();
   EXPECT_EQ(kv.size(), 6);
   EXPECT_TRUE(std::find(kv.begin(), kv.end(), fkPath) != kv.end()); 
   EXPECT_TRUE(std::find(kv.begin(), kv.end(), ckPath1) != kv.end());
@@ -135,9 +136,7 @@ TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
 
 
 TEST_F(LroKernelSet, UnitTestLoadTimeKernels) {
-  loadTimeKernels();
-
-  vector<string> kv = KernelPool::getLoadedKernels();
+  vector<string> kv = pool.getLoadedKernels();
   set<string> expected = {"naif0011.tls", "lro_clkcor_2020184_v00.tsc"}; 
 
   for (auto & e: kv) {

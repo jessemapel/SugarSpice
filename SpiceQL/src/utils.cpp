@@ -179,7 +179,7 @@ namespace SpiceQL {
     SpiceBoolean gcfound = false, gdfound = false, gifound = false;
 
     json allResults;
-
+    
     // iterate over kvals;
     for(int i = 0; i < nkeys; i++) {
       json jresultVal;

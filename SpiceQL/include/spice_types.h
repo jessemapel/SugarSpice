@@ -6,6 +6,9 @@
  **/
 
 #include <iostream>
+#include <unordered_map>
+
+#include <nlohmann/json.hpp>
 
 /**
  * @namespace SpiceQL types
@@ -13,9 +16,6 @@
  */
 namespace SpiceQL {
    
-  //! typedef for the Kernel reference map singleton. 
-  typedef std::unordered_map<std::string, int>& KernelRefMap;
-  
   /**
    * @brief Base Kernel class
    *
@@ -190,13 +190,19 @@ namespace SpiceQL {
     public:
     
     /**
-     * Delete constructors and such as this is a static class
+     * Delete constructors and such as this is a singleton
      */
-    KernelPool(KernelPool &other) = delete;
-    KernelPool() = delete;
-    ~KernelPool() = delete;
+    KernelPool(KernelPool const &other) = delete;
+    void operator=(KernelPool const &other) = delete;
 
-
+    /**
+     * @brief Get the Ref Map object
+     * 
+     * @return KernelRefMap& 
+     */
+    static KernelPool &getInstance();
+    
+    
     /**
      * @brief get a kernel's reference count
      * 
@@ -207,7 +213,7 @@ namespace SpiceQL {
      * @param key key for the kernel to get the ref count for, usually the complete file path
      * @return unsigned int The number of references to the input kernel. If key doesn't exist, this is 0. 
      */
-    static unsigned int getRefCount(std::string key);
+    unsigned int getRefCount(std::string key);
 
 
     /**
@@ -218,7 +224,7 @@ namespace SpiceQL {
      *
      * @return std::map<std::string, int> Map of kernel path to reference count.
      */
-    static std::unordered_map<std::string, int>& getRefCounts();
+    std::unordered_map<std::string, int> getRefCounts();
 
 
     /**
@@ -226,7 +232,7 @@ namespace SpiceQL {
      * 
      * @return std::vector<std::string> list of loaded kernels.
      */
-    static std::vector<std::string> getLoadedKernels(); 
+    std::vector<std::string> getLoadedKernels(); 
 
 
     /**
@@ -238,7 +244,7 @@ namespace SpiceQL {
      * @param kernelPath Path to the kernel to load 
      * @param force_refurnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is True. 
      */
-    static int load(std::string kernelPath, bool force_refurnsh=true);
+    int load(std::string kernelPath, bool force_refurnsh=true);
 
 
     /**
@@ -250,7 +256,36 @@ namespace SpiceQL {
      * 
      * @param kernelPath path to the kernel
      */
-    static int unload(std::string kernelPath);    
+    int unload(std::string kernelPath);    
+
+
+    /**
+     * @brief load SCLKs 
+     * 
+     * Any SCLKs in the data area are furnished. 
+     * This is should implicitly called when you get the KernelPool instance. 
+     */
+    void loadClockKernels();
+
+    private: 
+
+    /**
+     * @brief load leapsecond kernels
+     * 
+     * Load the LSK distributed with 
+     *
+     */
+    void loadLeapSecondKernel();
+
+
+    //! Default constructor, default implentation. Singletons shouldn't be constructed from anywhere
+    //! other than the getInstance() function.
+    KernelPool();
+    ~KernelPool() = default;
+    
+    //! map for tracking what kernels have been furnished and how often. 
+    std::unordered_map<std::string, int> refCounts;
+
   };
 
 
@@ -277,7 +312,7 @@ namespace SpiceQL {
     //! map of path to kernel pointers
     std::unordered_map<std::string, std::vector<SharedKernel>> loadedKernels;
     
-    //! json used to populate the loadedKernels object
+    //! json used to populate the loadedKernels
     nlohmann::json kernels; 
   };
 

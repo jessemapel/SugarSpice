@@ -5,7 +5,10 @@
 #include "gtest/gtest.h"
 #include <ghc/fs_std.hpp>
 
+#include "spice_types.h"
+
 using namespace std;
+using namespace SpiceQL;
 
 class TempTestingFiles : public ::testing::Test {
   protected:
@@ -28,6 +31,7 @@ class KernelDataDirectories : public ::testing::Test {
 
 class LroKernelSet : public TempTestingFiles {
   protected:
+    KernelPool &pool = KernelPool::getInstance();
 
     string root;
     string lskPath;

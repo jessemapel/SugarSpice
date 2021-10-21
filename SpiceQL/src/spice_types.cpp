@@ -109,18 +109,18 @@ namespace SpiceQL {
 
   Kernel::Kernel(string path) {
     this->path = path;
-    KernelPool::load(path, true);
+    KernelPool::getInstance().load(path, true);
   }
 
 
   Kernel::Kernel(Kernel &other) {
-    KernelPool::load(other.path);
+    KernelPool::getInstance().load(other.path);
     this->path = other.path;
   }
 
 
   Kernel::~Kernel() {
-    KernelPool::unload(this->path);
+    KernelPool::getInstance().unload(this->path);
   }
 
 
@@ -138,7 +138,6 @@ namespace SpiceQL {
 
   int KernelPool::load(string path, bool force_refurnsh) {
     int refCount; 
-    KernelRefMap refCounts = getRefCounts();
 
     auto it = refCounts.find(path);
 
@@ -163,7 +162,6 @@ namespace SpiceQL {
 
   int KernelPool::unload(string path) {
     try { 
-      KernelRefMap refCounts = getRefCounts(); 
       int &refcount = refCounts.at(path);
       
       // if the map contains the last copy of the kernel, delete it
@@ -188,27 +186,74 @@ namespace SpiceQL {
 
   unsigned int KernelPool::getRefCount(std::string key) {
     try {
-      return getRefCounts().at(key);
+      return refCounts.at(key);
     } catch(out_of_range &e) {
       return 0;
     }
   }
 
 
-  unordered_map<string, int>& KernelPool::getRefCounts() {
-    static unordered_map<string, int> refCounts;
+  unordered_map<string, int> KernelPool::getRefCounts() {
     return refCounts;
+  }
+
+
+  KernelPool &KernelPool::getInstance() {
+    static KernelPool pool;
+    return pool;
+  }
+
+
+  KernelPool::KernelPool() : refCounts() { 
+    loadLeapSecondKernel();
   }
 
 
   vector<string> KernelPool::getLoadedKernels() {
     vector<string> res;
-    KernelRefMap refCounts = getRefCounts();
 
     for( const auto& [key, value] : refCounts ) {
       res.emplace_back(key);
     }
     return res;
+  }
+
+  void KernelPool::loadClockKernels() { 
+    json clocks;
+
+    // if data dir not set, should raise an exception 
+    fs::path dataDir = getDataDirectory();
+
+    vector<json> confs = getAvailableConfigs();
+    // get SCLKs
+    for(auto &j : confs) {
+      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      
+      if (!p.empty()) {
+        json sclks = j[p.at(0)];
+        clocks[p.at(0)] = sclks;
+      }
+    }
+  
+    clocks = searchMissionKernels(dataDir, clocks);
+    clocks = getLatestKernels(clocks);
+
+    vector<json::json_pointer> kpointers = findKeyInJson(clocks, "kernels", true);
+    for (auto &p : kpointers) {
+        json sclks = clocks[p];
+        
+        for (auto &e : sclks) { 
+          load(e.get<string>());
+        }
+    }
+  }
+
+
+  void KernelPool::loadLeapSecondKernel() {
+    // get the distribution's LSK
+    fs::path dbPath = getConfigDirectory();
+    string lskPath = dbPath / "kernels" / "naif0011.tls";
+    load(lskPath);
   }
 
 
@@ -227,5 +272,7 @@ namespace SpiceQL {
       loadedKernels.emplace(p, res);
     } 
   }
+
+  
 } 
  

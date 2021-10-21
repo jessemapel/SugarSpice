@@ -83,9 +83,8 @@ void LroKernelSet::SetUp() {
   lskPath = tempDir / "clocks" / "naif0012.tls";
   sclkPath = tempDir / "clocks" / "lro_clkcor_2020184_v00.tsc";
 
-  // manually load time kernels 
-  loadTimeKernels();
-
+  pool.loadClockKernels();
+  
   // Write CK1 ------------------------------------------
   fs::create_directory(tempDir / "ck");
 

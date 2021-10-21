@@ -99,13 +99,5 @@ namespace SpiceQL {
     * @param kernelType Some CK kernel type, see Kernel::TYPES
    **/
   nlohmann::json globKernels(std::string root, nlohmann::json conf, std::string kernelType);
-
-
-  /**
-   * @brief 
-   * 
-   * @return std::shared_ptr<KernelSet> 
-   */
-  void loadTimeKernels();
-
-}
+  
+  }
