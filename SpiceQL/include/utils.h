@@ -18,8 +18,8 @@
 #include "spice_types.h"
 
 /**
- * @namespace SpiceQL 
- * 
+ * @namespace SpiceQL
+ *
  */
 namespace SpiceQL {
 
@@ -189,7 +189,7 @@ namespace SpiceQL {
     *
     * @returns list of paths matching ext
    **/
-  std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpath, std::string sclk, std::string lsk);
+  // std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpath, std::string sclk, std::string lsk);
 
 
   /**
