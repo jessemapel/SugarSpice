@@ -341,7 +341,7 @@ def main(mission_path, log_to_code):
         
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = "A script to automatically generate a template of a mission json file, the file will be placed in the SpiceQL/db folder\n\
+    parser = argparse.ArgumentParser(description = "A script to automatically generate a template of a mission json file, the file will be placed in the SpiceQL/db folder if log_to_cod is set to file or both\n\
                                                     Note: there are some weird edge cases that this script \
                                                     does not catch yet, specifically when it come's to kernels having\n\
                                                     special dependency object's that are a different kernel type, along with a couple other edge cases\
