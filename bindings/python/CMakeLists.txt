@@ -19,11 +19,6 @@ set_property(TARGET pyspiceql PROPERTY SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 
 # Setup for wrapper tests
 if(SPICEQL_BUILD_TESTS)
-    add_custom_command(TARGET pyspiceql POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_CURRENT_SOURCE_DIR}/tests
-                ${CMAKE_CURRENT_BINARY_DIR}/tests
-            COMMENT "Copying Python bindings tests")
     add_test(NAME python-tests
         COMMAND python -m pytest ${CMAKE_CURRENT_SOURCE_DIR}/tests
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
