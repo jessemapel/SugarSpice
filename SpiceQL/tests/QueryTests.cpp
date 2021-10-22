@@ -126,3 +126,29 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["sclk"]["kernels"].size(), 1);
 }
 
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
+  fs::path dbPath = getMissionConfigFile("apollo16");
+
+
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
+
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+
+  cout << res << endl;
+
+  ASSERT_EQ(res["apollo16"]["sclk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["apollo16"]["ck"]["reconstructed"]["kernels"].size(), 4);
+
+  ASSERT_EQ(res["apollo16"]["spk"]["reconstructed"]["kernels"].size(), 4);
+  ASSERT_EQ(res["apollo16"]["fk"]["kernels"].size(), 2); 
+  ASSERT_EQ(res["metric"]["ik"]["kernels"].size(), 2);
+  ASSERT_EQ(res["metric"]["iak"]["kernels"].size(), 1);
+  ASSERT_EQ(res["panoramic"]["ik"]["kernels"].size(), 1);
+  ASSERT_EQ(res["apollo_pan"]["iak"]["kernels"].size(), 1);
+}
+

@@ -54,6 +54,7 @@ void KernelDataDirectories::SetUp() {
   paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());
   paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
   paths.insert(paths.end(), galileo_paths.begin(), galileo_paths.end());
+  paths.insert(paths.end(), apollo16_paths.begin(), apollo16_paths.end());
 }
 
 
