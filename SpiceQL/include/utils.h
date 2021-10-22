@@ -229,8 +229,12 @@ namespace SpiceQL {
 
 
   /**
-   * @brief Get the Available Config Files object
-   * 
+   * @brief Get names of available config files as a json vector
+   *
+   * This iterates through all the configs in the db folder either installed 
+   * or in the debug directory depending on whether or not SSPICE_DEBUG is set. Loads them 
+   * as vector of json obects and returns the vector. 
+   *
    * @return std::vector<nlohmann::json> 
    */
   std::vector<nlohmann::json> getAvailableConfigs();

@@ -263,7 +263,6 @@ namespace SpiceQL {
      * @brief load SCLKs 
      * 
      * Any SCLKs in the data area are furnished. 
-     * This is should implicitly called when you get the KernelPool instance. 
      */
     void loadClockKernels();
 
@@ -272,7 +271,7 @@ namespace SpiceQL {
     /**
      * @brief load leapsecond kernels
      * 
-     * Load the LSK distributed with 
+     * Load the LSK distributed with SpiceQL
      *
      */
     void loadLeapSecondKernel();
