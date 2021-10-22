@@ -23,15 +23,6 @@ using namespace std;
 namespace SpiceQL {
 
 
-  /**
-    * @brief return's kernel value from key
-    *
-    *  Takes in a kernel key and returns the value associated with that kernel as a string 
-    *  Note: this function is for when the kernal has a single value associated with it, ie:   INS-236800_FOV_REF_ANGLE   = ( 5.27 )
-    * 
-    * @param root key - Kernel to get values from 
-    * @returns string of value associated with key
-   **/
  std::string getKernelStringValue(std::string key) {
    // check to make sure the key exists when calling findKeyWords(key) 
    if (findKeywords(key).contains(key)){
@@ -44,16 +35,6 @@ namespace SpiceQL {
     }
   }
  
-
-  /**
-    * @brief return's kernel values in the form of a vector 
-    *
-    *  Takes in a kernel key and returns the value associated with that kernel as a vector of string
-    *  Note: This function is for when the kernel has more than 1 value associated with it, ie: INS-236800_FOV_REF_VECTOR  = ( 1.0, 0.0, 0.0 )
-    * 
-    * @param root key - Kernel to get values from 
-    * @returns vector of values in the form of a string 
-   **/
   std::vector<string> getKernelVectorValue(std::string key) {
     
     // check to make sure the key exists when calling findKeyWords(key) 

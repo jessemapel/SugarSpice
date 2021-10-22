@@ -28,9 +28,9 @@ TEST(QueryTests, getKernelStringValue){
   EXPECT_EQ(getKernelStringValue("INS-236810_FOV_SHAPE"), "RECTANGLE");
 
 
-     try {
-        getKernelStringValue("aKeyThatWillNotBeInTheResults");
-        FAIL() << "Expected std::invalid_argument";
+    try {
+      getKernelStringValue("aKeyThatWillNotBeInTheResults");
+      FAIL() << "Expected std::invalid_argument";
     }
     catch(std::invalid_argument const & err) {
         EXPECT_EQ(err.what(),std::string("key not in results"));
