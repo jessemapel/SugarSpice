@@ -1,5 +1,5 @@
-# SugarSpice
-[![Documentation Status](https://readthedocs.org/projects/sugar-spice/badge/?version=latest)](http://sugar-spice.readthedocs.io/?badge=latest) [![CMake](https://github.com/USGS-Astrogeology/SugarSpice/actions/workflows/ctests.yml/badge.svg)](https://github.com/USGS-Astrogeology/SugarSpice/actions/workflows/ctests.yml)
+# SpiceQL
+[![Documentation Status](https://readthedocs.org/projects/sugar-spice/badge/?version=latest)](http://sugar-spice.readthedocs.io/?badge=latest) [![CMake](https://github.com/USGS-Astrogeology/SpiceQL/actions/workflows/ctests.yml/badge.svg)](https://github.com/USGS-Astrogeology/SpiceQL/actions/workflows/ctests.yml)
 
 This Library provides a C++ interface querying, reading and writing Naif SPICE kernels. Built on the [Naif Toolkit](https://naif.jpl.nasa.gov/naif/toolkit.html).
 
@@ -20,7 +20,7 @@ Primary Milstones:
 
 ## Building The Library
 
-The library leverages anaconda to maintain all of it's dependencies. So in order to build SugarSpice, you'll need to have Anaconda installed.
+The library leverages anaconda to maintain all of it's dependencies. So in order to build SpiceQL, you'll need to have Anaconda installed.
 
 > **NOTE**:If you already have Anaconda installed, skip to step 3.
 
@@ -33,10 +33,10 @@ The library leverages anaconda to maintain all of it's dependencies. So in order
 # Clone the Github repo, note the recursive flag, this library depends on
 # submodules that also need to be cloned. --recurse-submodules enables this and
 # the -j8 flag parallelizes the cloning process.
-git clone --recurse-submodules -j8 https://github.com/USGS-Astrogeology/SugarSpice.git
+git clone --recurse-submodules -j8 https://github.com/USGS-Astrogeology/SpiceQL.git
 
 # cd into repo dir
-cd SugarSpice
+cd SpiceQL
 
 # Create new environment from the provided dependency file, the -n flag is
 # proceded by the name of the new environment, change this to whatever works for you
@@ -53,9 +53,32 @@ cd build
 # Configure the project, install directory can be anything, here, it's the conda env
 cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
 
+# Optional: DB files are installed by default in $CONDA_PREFIX/etc/SpiceQL/db to 
+# use files that are included within the repo, you must create and define 
+# an environment variable named SSPICE_DEBUG. 
+# note SSPICE_DEBUG can be set to anything as long as it is defined
+export SSPICE_DEBUG=True
+
+# Set the environment variable(s) to point to your kernel install 
+# The following environment variables are used by default in order of priority: 
+# $SPICEROOT, $ALESPICEROOT, $ISISDATA. 
+# SPICEROOT is unique to this lib, while ALESPICEROOT, and ISISDATA are used 
+# by both ALE and ISIS respectively. 
+# note you can set each of these environment variables path to point to the
+# correspoding kernels downloaded location, ie 
+SPICEROOT=~/spiceQL/Kernals/spiceRootKernel
+ALESPICEROOT=~/spiceQL/Kernals/aleSpiceRootKernel
+ISISDATA=~/spiceQL/Kernals/isisData
+
 # build and install project
 make install
 
 # Optional, Run tests
 ctest -j8
+```
+
+You can disable different components of the build by setting the CMAKE variables `SPICEQL_BUILD_DOCS`, `SPICEQL_BUILD_TESTS`, or `SPICEQL_BUILD_LIB` to `OFF`. For example, the following cmake configuration command will not build the documentation or the tests:
+
+```
+cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DSPICEQL_BUILD_DOCS=OFF -DSPICEQL_BUILD_TESTS=OFF
 ```

@@ -3,14 +3,14 @@
 
 
 // paths for testing base / shared kernel queries
-std::vector<fs::path> base_paths = {
+std::vector<std::string> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
     "/isis_data/base/kernels/sclk/naif0002.tls",
     "/kernels/pck/pck00006.tpc"
 };
 
 // paths for testing messenger kernel queries
-std::vector<fs::path> mess_paths = {
+std::vector<std::string> mess_paths = {
     "/isis_data/messenger/kernels/ck/msgr_1234_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v01.bc",
     "/isis_data/messenger/kernels/ck/msgr_1235_v02.bc",
@@ -49,7 +49,7 @@ std::vector<fs::path> mess_paths = {
 };
 
 // paths for testing clementine kernel queries
-std::vector<fs::path> clem1_paths = {
+std::vector<std::string> clem1_paths = {
     "/isis_data/clementine1/kernels/ck/clem_123.bck",
     "/isis_data/clementine1/kernels/ck/clem_124.bck",
     "/isis_data/clementine1/kernels/ck/clem_125.bck",
@@ -74,7 +74,7 @@ std::vector<fs::path> clem1_paths = {
 };
 
 
-std::vector<fs::path> galileo_paths = {
+std::vector<std::string> galileo_paths = {
     "/isis_data/galileo/kernels/ck/ck90342a_plt.bc",
     "/isis_data/galileo/kernels/ck/ck90342b_plt.bc",
     "/isis_data/galileo/kernels/ck/ck90343a_plt.bc",
@@ -149,4 +149,29 @@ std::vector<fs::path> lro_paths = {
     "/isis_data/lro/kernels/spk/LRO_NO_13_201311_GRGM900C_L600.BSP",
     "/isis_data/lro/kernels/spk/LRO_SM_25_201308_GRGM660PRIMAT270.bsp",
     "/isis_data/lro/kernels/spk/LRO_SM_26_201308_GRGM660PRIMAT270.bsp"
+};
+
+// paths for testing apollo16 kernel queries
+std::vector<std::string> apollo16_paths = {
+    "/isis_data/apollo16/kernels/sclk/apollo16.0002.tsc",
+
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV1.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV02.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV01-23_v2.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV22_v2.bc",
+
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV2.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV90.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV7921_v2.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV31_v2.bsp",
+
+    "/isis_data/apollo16/kernels/fk/apollo16.0001.tf",
+    "/isis_data/apollo16/kernels/fk/apollo16_v2.1234.tf",
+
+    "/isis_data/apollo16/kernels/ik/apollo16_metric.1234.ti",
+    "/isis_data/apollo16/kernels/ik/apollo16_metric_v2.2411.ti",
+    "/isis_data/apollo16/kernels/ik/apollo16_panoramic.1234.ti"
+    "/isis_data/apollo16/kernels/iak/apolloPanAddendum701.ti",
+
+    "/isis_data/apollo16/kernels/iak/apollo16MetricAddendum123.ti"
 };

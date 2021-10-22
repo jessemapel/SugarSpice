@@ -4,9 +4,9 @@ find_package(Doxygen REQUIRED)
 find_package(Sphinx REQUIRED)
 
 # Find all the public headers
-file(GLOB_RECURSE SUGARSPICE_PUBLIC_HEADERS ${SUGARSPICE_BUILD_INCLUDE_DIR}/*.h)
+file(GLOB_RECURSE SPICEQL_PUBLIC_HEADERS ${SPICEQL_BUILD_INCLUDE_DIR}/*.h)
 
-set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/SugarSpice/include/)
+set(DOXYGEN_INPUT_DIR ${PROJECT_SOURCE_DIR}/SpiceQL/include/)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
@@ -23,7 +23,7 @@ message(STATUS "DOXYFILE_OUT: " ${DOXYFILE_OUT})
 file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
 
 add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                   DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
+                   DEPENDS ${SPICEQL_PUBLIC_HEADERS}
                    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT} 
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    MAIN_DEPENDENCY Doxyfile
@@ -44,10 +44,10 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                    COMMAND
                      ${SPHINX_EXECUTABLE} -b html
                      # Tell Breathe where to find the Doxygen output
-                     -Dbreathe_projects.SugarSpice=${DOXYGEN_OUTPUT_DIR}/xml
+                     -Dbreathe_projects.SpiceQL=${DOXYGEN_OUTPUT_DIR}/xml
                    ${SPHINX_SOURCE} ${SPHINX_BUILD}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                   DEPENDS ${SUGARSPICE_PUBLIC_HEADERS}
+                   DEPENDS ${SPICEQL_PUBLIC_HEADERS}
                    # Other docs files you want to track should go here (or in some variable)
                    ${SPHINX_RST_FILES}
                    ${CMAKE_CURRENT_SOURCE_DIR}/../README.md # Docs insert the readme, so it's a dep

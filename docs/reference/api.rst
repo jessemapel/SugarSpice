@@ -2,18 +2,5 @@
 API
 ###
 
-Querying Available Kernels 
-==========================
-
-.. doxygenfile :: query.h
-
-Writing Kernels
-===============
-
-.. doxygenfile :: io.h
-
-
-Utils 
-=====
-
-.. doxygenfile :: utils.h
+.. doxygennamespace:: SpiceQL
+    :project: SpiceQL
