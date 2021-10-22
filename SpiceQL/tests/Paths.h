@@ -117,6 +117,7 @@ std::vector<std::string> apollo16_paths = {
     "/isis_data/apollo16/kernels/iak/apolloPanAddendum701.ti",
 
     "/isis_data/apollo16/kernels/iak/apollo16MetricAddendum123.ti"
+};
 
 std::vector<std::string> juno_paths = {
     "/isis_data/juno/kernels/ck/juno_sc_rec_110915_110917_v03.bc",

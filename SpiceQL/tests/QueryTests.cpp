@@ -140,8 +140,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
-  cout << res << endl;
-
   ASSERT_EQ(res["apollo16"]["sclk"]["kernels"].size(), 1);
   ASSERT_EQ(res["apollo16"]["ck"]["reconstructed"]["kernels"].size(), 4);
 
@@ -166,11 +164,14 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsJuno) {
     }
   }
 
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(paths_with_base);
 
   nlohmann::json res = searchMissionKernels(base, conf);
-  std::cout << res << '\n';
 
   ASSERT_EQ(res["juno"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["juno"]["ck"]["deps"]["objs"].size(), 2);
