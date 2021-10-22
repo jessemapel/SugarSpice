@@ -1,7 +1,7 @@
 from pyspiceql import toUpper, toLower
 
 def test_toUpper():
-    assert type(toUpper('Some Test String')) is str
+    assert isinstance(toUpper('Some Test String'), str)
 
 def test_toLower():
-    assert type(toLower('Some Test String')) is str
+    assert isinstance(toLower('Some Test String'), str)
