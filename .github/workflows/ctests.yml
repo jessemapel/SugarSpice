@@ -75,6 +75,7 @@ jobs:
           elif [ "$RUNNER_OS" == "Linux" ]; then
             test -e lib/libSpiceQL.so
           fi
+          test -e include/SpiceQL/sugar_spice.h
           python -c "import pyspiceql"
 
   build-docs:
