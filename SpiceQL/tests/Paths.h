@@ -93,3 +93,30 @@ std::vector<std::string> galileo_paths = {
 
     "/isis_data/galileo/kernels/pck/pck00010_msgr_v23_europa2020.tpc"
 };
+
+
+
+// paths for apollo 17
+std::vector<std::string> apollo17_paths = {
+    "/isis_data/apollo17/kernels/ck/AS17_M_rev1.bc",
+    "/isis_data/apollo17/kernels/ck/AS17_M_rev12.bc",
+    "/isis_data/apollo17/kernels/ck/AS17_M_REV1234_v2.bc",
+    "/isis_data/apollo17/kernels/ck/AS17_M_REV45_v2.bc",
+
+    "/isis_data/apollo17/kernels/sclk/apollo17.5522.tsc",
+
+    "/isis_data/apollo17/kernels/fk/apollo17.0001.tf",
+    "/isis_data/apollo17/kernels/fk/apollo17_v2.8968.tf",
+
+    "/isis_data/apollo17/kernels/spk/AS17_M_REV7.bsp",
+    "/isis_data/apollo17/kernels/spk/AS17_M_REV13.bsp",
+    "/isis_data/apollo17/kernels/spk/AS17_M_REV8799_v2.bsp",
+    "/isis_data/apollo17/kernels/spk/AS17_M_REV88_v2.bsp",
+
+    "/isis_data/apollo17/kernels/iak/apollo17MetricAddendum333.ti",
+    "/isis_data/apollo17/kernels/iak/apolloPanAddendum986.ti",
+
+    "/isis_data/apollo17/kernels/ik/apollo17_metric.1234.ti",
+    "/isis_data/apollo17/kernels/ik/apollo17_metric_v2.1234.ti",
+    "/isis_data/apollo17/kernels/ik/apollo17_panoramic.6214.ti"
+};

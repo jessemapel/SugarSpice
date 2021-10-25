@@ -52,6 +52,7 @@ void KernelDataDirectories::SetUp() {
   // combine multiple path lists here as we add more.
   paths = base_paths;
   paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());
+  paths.insert(paths.end(), apollo17_paths.begin(), apollo17_paths.end());
   paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
   paths.insert(paths.end(), galileo_paths.begin(), galileo_paths.end());
 }

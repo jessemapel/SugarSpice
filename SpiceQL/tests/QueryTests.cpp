@@ -172,3 +172,28 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["sclk"]["kernels"].size(), 1);
 }
 
+
+// test for apollo 17 kernels 
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo17) {
+  fs::path dbPath = getMissionConfigFile("apollo17");
+
+
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
+
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+
+
+  ASSERT_EQ(res["apollo17"]["ck"]["reconstructed"]["kernels"].size(), 4);
+  ASSERT_EQ(res["apollo17"]["sclk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["apollo17"]["fk"]["kernels"].size(), 2);
+  ASSERT_EQ(res["apollo17"]["spk"]["reconstructed"]["kernels"].size(), 4);
+  ASSERT_EQ(res["METRIC"]["iak"]["kernels"].size(), 1);
+  ASSERT_EQ(res["PANORAMIC"]["ik"]["kernels"].size(), 3);
+  ASSERT_EQ(res["APOLLO_PAN"]["iak"]["kernels"].size(), 1);
+}
+

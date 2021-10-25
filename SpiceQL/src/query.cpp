@@ -187,7 +187,6 @@ namespace SpiceQL {
     for(auto &kernelType: {"ck", "spk", "tspk", "fk", "ik", "iak", "pck", "lsk", "sclk"}) {
         kernels.merge_patch(globKernels(root, conf, kernelType));
     }
-
     return kernels;
   }
 
@@ -201,6 +200,7 @@ namespace SpiceQL {
         sclks = jsonArrayToVector(j[p.at(0)]);
         sort(sclks.begin(), sclks.end(), greater<string>());
       }
+
 
       json baseConf = getMissionConfig("base");
       string dataDir = getDataDirectory();
