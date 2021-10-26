@@ -181,9 +181,9 @@ namespace SpiceQL {
 
 
   /**
-   * @brief Static class for interacting with the cspice kernel pool 
+   * @brief Singleton class for interacting with the cspice kernel pool 
    * 
-   * Contains static functions required to load and unload kernels and 
+   * Contains functions required to load and unload kernels and 
    * keep track of furnished kernels. 
    */
   class KernelPool {
@@ -326,5 +326,4 @@ namespace SpiceQL {
    * @returns double precision ephemeris time
    **/
   double utcToEt(std::string et);
-
 }
