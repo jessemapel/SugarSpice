@@ -10,7 +10,6 @@
 
 #include <SpiceUsr.h>
 
-
 #include <ghc/fs_std.hpp>
 
 #include "query.h"
@@ -60,6 +59,10 @@ namespace SpiceQL {
   
 
   string getLatestKernel(vector<string> kernels) {
+    if(kernels.empty()) {
+      throw invalid_argument("Can't get latest kernel from empty vector");  
+    }
+
     string extension = static_cast<fs::path>(kernels.at(0)).extension();
     // ensure everything is different versions of the same file
     for(const fs::path &k : kernels) {
@@ -81,6 +84,7 @@ namespace SpiceQL {
             if(!kernels[p].contains(qual)){
               continue;
             }
+ 
             std::vector<string> l = jsonArrayToVector(kernels[p][qual]["kernels"]);
             fs::path latest;
 
@@ -91,8 +95,11 @@ namespace SpiceQL {
           }
 
           if(kernels[p].contains("kernels")) {
-            fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]["kernels"]));
-            kernels[p]["kernels"] = latest;
+            vector<string> k = jsonArrayToVector(kernels[p]["kernels"]);
+            if(!k.empty()) {
+              fs::path latest = getLatestKernel(k);
+              kernels[p]["kernels"] = latest;
+            }
           }
         }
     }
@@ -102,8 +109,12 @@ namespace SpiceQL {
       if(kernels.at(p).contains("kernels")) {
         p /= "kernels";
       }
-      fs::path latest = getLatestKernel(jsonArrayToVector(kernels[p]));
-      kernels[p] = latest;
+
+      vector<string> k = jsonArrayToVector(kernels[p]);
+      if(!k.empty()) { 
+        fs::path latest = getLatestKernel(k);
+        kernels[p] = latest;
+      }
     }
 
     return kernels;
@@ -193,34 +204,6 @@ namespace SpiceQL {
 
 
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
-    auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> {
-      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
-      vector<string> sclks;
-
-      if (!p.empty()) {
-        sclks = jsonArrayToVector(j[p.at(0)]);
-        sort(sclks.begin(), sclks.end(), greater<string>());
-      }
-
-      json baseConf = getMissionConfig("base");
-      string dataDir = getDataDirectory();
-      baseConf = searchMissionKernels(dataDir, baseConf);
-      p = findKeyInJson(baseConf, "lsk", true);
-
-      vector<string> lsks = jsonArrayToVector(baseConf.at(p.at(0))["kernels"]);
-      sort(lsks.begin(), lsks.end(), greater<string>());
-
-      vector<shared_ptr<Kernel>> timeKernels(2);
-
-      if(lsks.size()) {
-        timeKernels.emplace_back(new Kernel(lsks.at(0)));
-      }
-      if (sclks.size()) {
-        timeKernels.emplace_back(new Kernel(sclks.at(0)));
-      }
-      return timeKernels;
-    };
-
     json reducedKernels;
 
     vector<json::json_pointer> ckpointers = findKeyInJson(kernels, "ck", true);
@@ -236,9 +219,6 @@ namespace SpiceQL {
       if(cks.is_null() ) {
         continue;
       }
-
-      // load time kernels
-      vector<shared_ptr<Kernel>> timeKernels = loadTimeKernels(cks);
 
       for(auto qual: Kernel::QUALITIES) {
         if(!cks.contains(qual)) {
@@ -269,4 +249,10 @@ namespace SpiceQL {
     kernels.merge_patch(reducedKernels);
     return kernels;
   }
+
+  json searchMissionKernels(json conf) {
+    fs::path root = getDataDirectory();
+    return searchMissionKernels(root, conf);
+  }
+
 }
