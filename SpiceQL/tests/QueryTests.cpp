@@ -22,6 +22,52 @@ TEST(QueryTests, UnitTestGetLatestKernel) {
   EXPECT_EQ(getLatestKernel(kernels),  "test/iak.0004.ti");
 }
 
+TEST(QueryTests, getKernelStringValue){
+  unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
+  // INS-236810_CCD_CENTER        =  (  511.5, 511.5 )
+  EXPECT_EQ(getKernelStringValue("INS-236810_FOV_SHAPE"), "RECTANGLE");
+
+
+    try {
+      getKernelStringValue("aKeyThatWillNotBeInTheResults");
+      FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+}
+
+TEST(QueryTests, getKernelVectorValue){
+  unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
+
+  vector<string> actualResultsOne = getKernelVectorValue("INS-236810_CCD_CENTER");
+  std::vector<string> expectedResultsOne{"511.5", "511.5"};
+
+  vector<string> actualResultsTwo = getKernelVectorValue("INS-236800_FOV_REF_VECTOR");
+  std::vector<string> expectedResultsTwo{"1.0", "0.0", "0.0"};
+
+  for (int i = 0; i < actualResultsOne.size(); ++i) {
+    EXPECT_EQ(actualResultsOne[i], expectedResultsOne[i]) << "Vectors x and y differ at index " << i;
+  }
+
+  for (int j = 0; j < actualResultsTwo.size(); ++j) {
+    EXPECT_EQ(actualResultsTwo[j], expectedResultsTwo[j]) << "Vectors x and y differ at index " << j;
+  }
+
+   try {
+        getKernelVectorValue("aKeyThatWillNotBeInTheResults");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+}
 
 TEST(QueryTests, UnitTestGetLatestKernelError) {
   vector<string> kernels = {

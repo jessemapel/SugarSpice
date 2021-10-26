@@ -5,7 +5,6 @@
   *
   *
  **/
-
 #include <fstream>
 #include <algorithm>
 
@@ -22,6 +21,43 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace SpiceQL {
+
+
+ std::string getKernelStringValue(std::string key) {
+   // check to make sure the key exists when calling findKeyWords(key) 
+   if (findKeywords(key).contains(key)){
+      json results = findKeywords(key);
+      return results[key] ;
+    }
+    // throw exception 
+    else{
+      throw std::invalid_argument("key not in results");
+    }
+  }
+ 
+  std::vector<string> getKernelVectorValue(std::string key) {
+    
+    // check to make sure the key exists when calling findKeyWords(key) 
+    if (findKeywords(key).contains(key)){
+
+      // get json results of key 
+      json results = findKeywords(key);
+      vector<string> kernelValues;    
+
+      // iterate over results @ key
+      for(auto i : results[key]){
+        // push values to vector 
+        kernelValues.push_back(to_string(i));
+      }
+      return kernelValues;
+    }
+    // throw exception 
+    else{
+      throw std::invalid_argument("key not in results");
+    }
+  }
+
+  
 
   string getLatestKernel(vector<string> kernels) {
     string extension = static_cast<fs::path>(kernels.at(0)).extension();
