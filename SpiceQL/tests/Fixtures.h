@@ -36,13 +36,15 @@ class LroKernelSet : public TempTestingFiles {
     string root;
     string lskPath;
     string sclkPath;
-    string ckPath1; 
+    string ckPath1;
     string ckPath2;
     string spkPath1;
-    string spkPath2; 
-    string ikPath1; 
+    string spkPath2;
+    string ikPath1;
     string ikPath2;
     string fkPath;
+
+    nlohmann::json conf;
 
     void SetUp() override;
     void TearDown() override;

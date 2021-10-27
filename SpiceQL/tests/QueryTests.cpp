@@ -198,8 +198,33 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
 }
 
 
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsLRO) {
+  fs::path dbPath = getMissionConfigFile("lro");
+
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
+
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+
+  EXPECT_EQ(res["lroc"]["ck"]["reconstructed"]["kernels"].size(), 8);
+  EXPECT_EQ(res["lroc"]["ck"]["deps"]["objs"].size(), 3);
+  EXPECT_EQ(res["lroc"]["spk"]["reconstructed"]["kernels"].size(), 8);
+  EXPECT_EQ(res["lroc"]["spk"]["smithed"]["kernels"].size(), 14);
+  EXPECT_EQ(res["lroc"]["iak"]["kernels"].size(), 2);
+  EXPECT_EQ(res["lroc"]["ik"]["kernels"].size(), 2);
+  EXPECT_EQ(res["lroc"]["pck"]["kernels"].size(), 2);
+  EXPECT_EQ(res["lroc"]["fk"]["kernels"].size(), 2);
+  EXPECT_EQ(res["lroc"]["tspk"]["kernels"].size(), 2);
+}
+
+
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsJuno) {
   fs::path dbPath = getMissionConfigFile("jno");
+
   string base = "/isis_data/juno";
   regex base_reg(fmt::format("({})", fmt::join(base, "")));
   vector<string> paths_with_base;
