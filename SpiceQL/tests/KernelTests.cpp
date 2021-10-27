@@ -58,8 +58,6 @@ TEST_F(LroKernelSet, UnitTestStackedKernelCopyConstructor) {
 
 
 TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
-  nlohmann::json conf = getMissionConfig("test");
-
   // load all available kernels
   nlohmann::json kernels = searchMissionKernels(root, conf);
 
@@ -114,8 +112,6 @@ TEST_F(LroKernelSet, UnitTestStackedKernelSetConstructorDestructor) {
 
 
 TEST_F(LroKernelSet, UnitTestStackedKernelPoolGetLoadedKernels) {
-  nlohmann::json conf = getMissionConfig("test");
-
   // load all available kernels
   nlohmann::json kernels = searchMissionKernels(root, conf);
 
