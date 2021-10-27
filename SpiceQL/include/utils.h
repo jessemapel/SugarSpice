@@ -18,8 +18,8 @@
 #include "spice_types.h"
 
 /**
- * @namespace SpiceQL 
- * 
+ * @namespace SpiceQL
+ *
  */
 namespace SpiceQL {
 
@@ -176,20 +176,6 @@ namespace SpiceQL {
     * @returns vector of refernces to matching json objects
    **/
   std::vector<nlohmann::json::json_pointer> findKeyInJson(nlohmann::json in, std::string key, bool recursive=true);
-
-
-  /**
-    * @brief This is a short description
-    *
-    * This is a long description
-    *
-    * @param kpath The root directory to search
-    * @param sclk  Required sclk kernel
-    * @param lsk   Required lsk kernel
-    *
-    * @returns list of paths matching ext
-   **/
-  std::vector<std::pair<std::string, std::string>> getCkIntervals(std::string kpath, std::string sclk, std::string lsk);
 
 
   /**
