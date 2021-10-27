@@ -22,6 +22,52 @@ TEST(QueryTests, UnitTestGetLatestKernel) {
   EXPECT_EQ(getLatestKernel(kernels),  "test/iak.0004.ti");
 }
 
+TEST(QueryTests, getKernelStringValue){
+  unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
+  // INS-236810_CCD_CENTER        =  (  511.5, 511.5 )
+  EXPECT_EQ(getKernelStringValue("INS-236810_FOV_SHAPE"), "RECTANGLE");
+
+
+    try {
+      getKernelStringValue("aKeyThatWillNotBeInTheResults");
+      FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+}
+
+TEST(QueryTests, getKernelVectorValue){
+  unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
+
+  vector<string> actualResultsOne = getKernelVectorValue("INS-236810_CCD_CENTER");
+  std::vector<string> expectedResultsOne{"511.5", "511.5"};
+
+  vector<string> actualResultsTwo = getKernelVectorValue("INS-236800_FOV_REF_VECTOR");
+  std::vector<string> expectedResultsTwo{"1.0", "0.0", "0.0"};
+
+  for (int i = 0; i < actualResultsOne.size(); ++i) {
+    EXPECT_EQ(actualResultsOne[i], expectedResultsOne[i]) << "Vectors x and y differ at index " << i;
+  }
+
+  for (int j = 0; j < actualResultsTwo.size(); ++j) {
+    EXPECT_EQ(actualResultsTwo[j], expectedResultsTwo[j]) << "Vectors x and y differ at index " << j;
+  }
+
+   try {
+        getKernelVectorValue("aKeyThatWillNotBeInTheResults");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("key not in results"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+}
 
 TEST(QueryTests, UnitTestGetLatestKernelError) {
   vector<string> kernels = {
@@ -92,7 +138,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
   ASSERT_EQ(res["clem1"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["clem1"]["fk"]["kernels"].size(), 1);
   ASSERT_EQ(res["clem1"]["sclk"]["kernels"].size(), 2);
-  
+
   ASSERT_EQ(res["uvvis"]["ik"]["kernels"].size(), 1);
   ASSERT_EQ(res["uvvis"]["iak"]["kernels"].size(), 2);
 
@@ -126,6 +172,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["sclk"]["kernels"].size(), 1);
 }
 
+
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
   fs::path dbPath = getMissionConfigFile("apollo16");
 
@@ -139,13 +186,11 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
-  cout << res << endl;
-
   ASSERT_EQ(res["apollo16"]["sclk"]["kernels"].size(), 1);
   ASSERT_EQ(res["apollo16"]["ck"]["reconstructed"]["kernels"].size(), 4);
 
   ASSERT_EQ(res["apollo16"]["spk"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["apollo16"]["fk"]["kernels"].size(), 2); 
+  ASSERT_EQ(res["apollo16"]["fk"]["kernels"].size(), 2);
   ASSERT_EQ(res["metric"]["ik"]["kernels"].size(), 2);
   ASSERT_EQ(res["metric"]["iak"]["kernels"].size(), 1);
   ASSERT_EQ(res["panoramic"]["ik"]["kernels"].size(), 1);
@@ -176,3 +221,37 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsLRO) {
   EXPECT_EQ(res["lroc"]["tspk"]["kernels"].size(), 2);
 }
 
+
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsJuno) {
+  fs::path dbPath = getMissionConfigFile("jno");
+
+  string base = "/isis_data/juno";
+  regex base_reg(fmt::format("({})", fmt::join(base, "")));
+  vector<string> paths_with_base;
+
+  for (auto path: paths) {
+    if (regex_search(path, base_reg)) {
+      paths_with_base.push_back(path);
+    }
+  }
+
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths_with_base);
+
+  nlohmann::json res = searchMissionKernels(base, conf);
+
+  ASSERT_EQ(res["juno"]["ck"]["reconstructed"]["kernels"].size(), 4);
+  ASSERT_EQ(res["juno"]["ck"]["deps"]["objs"].size(), 2);
+  ASSERT_EQ(res["juno"]["spk"]["reconstructed"]["kernels"].size(), 2);
+  ASSERT_EQ(res["juno"]["spk"]["deps"]["objs"].size(), 1);
+  ASSERT_EQ(res["juno"]["sclk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["juno"]["tspk"]["kernels"].size(), 3);
+  ASSERT_EQ(res["juno"]["fk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["juno"]["ik"]["kernels"].size(), 1);
+  ASSERT_EQ(res["juno"]["iak"]["kernels"].size(), 1);
+  ASSERT_EQ(res["juno"]["pck"]["na"]["kernels"].size(), 1);
+}

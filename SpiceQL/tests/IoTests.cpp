@@ -71,20 +71,20 @@ TEST_F(TempTestingFiles, writeTextKernelTest) {
   fs::path tpath = tempDir / "test_ik.ti";
 
   nlohmann::json j = {
-    {"pi", 3.141},
-    {"happy", true},
-    {"name", "Niels"},
-    {"nothing", nullptr},
-    {"array", {1, 2, 3, 5.0}}
+    {"test_pi", 3.141},
+    {"test_happy", true},
+    {"test_name", "Niels"},
+    {"test_nothing", nullptr},
+    {"test_array", {1, 2, 3, 5.0}}
     }; 
 
   writeTextKernel(tpath, "ik", j, "This is a IK kernel");
 
   // furnsh the new kernel
-  StackKernel k(new Kernel(tpath));
+  Kernel k(tpath);
 
-  // get all keys in the variable pool
-  nlohmann::json j2 = findKeywords("*");
+  // get all test keys in the variable pool
+  nlohmann::json j2 = findKeywords("test_*");
 
   // diff should return an empty json array as input and output should be exactly the same
   ASSERT_EQ(nlohmann::json::diff(j, j2), nlohmann::json::array());

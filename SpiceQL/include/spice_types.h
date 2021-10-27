@@ -6,13 +6,16 @@
  **/
 
 #include <iostream>
+#include <unordered_map>
+
+#include <nlohmann/json.hpp>
 
 /**
  * @namespace SpiceQL types
  * 
  */
 namespace SpiceQL {
-
+   
   /**
    * @brief Base Kernel class
    *
@@ -116,20 +119,34 @@ namespace SpiceQL {
 
 
       /**
-        * @brief Instantiate a kernel from path
-        *
-        * Load a kernel into memory by opening the kernel and furnishing
-        *
-        * @param path path to a kernel.
-        *
+       * @brief Instantiate a kernel from path
+       *
+       * Load a kernel into memory by opening the kernel and furnishing.
+       * This also increases the reference count of the kernel. If the kernel
+       * has alrady been furnished, it is refurnshed.  
+       *
+       * @param path path to a kernel.
+       *
       **/
       Kernel(std::string path);
 
 
       /**
-        * @brief unfurnsh the kernel
+       * @brief Construct a new Kernel object from another
+       * 
+       * Ensures the reference counter is incremented when a copy of
+       * the kernel is created
+       * 
+       * @param other some other Kernel instance
+       */
+      Kernel(Kernel &other);
+
+
+      /**
+        * @brief Delete the kernel object and decrease it's reference count
         *
-        * Delete a kernel from memory by deleting the object and unfurnshing.
+        * Deletes the kernel object and decrements it's reference count. If the reference count hits 0,
+        * the kernel is unloaded. 
         *
       **/
       ~Kernel();
@@ -158,8 +175,145 @@ namespace SpiceQL {
    *
    * This basically allows the Kernel to exist only within the
    * call stack it is used in.
+   *
    */
   typedef std::unique_ptr<Kernel> StackKernel;
+
+
+  /**
+   * @brief Singleton class for interacting with the cspice kernel pool 
+   * 
+   * Contains functions required to load and unload kernels and 
+   * keep track of furnished kernels. 
+   */
+  class KernelPool {
+    public:
+    
+    /**
+     * Delete constructors and such as this is a singleton
+     */
+    KernelPool(KernelPool const &other) = delete;
+    void operator=(KernelPool const &other) = delete;
+
+    /**
+     * @brief Get the Ref Map object
+     * 
+     * @return KernelRefMap& 
+     */
+    static KernelPool &getInstance();
+    
+    
+    /**
+     * @brief get a kernel's reference count
+     * 
+     * Everytime KernelPool::load is called, the reference count is increased by one. 
+     * This returns the number of Kernel objects currently referencing the 
+     * input kernel.  
+     *
+     * @param key key for the kernel to get the ref count for, usually the complete file path
+     * @return unsigned int The number of references to the input kernel. If key doesn't exist, this is 0. 
+     */
+    unsigned int getRefCount(std::string key);
+
+
+    /**
+     * @brief get reference counts for all kernels in the pool 
+     * 
+     * Everytime KernelPool::load is called, the reference count is increased by one. 
+     * This returns the number of Kernel objects referencing every Kernel in the pool.
+     *
+     * @return std::map<std::string, int> Map of kernel path to reference count.
+     */
+    std::unordered_map<std::string, int> getRefCounts();
+
+
+    /**
+     * @brief Get the list of Loaded Kernels. 
+     * 
+     * @return std::vector<std::string> list of loaded kernels.
+     */
+    std::vector<std::string> getLoadedKernels(); 
+
+
+    /**
+     * @brief load kernel into the kernel pool 
+     * 
+     * This should be called for furnshing kernel instead of furnsh_c directly 
+     * so that they are tracked throughout the process. 
+     *
+     * @param kernelPath Path to the kernel to load 
+     * @param force_refurnsh If true, call furnsh on the kernel even if the kernel is already in the pool. Default is True. 
+     */
+    int load(std::string kernelPath, bool force_refurnsh=true);
+
+
+    /**
+     * @brief reduce the reference count for a kernel 
+     * 
+     * This reduces the ref count by one, and if the ref count hits 0, 
+     * the kernel is unfurnished. Use this instead of calling unload_c 
+     * directly as you cause errors from desyncs. 
+     * 
+     * @param kernelPath path to the kernel
+     */
+    int unload(std::string kernelPath);    
+
+
+    /**
+     * @brief load SCLKs 
+     * 
+     * Any SCLKs in the data area are furnished. 
+     */
+    void loadClockKernels();
+
+    private: 
+
+    /**
+     * @brief load leapsecond kernels
+     * 
+     * Load the LSK distributed with SpiceQL
+     *
+     */
+    void loadLeapSecondKernel();
+
+
+    //! Default constructor, default implentation. Singletons shouldn't be constructed from anywhere
+    //! other than the getInstance() function.
+    KernelPool();
+    ~KernelPool() = default;
+    
+    //! map for tracking what kernels have been furnished and how often. 
+    std::unordered_map<std::string, int> refCounts;
+
+  };
+
+
+  /**
+   * @brief Class for furnishing kernels in bulk 
+   * 
+   * Given a json object, furnish every kernel under a 
+   * "kernels" key. The kernels are unloaded as soon as the object 
+   * goes out of scope. 
+   *
+   * Generally used on results from a kernel query. 
+   */
+  class KernelSet {
+    public:
+
+    /**
+     * @brief Construct a new Kernel Set object
+     * 
+     * @param kernels 
+     */
+    KernelSet(nlohmann::json kernels);
+    ~KernelSet() = default;
+
+    //! map of path to kernel pointers
+    std::unordered_map<std::string, std::vector<SharedKernel>> loadedKernels;
+    
+    //! json used to populate the loadedKernels
+    nlohmann::json kernels; 
+  };
 
 
   /**
