@@ -12,7 +12,7 @@
 #include <nlohmann/json.hpp>
 
 
-namespace SugarSpice {
+namespace SpiceQL {
   /**
     * @brief get the latest kernel in a list
     *

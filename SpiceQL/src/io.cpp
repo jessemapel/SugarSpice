@@ -12,7 +12,7 @@ using namespace std;
 
 using json = nlohmann::json;
 
-namespace SugarSpice {
+namespace SpiceQL {
 
   SpkSegment::SpkSegment (vector<vector<double>> statePositions,
                           vector<double> stateTimes,

@@ -38,9 +38,9 @@ Issues with ISIS's approach:
 * ISIS's code for searching and exploiting Kernels is not modularied. 
 * Kernel search works on a per-image bases
 
-SugarSpice more-or-less rewrites much of ISIS's Kernel searching and exploitation code.
+SpiceQL more-or-less rewrites much of ISIS's Kernel searching and exploitation code.
 
-Distictions in SugarSpice's approach: 
+Distictions in SpiceQL's approach: 
 
 * DB files, here reffered to Mission config files, are located JSON files that can be shipped seperate from data installs
 * Config files leverage common Kernel naming schemes so you can use both NAIF installed kernels, but also 
@@ -216,7 +216,7 @@ Translating .db/makedb files to a single configuration file
 
 Here, we'll run through an example config file, again for Messenger, encapsulating a lot of the information put into ISIS between the .db and makedb files.  
 
-.. literalinclude:: ../../SugarSpice/db/mess.json 
+.. literalinclude:: ../../SpiceQL/db/mess.json 
    :language: JSON
    :linenos:
 

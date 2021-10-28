@@ -45,7 +45,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCSpice_DIR=$CONDA/envs/sugar_spice/lib/cmake/cspice/ -Dfmt_DIR=$CONDA/envs/sugar_spice/lib/cmake/fmt/ -DSUGARSPICE_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCSpice_DIR=$CONDA/envs/sugar_spice/lib/cmake/cspice/ -Dfmt_DIR=$CONDA/envs/sugar_spice/lib/cmake/fmt/ -DSPICEQL_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -70,11 +70,11 @@ jobs:
       # Check that the library installed properly
       run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
-            test -e lib/libSugarSpice.dylib
+            test -e lib/libSpiceQL.dylib
           elif [ "$RUNNER_OS" == "Linux" ]; then
-            test -e lib/libSugarSpice.so
+            test -e lib/libSpiceQL.so
           fi
-          test -e include/SugarSpice/sugar_spice.h
+          test -e include/SpiceQL/sugar_spice.h
 
   build-docs:
 
@@ -106,7 +106,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSUGARSPICE_BUILD_LIB=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSPICEQL_BUILD_LIB=OFF -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -132,6 +132,6 @@ jobs:
       working-directory: ${{github.workspace}}/install
       # Check for the built docs
       run: |
-          test -e share/doc/SugarSpice/sphinx/index.html
-          test -e share/doc/SugarSpice/sphinx/reference/api.html
-          test -e share/doc/SugarSpice/sphinx/reference/tutorials.html
+          test -e share/doc/SpiceQL/sphinx/index.html
+          test -e share/doc/SpiceQL/sphinx/reference/api.html
+          test -e share/doc/SpiceQL/sphinx/reference/tutorials.html

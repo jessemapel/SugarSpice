@@ -1,13 +1,13 @@
 include(CMakeDependentOption)
 cmake_minimum_required(VERSION 3.10)
-project(SugarSpice VERSION 0.0.1 DESCRIPTION "Syntax Sugar for cspice")
+project(SpiceQL VERSION 0.0.1 DESCRIPTION "Syntax Sugar for cspice")
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 set(CMAKE_CXX_STANDARD 20)
 
 # Variables required by multiple build options
-set(SUGARSPICE_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include/")
+set(SPICEQL_BUILD_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/include/")
 
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -25,9 +25,9 @@ message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 # Library Build #
 #################
 
-option (SUGARSPICE_BUILD_LIB "Build the SugarSpice Library" ON)
+option (SPICEQL_BUILD_LIB "Build the SpiceQL Library" ON)
 
-if(SUGARSPICE_BUILD_LIB)
+if(SPICEQL_BUILD_LIB)
 
   set(JSON_BuildTests OFF CACHE INTERNAL "")
 
@@ -37,39 +37,39 @@ if(SUGARSPICE_BUILD_LIB)
   find_package(CSpice REQUIRED)
   find_package(fmt REQUIRED)
 
-  set(SUGARSPICE_INSTALL_INCLUDE_DIR "include/SugarSpice")
-  set(SUGARSPICE_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/utils.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/io.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/query.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/src/spice_types.cpp)
+  set(SPICEQL_INSTALL_INCLUDE_DIR "include/SpiceQL")
+  set(SPICEQL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/src/utils.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/src/io.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/src/query.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/src/spice_types.cpp)
 
-  set(SUGARSPICE_HEADER_FILES ${SUGARSPICE_BUILD_INCLUDE_DIR}/sugar_spice.h
-                              ${SUGARSPICE_BUILD_INCLUDE_DIR}/utils.h
-                              ${SUGARSPICE_BUILD_INCLUDE_DIR}/io.h
-                              ${SUGARSPICE_BUILD_INCLUDE_DIR}/spice_types.h
-                              ${SUGARSPICE_BUILD_INCLUDE_DIR}/query.h)
+  set(SPICEQL_HEADER_FILES ${SPICEQL_BUILD_INCLUDE_DIR}/sugar_spice.h
+                              ${SPICEQL_BUILD_INCLUDE_DIR}/utils.h
+                              ${SPICEQL_BUILD_INCLUDE_DIR}/io.h
+                              ${SPICEQL_BUILD_INCLUDE_DIR}/spice_types.h
+                              ${SPICEQL_BUILD_INCLUDE_DIR}/query.h)
 
-  set(SUGARSPICE_CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/clem1.json
-                              ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/galileo.json
-                              ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/lro.json
-                              ${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/db/mess.json)
+  set(SPICEQL_CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/clem1.json
+                              ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/galileo.json
+                              ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/lro.json
+                              ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/mess.json)
 
-  add_library(SugarSpice SHARED ${SUGARSPICE_SRC_FILES})
+  add_library(SpiceQL SHARED ${SPICEQL_SRC_FILES})
 
   ADD_DEFINITIONS(-D_SOURCE_PREFIX="${CMAKE_CURRENT_SOURCE_DIR}")
 
 
-  set_target_properties(SugarSpice PROPERTIES
+  set_target_properties(SpiceQL PROPERTIES
                                   VERSION ${PROJECT_VERSION}
                                   SOVERSION 0)
 
-  target_include_directories(SugarSpice
+  target_include_directories(SpiceQL
                             PUBLIC
-                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SugarSpice/include>
+                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/include>
                             $<INSTALL_INTERFACE:include>
                             PRIVATE)
 
-  target_link_libraries(SugarSpice
+  target_link_libraries(SpiceQL
                         PUBLIC
                         ghc_filesystem
                         fmt::fmt-header-only
@@ -78,8 +78,8 @@ if(SUGARSPICE_BUILD_LIB)
                         CSpice::cspice
                         )
 
-  install(TARGETS SugarSpice LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  install(DIRECTORY ${SUGARSPICE_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(TARGETS SpiceQL LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(DIRECTORY ${SPICEQL_INCLUDE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
   # Generate the package config
   configure_file(cmake/config.cmake.in
@@ -91,19 +91,19 @@ if(SUGARSPICE_BUILD_LIB)
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
   # Install the headers
-  install(FILES ${SUGARSPICE_HEADER_FILES} DESTINATION ${SUGARSPICE_INSTALL_INCLUDE_DIR})
+  install(FILES ${SPICEQL_HEADER_FILES} DESTINATION ${SPICEQL_INSTALL_INCLUDE_DIR})
 
   # Install the json db files
-  install(FILES ${SUGARSPICE_CONFIG_FILES} DESTINATION "etc/SugarSpice/db")
+  install(FILES ${SPICEQL_CONFIG_FILES} DESTINATION "etc/SpiceQL/db")
 
   # Install the library
-  install(TARGETS SugarSpice nlohmann_json
-          EXPORT sugarSpiceTargets
+  install(TARGETS SpiceQL nlohmann_json
+          EXPORT spiceQLTargets
           LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-          INCLUDES DESTINATION ${SUGARSPICE_INSTALL_INCLUDE_DIR})
+          INCLUDES DESTINATION ${SPICEQL_INSTALL_INCLUDE_DIR})
 
   # Install the target
-  install(EXPORT sugarSpiceTargets
+  install(EXPORT spiceQLTargets
           NAMESPACE spice::
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
@@ -115,16 +115,16 @@ endif()
 # Tests Build #
 ###############
 
-cmake_dependent_option (SUGARSPICE_BUILD_TESTS "Build the SugarSpice Tests" ON SUGARSPICE_BUILD_LIB OFF)
+cmake_dependent_option (SPICEQL_BUILD_TESTS "Build the SpiceQL Tests" ON SPICEQL_BUILD_LIB OFF)
 
-if(SUGARSPICE_BUILD_TESTS)
+if(SPICEQL_BUILD_TESTS)
   include(GoogleTest)
   include(cmake/gtest.cmake)
   include(CTest)
 
   find_package (Threads)
   enable_testing()
-  add_subdirectory(SugarSpice/tests)
+  add_subdirectory(SpiceQL/tests)
 else()
   message(STATUS "Skipping Tests")
 endif()
@@ -133,9 +133,9 @@ endif()
 # Docs Build #
 ##############
 
-option (SUGARSPICE_BUILD_DOCS "Build the SugarSpice Docs" ON)
+option (SPICEQL_BUILD_DOCS "Build the SpiceQL Docs" ON)
 
-if(SUGARSPICE_BUILD_DOCS)
+if(SPICEQL_BUILD_DOCS)
   add_subdirectory ("docs")
 else()
   message(STATUS "Skipping Docs")

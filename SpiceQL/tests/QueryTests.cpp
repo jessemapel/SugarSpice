@@ -8,7 +8,7 @@
 #include "utils.h"
 
 using namespace std;
-using namespace SugarSpice;
+using namespace SpiceQL;
 
 
 TEST(QueryTests, UnitTestGetLatestKernel) {
@@ -86,13 +86,13 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
-  ASSERT_EQ(res["clem"]["ck"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["clem"]["ck"]["smithed"]["kernels"].size(), 1);
-  ASSERT_EQ(res["clem"]["ck"]["deps"]["sclk"].size(), 2);
-  ASSERT_EQ(res["clem"]["ck"]["deps"]["objs"].size(), 1);
-  ASSERT_EQ(res["clem"]["spk"]["reconstructed"]["kernels"].size(), 2);
-  ASSERT_EQ(res["clem"]["fk"]["kernels"].size(), 1);
-
+  ASSERT_EQ(res["clem1"]["ck"]["reconstructed"]["kernels"].size(), 4);
+  ASSERT_EQ(res["clem1"]["ck"]["smithed"]["kernels"].size(), 1);
+  ASSERT_EQ(res["clem1"]["ck"]["deps"]["objs"].size(), 2);
+  ASSERT_EQ(res["clem1"]["spk"]["reconstructed"]["kernels"].size(), 2);
+  ASSERT_EQ(res["clem1"]["fk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["clem1"]["sclk"]["kernels"].size(), 2);
+  
   ASSERT_EQ(res["uvvis"]["ik"]["kernels"].size(), 1);
   ASSERT_EQ(res["uvvis"]["iak"]["kernels"].size(), 2);
 
@@ -116,14 +116,14 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["ck"]["smithed"]["kernels"].size(), 3);
   ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["objs"].size(), 1);
-  ASSERT_EQ(res["galileo"]["ck"]["deps"]["sclk"].size(), 1);
-  ASSERT_EQ(res["galileo"]["ck"]["deps"]["objs"].size(), 0);
+  ASSERT_EQ(res["galileo"]["ck"]["deps"]["objs"].size(), 2);
   ASSERT_EQ(res["galileo"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["iak"]["kernels"].size(), 1);
   ASSERT_EQ(res["galileo"]["pck"]["smithed"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["pck"]["smithed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
+  ASSERT_EQ(res["galileo"]["sclk"]["kernels"].size(), 1);
 }
 
 

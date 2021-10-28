@@ -21,7 +21,7 @@
 using json = nlohmann::json;
 using namespace std;
 
-namespace SugarSpice {
+namespace SpiceQL {
 
   string getLatestKernel(vector<string> kernels) {
     string extension = static_cast<fs::path>(kernels.at(0)).extension();
