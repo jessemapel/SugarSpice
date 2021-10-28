@@ -6,7 +6,7 @@
 std::vector<std::string> base_paths = {
     "/isis_data/base/kernels/sclk/naif0001.tls",
     "/isis_data/base/kernels/sclk/naif0002.tls",
-    "/kernels/pck/pck00006.tpc"
+    "/isis_data/base/kernels/pck/pck00006.tpc"
 };
 
 // paths for testing messenger kernel queries
@@ -118,3 +118,108 @@ std::vector<std::string> cassini_paths = {
     "isis_data/cassini/spk/990135R_SCPSE_78992_87123.bsp",
     "isis_data/cassini/spk/cpck30Sep2004_jupiter.tpc"
 };
+
+std::vector<std::string> lro_paths = {
+    "/isis_data/lro/kernels/tspk/de421.bsp",
+    "/isis_data/lro/kernels/tspk/moon_pa_de421_1900-2050.bpc",
+
+    "/isis_data/lro/kernels/fk/lro_frames_2012255_v02.tf",
+    "/isis_data/lro/kernels/fk/lro_frames_2014049_v01.tf",
+
+    "/isis_data/lro/kernels/ik/lro_lroc_v17.ti",
+    "/isis_data/lro/kernels/ik/lro_lroc_v18.ti",
+
+    "/isis_data/lro/kernels/iak/lro_instrumentAddendum_v03.ti",
+    "/isis_data/lro/kernels/iak/lro_instrumentAddendum_v04.ti",
+
+    "/isis_data/lro/kernels/pck/moon_080317.tf",
+    "/isis_data/lro/kernels/pck/moon_assoc_me.tf",
+
+    "/isis_data/lro/kernels/ck/moc42_2021272_2021273_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021273_2021274_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021274_2021275_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42_2021275_2021276_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021120_2021152_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021151_2021182_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021181_2021213_v01.bc",
+    "/isis_data/lro/kernels/ck/moc42r_2021212_2021244_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021120_2021152_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021151_2021182_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021181_2021213_v01.bc",
+    "/isis_data/lro/kernels/ck/lrolc_2021212_2021244_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021273_2021274_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021274_2021275_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021275_2021276_v01.bc",
+    "/isis_data/lro/kernels/ck/soc31_2021276_2021277_v01.bc",
+
+    "/isis_data/lro/kernels/spk/fdf29_2021273_2021274_b01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021274_2021275_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021275_2021276_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29_2021276_2021277_n01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021121_2021152_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021152_2021182_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021182_2021213_v01.bsp",
+    "/isis_data/lro/kernels/spk/fdf29r_2021213_2021244_v01.bsp",
+    "/isis_data/lro/kernels/spk/LRO_CO_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_CO_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_08_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_ES_09_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_NO_12_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_NO_13_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_SM_25_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_SM_26_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_85_201910_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_ES_86_201910_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_NO_12_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_NO_13_201311_GRGM900C_L600.BSP",
+    "/isis_data/lro/kernels/spk/LRO_SM_25_201308_GRGM660PRIMAT270.bsp",
+    "/isis_data/lro/kernels/spk/LRO_SM_26_201308_GRGM660PRIMAT270.bsp"
+};
+
+// paths for testing apollo16 kernel queries
+std::vector<std::string> apollo16_paths = {
+    "/isis_data/apollo16/kernels/sclk/apollo16.0002.tsc",
+
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV1.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV02.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV01-23_v2.bc",
+    "/isis_data/apollo16/kernels/ck/AS16_M_REV22_v2.bc",
+
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV2.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV90.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV7921_v2.bsp",
+    "/isis_data/apollo16/kernels/spk/AS16_M_REV31_v2.bsp",
+
+    "/isis_data/apollo16/kernels/fk/apollo16.0001.tf",
+    "/isis_data/apollo16/kernels/fk/apollo16_v2.1234.tf",
+
+    "/isis_data/apollo16/kernels/ik/apollo16_metric.1234.ti",
+    "/isis_data/apollo16/kernels/ik/apollo16_metric_v2.2411.ti",
+    "/isis_data/apollo16/kernels/ik/apollo16_panoramic.1234.ti"
+    "/isis_data/apollo16/kernels/iak/apolloPanAddendum701.ti",
+
+    "/isis_data/apollo16/kernels/iak/apollo16MetricAddendum123.ti"
+};
+
+std::vector<std::string> juno_paths = {
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110915_110917_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110918_110924_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_110925_111001_v03.bc",
+    "/isis_data/juno/kernels/ck/juno_sc_rec_111002_111008_v03.bc",
+
+    "/isis_data/juno/kernels/spk/juno_rec_110805_111026_120302.bsp",
+    "/isis_data/juno/kernels/spk/juno_rec_111026_120308_120726.bsp",
+
+    "/isis_data/juno/kernels/sclk/jno_sclkscet_00058.tsc",
+
+    "/isis_data/juno/kernels/tspk/de436s.bsp",
+    "/isis_data/juno/kernels/tspk/de438s.bsp",
+    "/isis_data/juno/kernels/tspk/juno_struct_v04.bsp",
+
+    "/isis_data/juno/kernels/fk/juno_v12.tf",
+    "/isis_data/juno/kernels/ik/juno_junocam_v03.ti",
+    "/isis_data/juno/kernels/iak/junoAddendum005.ti",
+
+    "/isis_data/juno/kernels/pck/pck00010.tpc"
+};
+

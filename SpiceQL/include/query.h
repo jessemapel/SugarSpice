@@ -11,6 +11,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+#include "spice_types.h"
+
 
 namespace SpiceQL {
   /**
@@ -23,6 +25,7 @@ namespace SpiceQL {
     * @returns path object to latest Kernel
    **/
   std::string getLatestKernel(std::vector<std::string> kernels);
+
 
 
    /**
@@ -40,6 +43,31 @@ namespace SpiceQL {
 
 
   /**
+    * @brief return's kernel values in the form of a vector 
+    *
+    *  Takes in a kernel key and returns the value associated with that kernel as a vector of string
+    *  Note: This function is for when the kernel has more than 1 value associated with it, ie: INS-236800_FOV_REF_VECTOR  = ( 1.0, 0.0, 0.0 )
+    * 
+    * @param root key - Kernel to get values from 
+    * @returns vector of values in the form of a string 
+   **/
+  std::vector<std::string> getKernelVectorValue(std::string key);
+
+
+    /**
+    * @brief return's kernel value from key
+    *
+    *  Takes in a kernel key and returns the value associated with that kernel as a string 
+    *  Note: this function is for when the kernal has a single value associated with it, ie:   INS-236800_FOV_REF_ANGLE   = ( 5.27 )
+    * 
+    * @param root key - Kernel to get values from 
+    * @returns string of value associated with key
+   **/
+  std::string getKernelStringValue(std::string key);
+
+
+
+  /**
    * @brief Returns all kernels available for a mission
    *
    * Returns a structured json object containing all available kernels for a specified mission
@@ -52,6 +80,20 @@ namespace SpiceQL {
    * @returns list of paths matching ext
   **/
   nlohmann::json searchMissionKernels(std::string root,  nlohmann::json conf);
+
+
+  /**
+   * @brief Returns all kernels available for a mission
+   *
+   * Returns a structured json object containing all available kernels for a specified mission
+   * along with their dependencies.
+   *
+   * TODO: Add a "See Also" on json format after the format matures a bit more.
+   *
+   * @param conf json conf file
+   * @returns list of paths matching ext
+  **/
+  nlohmann::json searchMissionKernels(nlohmann::json conf);
 
 
   /**
@@ -83,5 +125,5 @@ namespace SpiceQL {
     * @param kernelType Some CK kernel type, see Kernel::TYPES
    **/
   nlohmann::json globKernels(std::string root, nlohmann::json conf, std::string kernelType);
-
-}
+  
+  }

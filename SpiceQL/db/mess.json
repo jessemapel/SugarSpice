@@ -19,7 +19,6 @@
               "deps" : {}
             },
             "deps" : {
-                "lsk" : "naif[0-9]{4}.tls",
                 "objs" : ["/base/lsk", "/mess/sclk"]
             }
         },
