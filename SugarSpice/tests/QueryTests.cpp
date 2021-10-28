@@ -122,7 +122,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   ASSERT_EQ(res["galileo"]["iak"]["kernels"].size(), 1);
   ASSERT_EQ(res["galileo"]["pck"]["smithed"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["pck"]["smithed"]["deps"].size(), 0);
-  ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 1);
+  ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
 }
 
@@ -133,12 +133,11 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsCassini) {
   ifstream i(dbPath);
   nlohmann::json conf;
   i >> conf;
-
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-cout << res << endl;
+
   ASSERT_EQ(res["cassini"]["ck"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["cassini"]["ck"]["smithed"]["kernels"].size(), 3);
 
