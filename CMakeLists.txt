@@ -129,6 +129,18 @@ else()
   message(STATUS "Skipping Tests")
 endif()
 
+##################
+# Bindings Build #
+##################
+
+cmake_dependent_option (SPICEQL_BUILD_BINDINGS "Build the SpiceQL Bindings in Other Languages" ON SPICEQL_BUILD_LIB OFF)
+
+if(SPICEQL_BUILD_BINDINGS)
+  add_subdirectory(bindings)
+else()
+  message(STATUS "Skipping Bindings")
+endif()
+
 ##############
 # Docs Build #
 ##############

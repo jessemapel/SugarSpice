@@ -109,12 +109,18 @@ namespace SpiceQL {
 
   Kernel::Kernel(string path) {
     this->path = path;
-    furnsh_c(path.c_str());
+    KernelPool::getInstance().load(path, true);
+  }
+
+
+  Kernel::Kernel(Kernel &other) {
+    KernelPool::getInstance().load(other.path);
+    this->path = other.path;
   }
 
 
   Kernel::~Kernel() {
-    unload_c(this->path.c_str());
+    KernelPool::getInstance().unload(this->path);
   }
 
 
@@ -130,4 +136,143 @@ namespace SpiceQL {
   }
 
 
-}
+  int KernelPool::load(string path, bool force_refurnsh) {
+    int refCount; 
+
+    auto it = refCounts.find(path);
+
+    if (it != refCounts.end()) {
+      // it's been furnished before, increment ref count
+      it->second += 1;
+      refCount = it->second; 
+
+      if (force_refurnsh) {
+        furnsh_c(path.c_str());
+      } 
+    }
+    else {  
+      // load the kernel and register in onto the kernel map 
+      furnsh_c(path.c_str());
+      refCounts.emplace(path, 1);
+    }
+
+    return refCount;
+  }
+
+
+  int KernelPool::unload(string path) {
+    try { 
+      int &refcount = refCounts.at(path);
+      
+      // if the map contains the last copy of the kernel, delete it
+      if (refcount == 1) {
+        // unfurnsh the kernel
+        unload_c(path.c_str());
+        refCounts.erase(path);
+        return 0;
+      }
+      else {
+        unload_c(path.c_str());
+        refcount--;
+        
+        return refcount;
+      }
+    }
+    catch(out_of_range &e) {
+      throw out_of_range(path + " is not a kernel that has been loaded."); 
+    }
+  }
+
+
+  unsigned int KernelPool::getRefCount(std::string key) {
+    try {
+      return refCounts.at(key);
+    } catch(out_of_range &e) {
+      return 0;
+    }
+  }
+
+
+  unordered_map<string, int> KernelPool::getRefCounts() {
+    return refCounts;
+  }
+
+
+  KernelPool &KernelPool::getInstance() {
+    static KernelPool pool;
+    return pool;
+  }
+
+
+  KernelPool::KernelPool() : refCounts() { 
+    loadLeapSecondKernel();
+  }
+
+
+  vector<string> KernelPool::getLoadedKernels() {
+    vector<string> res;
+
+    for( const auto& [key, value] : refCounts ) {
+      res.emplace_back(key);
+    }
+    return res;
+  }
+
+  void KernelPool::loadClockKernels() { 
+    json clocks;
+
+    // if data dir not set, should raise an exception 
+    fs::path dataDir = getDataDirectory();
+
+    vector<json> confs = getAvailableConfigs();
+    // get SCLKs
+    for(auto &j : confs) {
+      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
+      
+      if (!p.empty()) {
+        json sclks = j[p.at(0)];
+        clocks[p.at(0)] = sclks;
+      }
+    }
+  
+    clocks = searchMissionKernels(dataDir, clocks);
+    clocks = getLatestKernels(clocks);
+
+    vector<json::json_pointer> kpointers = findKeyInJson(clocks, "kernels", true);
+    for (auto &p : kpointers) {
+        json sclks = clocks[p];
+        
+        for (auto &e : sclks) { 
+          load(e.get<string>());
+        }
+    }
+  }
+
+
+  void KernelPool::loadLeapSecondKernel() {
+    // get the distribution's LSK
+    fs::path dbPath = getConfigDirectory();
+    string lskPath = dbPath / "kernels" / "naif0011.tls";
+    load(lskPath);
+  }
+
+
+  KernelSet::KernelSet(json kernels) {
+    this->kernels = kernels; 
+
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels", true);
+
+    for(auto &p : pointers) { 
+      json jkernels = kernels[p]; 
+      vector<SharedKernel> res; 
+      for(auto & k : jkernels) {
+        SharedKernel sk(new Kernel(k));
+        res.emplace_back(sk);
+      }
+      loadedKernels.emplace(p, res);
+    } 
+  }
+
+  
+} 
+ 

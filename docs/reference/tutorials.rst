@@ -205,7 +205,7 @@ Therefore, we need one CK kernel for the spacecraft, the gimbal, and then for MD
 
 Here, you can the how dependencies on other CK kernels are expressed. As MDIS-WAC and MDIS-NAC have the same dependencies, the two groups are the same. 
 
-Everything here, except kernel start and stop times, require a human to with the knowledge to manually label kernel qualities and dependencies. Times are cached by kerneldbgen_.  
+Everything here, except kernel start and stop times, require a knowledgable individual to manually label kernel qualities and dependencies. Times are cached by kerneldbgen_.
 
 Translating .db/makedb files to a single configuration file 
 ************************************************************

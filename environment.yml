@@ -5,14 +5,16 @@ channels:
   - tudat-team
 
 dependencies:
-  - cmake 
+  - cmake
   - cspice-cmake
   - cpp-filesystem
   - doxygen
   - fmt
   - ninja
   - pip
-  - python
+  - pytest
+  - python>=3
+  - swig
   - pip:
     - breathe
     - sphinx-material
