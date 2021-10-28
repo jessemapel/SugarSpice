@@ -94,6 +94,31 @@ std::vector<std::string> galileo_paths = {
     "/isis_data/galileo/kernels/pck/pck00010_msgr_v23_europa2020.tpc"
 };
 
+std::vector<std::string> cassini_paths = {
+    "isis_data/cassini/ck/123456_123456r.bc",
+    "isis_data/cassini/ck/12345_12345r.bc",
+    "isis_data/cassini/ck/Enceladus_CISS_2019Shape_camera.bc",
+    "isis_data/cassini/ck/99213_99243cb_ISS.bc/",
+    "isis_data/cassini/ck/04444_55555c1_ISS.bc",
+
+    "isis_data/cassini/fk/cas_v21_usgs.tf",
+    "isis_data/cassini/fk/cas_v21.tf",
+
+    "isis_data/cassini/iak/vimsAddendum78.ti",
+    "isis_data/cassini/iak/IssNAAddendum777.ti",
+    "isis_data/cassini/iak/IssWAAddendum123.ti",
+
+    "isis_data/cassini/pck/naif0012.tls",
+    "isis_data/cassini/pck/pck12345.tpc",
+    "isis_data/cassini/pck/cpck15Dec2017_2019Shape.tpc",
+
+    "isis_data/cassini/sclk/cas87901.tsc",
+
+    "isis_data/cassini/spk/010420R_SCPSE_EP1_JP83.bsp",
+    "isis_data/cassini/spk/990135R_SCPSE_78992_87123.bsp",
+    "isis_data/cassini/spk/cpck30Sep2004_jupiter.tpc"
+};
+
 std::vector<std::string> lro_paths = {
     "/isis_data/lro/kernels/tspk/de421.bsp",
     "/isis_data/lro/kernels/tspk/moon_pa_de421_1900-2050.bpc",
@@ -197,3 +222,4 @@ std::vector<std::string> juno_paths = {
 
     "/isis_data/juno/kernels/pck/pck00010.tpc"
 };
+
