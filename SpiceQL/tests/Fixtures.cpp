@@ -56,6 +56,7 @@ void KernelDataDirectories::SetUp() {
   paths.insert(paths.end(), apollo17_paths.begin(), apollo17_paths.end());
   paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
   paths.insert(paths.end(), galileo_paths.begin(), galileo_paths.end());
+  paths.insert(paths.end(), cassini_paths.begin(), cassini_paths.end());
   paths.insert(paths.end(), lro_paths.begin(), lro_paths.end());
   paths.insert(paths.end(), apollo16_paths.begin(), apollo16_paths.end());
   paths.insert(paths.end(), juno_paths.begin(), juno_paths.end());

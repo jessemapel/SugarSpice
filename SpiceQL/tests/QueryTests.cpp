@@ -174,12 +174,38 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
 
 
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
-  fs::path dbPath = getMissionConfigFile("apollo16");
- ifstream i(dbPath);
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsCassini) {
+  fs::path dbPath = getMissionConfigFile("cassini");
+  ifstream i(dbPath);
   nlohmann::json conf;
   i >> conf;
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
 
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+
+  ASSERT_EQ(res["cassini"]["ck"]["reconstructed"]["kernels"].size(), 2);
+  ASSERT_EQ(res["cassini"]["ck"]["smithed"]["kernels"].size(), 3);
+
+
+
+  ASSERT_EQ(res["cassini"]["fk"]["kernels"].size(), 2);
+
+  ASSERT_EQ(res["cassini"]["iak"]["kernels"].size(), 3);
+
+  
+  ASSERT_EQ(res["cassini"]["pck"]["deps"].size(), 1);
+  ASSERT_EQ(res["cassini"]["pck"]["kernels"].size(), 3);
+  ASSERT_EQ(res["cassini"]["pck"]["smithed"]["kernels"].size(), 1);
+  ASSERT_EQ(res["cassini"]["sclk"]["kernels"].size(), 1);
+  ASSERT_EQ(res["cassini"]["spk"]["kernels"].size(), 3);
+}
+
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
+  fs::path dbPath = getMissionConfigFile("apollo16");
+    ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(paths);
 
