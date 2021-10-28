@@ -8,6 +8,7 @@
  **/
 
 #include <vector>
+#include <set>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
@@ -125,5 +126,28 @@ namespace SpiceQL {
     * @param kernelType Some CK kernel type, see Kernel::TYPES
    **/
   nlohmann::json globKernels(std::string root, nlohmann::json conf, std::string kernelType);
+
   
+  /**
+   * @brief Get all the kernels in the json as a vector
+   * 
+   * Recusively iterates all the kernel keys and flattens them in a vector.
+   *
+   *
+   * @param kernels json object with kernel query results
+   * @return vector<string> list of kernels
+   */
+  std::vector<std::string> getKernelList(nlohmann::json kernels);
+
+
+ /**
+   * @brief Get all the kernels in the json as a vector
+   * 
+   * Recusively iterates all the kernel keys and flattens them in a vector.
+   *
+   *
+   * @param kernels json object with kernel query results
+   * @return set<string> set of kernels
+   */
+  std::set<std::string> getKernelSet(nlohmann::json kernels); 
   }
