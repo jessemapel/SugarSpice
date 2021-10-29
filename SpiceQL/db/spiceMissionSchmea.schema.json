@@ -4,16 +4,16 @@
     "definitions": {
         "Welcome": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "properties": {
-                "missionName": {
-                    "$ref": "#/definitions/MissionName"
+                "^.*$": {
+                    "$ref": "#/definitions/^.*$"
                 }
             },
             "required": [],
             "title": "Welcome"
         },
-        "MissionName": {
+        "^.*$": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
