@@ -12,17 +12,7 @@ using json = nlohmann::json;
 using namespace SpiceQL;
 
 TEST_F(TestConfig, FunctionalTestConfigConstruct) {
-  json megaConfig = testConfig.getGlobalJson();
-
-  vector<string> keys = {"apollo16", "apollo_pan", "metric", "panoramic",
-                         "galileo", "clem1", "nir", "uvvis", "base", "juno",
-                         "mdis", "mdis_att", "mess", "lroc", "moc"};
-
-  ASSERT_EQ(megaConfig.size(), 15);
-  int i = 0;
-  for (auto it = megaConfig.begin(); it != megaConfig.end(); it++) {
-    EXPECT_EQ((std::find(keys.begin(), keys.end(), it.key()) != keys.end()), true);
-  }
+  ASSERT_EQ(megaConfig.size(), 20);
 }
 
 TEST_F(TestConfig, FunctionalTestConfigEval) {
@@ -150,7 +140,7 @@ TEST_F(TestConfig, FunctionalTestsConfigKeySearch) {
   mocks.OnCallFunc(SpiceQL::findKeyInJson).Return(pointers);
 
   vector<json::json_pointer> res_pointers = testConfig.findKeyInJson("kernels", true);
-  
+
   int i = 0;
   for (auto pointer : res_pointers) {
     EXPECT_EQ(pointer, pointers[i++]);
