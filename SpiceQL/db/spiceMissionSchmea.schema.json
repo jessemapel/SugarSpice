@@ -1,0 +1,98 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "missionName": {
+        "type": "object",
+        "properties": {
+          "kernelType": {
+            "type": "object",
+            "properties": {
+              "kernels": {
+                "type": "string",
+                "items": [
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "reconstructed": {
+                "type": "object",
+                "properties": {
+                  "kernels": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "deps": {
+                "type": "object",
+                "properties": {
+                  "objs": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "required": [
+      "missionName",
+      "properties"
+    ],
+    "specialCase": {
+      "type": "object",
+      "properties": {
+        "kernelType": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": "string",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "reconstructed": {
+              "type": "object",
+              "properties": {
+                "kernels": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            },
+            "deps": {
+              "type": "object",
+              "properties": {
+                "objs": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
