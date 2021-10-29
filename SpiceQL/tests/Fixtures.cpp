@@ -7,7 +7,7 @@
 #include <random>
 #include <sstream>
 
-
+#include "config.h"
 #include "utils.h"
 #include "io.h"
 #include "query.h"
@@ -203,5 +203,13 @@ void LroKernelSet::SetUp() {
 }
 
 void LroKernelSet::TearDown() {
+
+}
+
+void TestConfig::SetUp() {
+  KernelDataDirectories::SetUp();
+}
+
+void TestConfig::TearDown() {
 
 }

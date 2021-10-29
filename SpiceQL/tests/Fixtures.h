@@ -2,6 +2,8 @@
 
 #include <HippoMocks/hippomocks.h>
 
+#include "config.h"
+
 #include "gtest/gtest.h"
 #include <ghc/fs_std.hpp>
 
@@ -50,3 +52,11 @@ class LroKernelSet : public TempTestingFiles {
     void TearDown() override;
 };
 
+class TestConfig : public KernelDataDirectories {
+  protected:
+
+    SpiceQL::Config testConfig;
+
+    void SetUp() override;
+    void TearDown() override;
+};
