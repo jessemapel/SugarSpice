@@ -141,7 +141,7 @@ namespace SpiceQL {
 
 
  /**
-   * @brief Get all the kernels in the json as a vector
+   * @brief Get all the kernels in the json as a set
    * 
    * Recusively iterates all the kernel keys and flattens them in a vector.
    *

@@ -251,4 +251,27 @@ TEST_F(IsisDataDirectory, MroConfTest) {
   set<string> mission = missionMap.at("mro");
   
   EXPECT_EQ(kernels, mission); 
+  
+  // check a kernel from each regex exists in there quality groups
+  vector<string> kernelToCheck =  jsonArrayToVector(res.at("mro").at("spk").at("reconstructed").at("kernels"));
+  vector<string> expected = {"mro_cruise.bsp", "mro_ab.bsp", "mro_psp_rec.bsp", 
+                             "mro_psp1.bsp", "mro_psp10.bsp", "mro_psp_rec.bsp", 
+                             "mro_psp1_ssd_mro95a.bsp", "mro_psp27_ssd_mro110c.bsp"};
+  
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    EXPECT_TRUE(it != kernelToCheck.end());
+  }
+
+  kernelToCheck = getKernelList(res.at("mro").at("spk").at("predicted")); 
+  expected = {"mro_psp.bsp"};
+  EXPECT_EQ(kernelToCheck, expected);
+
+  kernelToCheck = getKernelList(res.at("mro").at("ck").at("reconstructed"));
+  expected = {"mro_sc_psp_160719_160725.bc", "mro_sc_cru_060301_060310.bc", 
+              "mro_sc_ab_060801_060831.bc", "mro_sc_psp_150324_150330_v2.bc"};
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    EXPECT_TRUE(it != kernelToCheck.end());
+  }
 }

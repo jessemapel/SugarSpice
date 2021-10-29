@@ -263,7 +263,6 @@ namespace SpiceQL {
 
     for (auto & p : pointers) {
       vector<string> k = jsonArrayToVector(kernels[p]);
-      kernelVect.reserve(kernelVect.size() + distance(k.begin(), k.end()));
       kernelVect.insert(kernelVect.end(), k.begin(), k.end());
     }    
 
