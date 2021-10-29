@@ -53,6 +53,20 @@ namespace SpiceQL {
 
 
   /**
+    * @brief glob, but with json
+    *
+    * Lambda for globbing files from a regular expression stored
+    * in json. As they can be a single expression or a
+    * list, we need to massage the json a little.
+    *
+    * @param root root path to search
+    * @param r json list of regexes
+    * @returns vector of paths
+   **/
+  std::vector<std::string> getPathsFromRegex (std::string root, nlohmann::json r);
+
+
+  /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
     * Iterates the input path and returning a list of files. Optionally, recursively.

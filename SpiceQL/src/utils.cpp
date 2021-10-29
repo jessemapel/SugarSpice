@@ -77,6 +77,15 @@ namespace SpiceQL {
   }
 
 
+  vector<string> getPathsFromRegex (string root, json r) {
+      vector<string> regexes = jsonArrayToVector(r);
+      regex reg(fmt::format("({})", fmt::join(regexes, "|")));
+      vector<string> paths = glob(root, reg, true);
+
+      return paths;
+  }
+
+
   targetState getTargetState(double et, string target, string observer, string frame, string abcorr) {
     // convert params to spice types
     ConstSpiceChar *target_spice = target.c_str();  // better way to do this?
@@ -544,4 +553,3 @@ namespace SpiceQL {
   }
 
 }
-
