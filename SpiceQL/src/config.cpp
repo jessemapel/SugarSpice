@@ -1,5 +1,7 @@
 #include "config.h"
 
+#include <fstream>
+
 #include <ghc/fs_std.hpp>
 
 using namespace std;
