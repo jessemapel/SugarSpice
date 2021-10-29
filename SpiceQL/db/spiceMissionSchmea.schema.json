@@ -1,98 +1,202 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "missionName": {
-        "type": "object",
-        "properties": {
-          "kernelType": {
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Welcome",
+    "definitions": {
+        "Welcome": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-              "kernels": {
-                "type": "string",
-                "items": [
-                  {
-                    "type": "string"
-                  }
-                ]
-              },
-              "reconstructed": {
-                "type": "object",
-                "properties": {
-                  "kernels": {
-                    "type": "array",
-                    "items": [
-                      {
-                        "type": "string"
-                      }
-                    ]
-                  }
+                "missionName": {
+                    "$ref": "#/definitions/MissionName"
                 }
-              },
-              "deps": {
-                "type": "object",
-                "properties": {
-                  "objs": {
-                    "type": "array",
-                    "items": [
-                      {
-                        "type": "string"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "required": [
-      "missionName",
-      "properties"
-    ],
-    "specialCase": {
-      "type": "object",
-      "properties": {
-        "kernelType": {
-          "type": "object",
-          "properties": {
-            "kernels": {
-              "type": "string",
-              "items": [
-                {
-                  "type": "string"
-                }
-              ]
             },
-            "reconstructed": {
-              "type": "object",
-              "properties": {
+            "required": [],
+            "title": "Welcome"
+        },
+        "MissionName": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ck": {
+                    "$ref": "#/definitions/Ck"
+                },
+                "spk": {
+                    "$ref": "#/definitions/Spk"
+                },
+                "tspk": {
+                    "$ref": "#/definitions/Fk"
+                },
+                "fk": {
+                    "$ref": "#/definitions/Fk"
+                },
+                "lsk": {
+                    "$ref": "#/definitions/Lsk"
+                },
+                "ik": {
+                    "$ref": "#/definitions/Iak"
+                },
+                "iak": {
+                    "$ref": "#/definitions/Iak"
+                },
+                "pck": {
+                    "$ref": "#/definitions/Pck"
+                }
+            },
+            "required": [],
+            "title": "MissionName"
+        },
+        "Ck": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "reconstructed": {
+                    "$ref": "#/definitions/Reconstructed"
+                },
+                "smithed": {
+                    "$ref": "#/definitions/Smithed"
+                },
+                "deps": {
+                    "$ref": "#/definitions/CkDeps"
+                },
                 "kernels": {
-                  "type": "array",
-                  "items": [
-                    {
-                      "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
-                  ]
                 }
-              }
             },
-            "deps": {
-              "type": "object",
-              "properties": {
+            "required": [],
+            "title": "Ck"
+        },
+        "CkDeps": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
                 "objs": {
-                  "type": "array",
-                  "items": [
-                    {
-                      "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
-                  ]
                 }
-              }
-            }
-          }
+            },
+            "required": [],
+            "title": "CkDeps"
+        },
+        "Reconstructed": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "string"
+                },
+                "deps": {
+                    "$ref": "#/definitions/ReconstructedDeps"
+                }
+            },
+            "required": [],
+            "title": "Reconstructed"
+        },
+        "ReconstructedDeps": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "ReconstructedDeps"
+        },
+        "Smithed": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "string"
+                },
+                "deps": {
+                    "$ref": "#/definitions/CkDeps"
+                }
+            },
+            "required": [],
+            "title": "Smithed"
+        },
+        "Fk": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [],
+            "title": "Fk"
+        },
+        "Iak": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "string"
+                }
+            },
+            "required": [],
+            "title": "Iak"
+        },
+        "Lsk": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deps": {
+                    "type": "array",
+                    "items": {}
+                }
+            },
+            "required": [],
+            "title": "Lsk"
+        },
+        "Pck": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "na": {
+                    "$ref": "#/definitions/Na"
+                }
+            },
+            "required": [],
+            "title": "Pck"
+        },
+        "Na": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kernels": {
+                    "type": "string"
+                },
+                "deps": {
+                    "type": "array",
+                    "items": {}
+                }
+            },
+            "required": [],
+            "title": "Na"
+        },
+        "Spk": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "reconstructed": {
+                    "$ref": "#/definitions/Reconstructed"
+                },
+                "deps": {
+                    "$ref": "#/definitions/CkDeps"
+                }
+            },
+            "required": [],
+            "title": "Spk"
         }
-      }
     }
-  }
+}
