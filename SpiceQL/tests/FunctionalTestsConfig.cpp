@@ -12,6 +12,8 @@ using json = nlohmann::json;
 using namespace SpiceQL;
 
 TEST_F(TestConfig, FunctionalTestConfigConstruct) {
+  json megaConfig = testConfig.getGlobalJson();
+  
   ASSERT_EQ(megaConfig.size(), 20);
 }
 
