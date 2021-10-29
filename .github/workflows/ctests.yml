@@ -64,6 +64,7 @@ jobs:
       # Execute the install.  You can specify a specific target with "--target <NAME>"
       run: |
         cmake --install . --config $BUILD_TYPE
+        cmake --build . --target install-python
 
     - name: Check install
       working-directory: ${{github.workspace}}/install
@@ -75,6 +76,7 @@ jobs:
             test -e lib/libSpiceQL.so
           fi
           test -e include/SpiceQL/sugar_spice.h
+          python -c "import pyspiceql"
 
   build-docs:
 

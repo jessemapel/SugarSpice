@@ -1,8 +1,8 @@
 {
-  "moc" : { 
+  "moc" : {
       "ck" : {
           "reconstructed" : {
-              "kernels": ["soc31.*.bc", "lrolc.*.bc"]
+              "kernels": "moc42r?_[0-9]{7}_[0-9]{7}_v[0-9]{2}.bc"
           },
           "deps" : {
             "objs" : ["/base/lsk", "/moc/sclk"]
@@ -10,14 +10,16 @@
       },
       "spk" : {
         "reconstructed" : {
-          "kernels" : ["fdf29_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp", "fdf29r_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp"]
-        }, 
+          "kernels" : ["fdf29_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp", "fdf29r_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp"],
+          "deps" : {}
+        },
         "smithed" : {
-          "kernels" : ["LRO_.*_GRGM660.*.bsp", "LRO_.*_GRGM900C.*.BSP"]
+          "kernels" : ["LRO_.*_GRGM660.*.bsp", "LRO_.*_GRGM900C.*.BSP"],
+          "deps" : {}
         },
         "deps" : {
           "objs" : ["/base/lsk", "/moc/sclk"]
-        } 
+        }
       },
       "sclk" : {
         "kernels" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"]
@@ -29,8 +31,49 @@
         "kernels" : ["lro_instruments_v[0-9]{2}.ti"]
       }
   },
-  
-  "lroc" : {
 
+  "lroc" : {
+    "ck" : {
+      "reconstructed" : {
+        "kernels" : ["lrolc_[0-9]{7}_[0-9]{7}_v[0-9]{2}.bc", "soc31_[0-9]{7}_[0-9]{7}_v[0-9]{2}.bc"],
+        "deps" : {}
+      },
+      "deps" : {
+        "objs" : ["/base/lsk", "/moc/sclk", "/moc/ck"]
+      }
+    },
+    "spk" : {
+      "reconstructed" : {
+        "kernels" : "fdf29r?_[0-9]{7}_[0-9]{7}_[nbv][0-9]{2}.bsp",
+        "deps" : {}
+      },
+      "smithed" : {
+        "kernels" : [
+          "LRO_CO_[0-9]{6}_GRGM660PRIMAT270.bsp",
+          "LRO_[A-Z]{2}_[0-9]{2}_[0-9]{6}_GRGM660PRIMAT270.bsp",
+          "LRO_CO_[0-9]{6}_GRGM900C_L600.BSP",
+          "LRO_[A-Z]{2}_[0-9]{2}_[0-9]{6}_GRGM900C_L600.BSP"],
+        "deps" : {}
+      },
+      "deps" : {
+          "objs" : ["/base/lsk", "/moc/sclk"]
+      }
+    },
+    "tspk" : {
+      "kernels" : ["de421.bsp", "moon_pa_de421_1900-2050.bpc"]
+    },
+    "fk" : {
+      "kernels" : "lro_frames_[0-9]{7}_v[0-9]{2}.tf"
+    },
+    "ik" : {
+      "kernels" :"lro_lroc_v[0-9]{2}.ti"
+    },
+    "iak" : {
+      "kernels" : "lro_instrumentAddendum_v[0-9]{2}.ti"
+    },
+    "pck" : {
+      "kernels" : ["moon_080317.tf", "moon_assoc_me.tf"],
+      "deps" : "/base/pck"
+    }
   }
 }

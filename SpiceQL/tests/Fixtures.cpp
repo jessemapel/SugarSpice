@@ -52,8 +52,11 @@ void KernelDataDirectories::SetUp() {
   // combine multiple path lists here as we add more.
   paths = base_paths;
   paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());
+  paths.insert(paths.end(), apollo17_paths.begin(), apollo17_paths.end());
   paths.insert(paths.end(), clem1_paths.begin(), clem1_paths.end());
   paths.insert(paths.end(), galileo_paths.begin(), galileo_paths.end());
+  paths.insert(paths.end(), cassini_paths.begin(), cassini_paths.end());
+  paths.insert(paths.end(), lro_paths.begin(), lro_paths.end());
   paths.insert(paths.end(), apollo16_paths.begin(), apollo16_paths.end());
   paths.insert(paths.end(), juno_paths.begin(), juno_paths.end());
 }
@@ -107,7 +110,7 @@ void LroKernelSet::SetUp() {
 
   // make tempdir the root
   setenv("SPICEROOT", tempDir.c_str(), true);
-  
+
   root = tempDir;
 
   // Move Clock kernels
@@ -115,28 +118,28 @@ void LroKernelSet::SetUp() {
   lskPath = fs::path("data") / "naif0012.tls";
   sclkPath = fs::path("data") / "lro_clkcor_2020184_v00.tsc";
   create_directory(tempDir / "clocks");
-  
+
   fs::copy_file(lskPath, tempDir / "clocks" / "naif0012.tls");
   fs::copy_file(sclkPath, tempDir / "clocks" / "lro_clkcor_2020184_v00.tsc");
-  
+
   // reassign member vars to temp dir
   lskPath = tempDir / "clocks" / "naif0012.tls";
   sclkPath = tempDir / "clocks" / "lro_clkcor_2020184_v00.tsc";
 
   pool.loadClockKernels();
-  
+
   // Write CK1 ------------------------------------------
   fs::create_directory(tempDir / "ck");
 
   int bodyCode = -85000;
   std::string referenceFrame = "j2000";
-  
+
   ckPath1 = tempDir / "ck" / "soc31.0001.bc";
   std::vector<std::vector<double>> avs = {{1,1,1}, {2,2,2}};
   std::vector<std::vector<double>> quats = {{0.2886751, 0.2886751, 0.5773503, 0.7071068 }, {0.4082483, 0.4082483, 0.8164966, 0 }};
   std::vector<double> times1 = {110000000, 120000000};
   std::vector<double> times2 = {130000000, 140000000};
-  
+
   writeCk(ckPath1, quats, times1, bodyCode, referenceFrame, "CK ID 1",  sclkPath, lskPath, avs, "CK1");
 
   // Write CK2 ------------------------------------------
@@ -144,7 +147,7 @@ void LroKernelSet::SetUp() {
   avs = {{3,4,5}, {6,5,5}};
   quats = {{0.3754439, 0.3754439, 0.3754439, -0.7596879}, {-0.5632779, -0.5632779, -0.5632779, 0.21944}};
   writeCk(ckPath2, quats, times2, bodyCode, referenceFrame, "CK ID 2", sclkPath, lskPath, avs, "CK2");
-  
+
   // Write SPK1 ------------------------------------------
   fs::create_directory(tempDir / "spk");
   spkPath1 = tempDir / "spk" / "LRO_TEST_GRGM660MAT270.bsp";
@@ -198,8 +201,43 @@ void LroKernelSet::SetUp() {
   };
 
   fkPath = tempDir / "fk" / "lro_frames_1111111_v01.tf";
-  
+
   writeTextKernel(fkPath, "fk", jKeywords);
+
+  conf = R"({
+    "moc" : {
+        "ck" : {
+            "reconstructed" : {
+                "kernels": ["soc31.*.bc", "lrolc.*.bc"]
+            },
+            "deps" : {
+            "sclk" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"],
+            "objs" : ["/base/lsk", "/moc/sclk"]
+            }
+        },
+        "spk" : {
+        "reconstructed" : {
+            "kernels" : ["fdf29_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp", "fdf29r_[0-9]{7}_[0-9]{7}_[0-9]{3}.bsp"]
+        },
+        "smithed" : {
+            "kernels" : ["LRO_.*_GRGM660.*.bsp", "LRO_.*_GRGM900C.*.BSP"]
+        },
+        "deps" : {
+            "sclk" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"],
+            "objs" : ["/base/lsk", "/moc/sclk"]
+        }
+        },
+        "sclk" : {
+        "kernels" : ["lro_clkcor_[0-9]{7}_v[0-9]{2}.tsc"]
+        },
+        "fk" : {
+        "kernels" : ["lro_frames_[0-9]{7}_v[0-9]{2}.tf"]
+        },
+        "ik" : {
+        "kernels" : ["lro_instruments_v[0-9]{2}.ti"]
+        }
+    }
+})"_json;
 }
 
 void LroKernelSet::TearDown() {
