@@ -7,7 +7,6 @@
 #include <random>
 #include <sstream>
 
-
 #include "utils.h"
 #include "io.h"
 #include "query.h"
@@ -63,9 +62,48 @@ void KernelDataDirectories::SetUp() {
 }
 
 
-void KernelDataDirectories::TearDown() {
+void KernelDataDirectories::TearDown() { }
+
+
+void IsisDataDirectory::SetUp() { 
+  TempTestingFiles::SetUp();
+
+  base = "";
+
+  ifstream infile("data/isisKernelList.txt");
+  string line;
+
+  while(getline(infile, line)) {
+    fs::path p = line;
+    string mission = p.parent_path().parent_path().parent_path().filename();
+    string kernelType = p.parent_path().filename();
+
+    files.emplace_back(base / p.filename());
+
+    auto iter = missionMap.find(mission);
+    if (iter == missionMap.end()) {
+      set<string> s = {p.filename()};
+      missionMap.emplace(mission, s);
+    }
+    else {
+      missionMap[mission].emplace(p.filename());
+    }
+
+    iter = kernelTypeMap.find(kernelType);
+    if (iter == kernelTypeMap.end()) {
+      set<string> s = {p.filename()};
+      kernelTypeMap.emplace(kernelType, s);
+    }
+    else {
+      kernelTypeMap[kernelType].emplace(p.filename());
+    }
+  }
 
 }
+
+
+void IsisDataDirectory::TearDown() {}
+
 
 void LroKernelSet::SetUp() {
   TempTestingFiles::SetUp();

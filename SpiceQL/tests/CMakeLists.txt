@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(SPICEQL_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/SpiceQL/tests/)
 
+
 # collect all of the test sources
 set (SPICEQL_TEST_SOURCE ${SPICEQL_TEST_DIRECTORY}/Fixtures.cpp
                             ${SPICEQL_TEST_DIRECTORY}/UtilTests.cpp
