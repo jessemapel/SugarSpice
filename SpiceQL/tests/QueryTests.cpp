@@ -1,4 +1,7 @@
 #include <fstream>
+#include <algorithm>
+
+#include <HippoMocks/hippomocks.h>
 
 #include <gtest/gtest.h>
 
@@ -6,6 +9,7 @@
 
 #include "query.h"
 #include "utils.h"
+
 
 using namespace std;
 using namespace SpiceQL;
@@ -27,18 +31,18 @@ TEST(QueryTests, getKernelStringValue){
   // INS-236810_CCD_CENTER        =  (  511.5, 511.5 )
   EXPECT_EQ(getKernelStringValue("INS-236810_FOV_SHAPE"), "RECTANGLE");
 
-
-    try {
-      getKernelStringValue("aKeyThatWillNotBeInTheResults");
+  try {
+    getKernelStringValue("aKeyThatWillNotBeInTheResults");
+    FAIL() << "Expected std::invalid_argument";
+  }
+  catch(std::invalid_argument const & err) {
+      EXPECT_EQ(err.what(),std::string("key not in results"));
+  }
+  catch(...) {
       FAIL() << "Expected std::invalid_argument";
-    }
-    catch(std::invalid_argument const & err) {
-        EXPECT_EQ(err.what(),std::string("key not in results"));
-    }
-    catch(...) {
-        FAIL() << "Expected std::invalid_argument";
-    }
+  }
 }
+
 
 TEST(QueryTests, getKernelVectorValue){
   unique_ptr<Kernel> k(new Kernel("data/msgr_mdis_v010.ti"));
@@ -292,14 +296,55 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsJuno) {
 
   nlohmann::json res = searchMissionKernels(base, conf);
 
-  ASSERT_EQ(res["juno"]["ck"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["juno"]["ck"]["deps"]["objs"].size(), 2);
-  ASSERT_EQ(res["juno"]["spk"]["reconstructed"]["kernels"].size(), 2);
-  ASSERT_EQ(res["juno"]["spk"]["deps"]["objs"].size(), 1);
-  ASSERT_EQ(res["juno"]["sclk"]["kernels"].size(), 1);
-  ASSERT_EQ(res["juno"]["tspk"]["kernels"].size(), 3);
-  ASSERT_EQ(res["juno"]["fk"]["kernels"].size(), 1);
-  ASSERT_EQ(res["juno"]["ik"]["kernels"].size(), 1);
-  ASSERT_EQ(res["juno"]["iak"]["kernels"].size(), 1);
-  ASSERT_EQ(res["juno"]["pck"]["na"]["kernels"].size(), 1);
+  ASSERT_EQ(res["juno"]["ck"]["reconstructed"]["kernels"].size(), 4); 
+  ASSERT_EQ(res["juno"]["ck"]["deps"]["objs"].size(), 2); 
+  ASSERT_EQ(res["juno"]["spk"]["reconstructed"]["kernels"].size(), 2); 
+  ASSERT_EQ(res["juno"]["spk"]["deps"]["objs"].size(), 1); 
+  ASSERT_EQ(res["juno"]["sclk"]["kernels"].size(), 1);  
+  ASSERT_EQ(res["juno"]["tspk"]["kernels"].size(), 3);  
+  ASSERT_EQ(res["juno"]["fk"]["kernels"].size(), 1); 
+  ASSERT_EQ(res["juno"]["ik"]["kernels"].size(), 1);  
+  ASSERT_EQ(res["juno"]["iak"]["kernels"].size(), 1);  
+  ASSERT_EQ(res["juno"]["pck"]["na"]["kernels"].size(), 1); 
+} 
+
+
+TEST_F(IsisDataDirectory, MroConfTest) {
+  fs::path dbPath = getMissionConfigFile("mro");
+  
+  ifstream i(dbPath);
+  nlohmann::json conf = nlohmann::json::parse(i);
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(files);
+
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
+
+  set<string> kernels = getKernelSet(res);
+  set<string> mission = missionMap.at("mro");
+  
+  EXPECT_EQ(kernels, mission); 
+  
+  // check a kernel from each regex exists in there quality groups
+  vector<string> kernelToCheck =  jsonArrayToVector(res.at("mro").at("spk").at("reconstructed").at("kernels"));
+  vector<string> expected = {"mro_cruise.bsp", "mro_ab.bsp", "mro_psp_rec.bsp", 
+                             "mro_psp1.bsp", "mro_psp10.bsp", "mro_psp_rec.bsp", 
+                             "mro_psp1_ssd_mro95a.bsp", "mro_psp27_ssd_mro110c.bsp"};
+  
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    EXPECT_TRUE(it != kernelToCheck.end());
+  }
+
+  kernelToCheck = getKernelList(res.at("mro").at("spk").at("predicted")); 
+  expected = {"mro_psp.bsp"};
+  EXPECT_EQ(kernelToCheck, expected);
+
+  kernelToCheck = getKernelList(res.at("mro").at("ck").at("reconstructed"));
+  expected = {"mro_sc_psp_160719_160725.bc", "mro_sc_cru_060301_060310.bc", 
+              "mro_sc_ab_060801_060831.bc", "mro_sc_psp_150324_150330_v2.bc"};
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    EXPECT_TRUE(it != kernelToCheck.end());
+  }
 }

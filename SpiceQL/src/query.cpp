@@ -265,4 +265,34 @@ namespace SpiceQL {
     return searchMissionKernels(root, conf);
   }
 
+
+  vector<string> getKernelList(json kernels) {
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels");
+
+    vector<string> kernelVect;
+
+    for (auto & p : pointers) {
+      vector<string> k = jsonArrayToVector(kernels[p]);
+      kernelVect.insert(kernelVect.end(), k.begin(), k.end());
+    }    
+
+    return kernelVect;
+  }
+
+
+  set<string> getKernelSet(json kernels) {
+    vector<json::json_pointer> pointers = findKeyInJson(kernels, "kernels");
+
+    set<string> kernelSet;
+
+    for (auto & p : pointers) {
+      vector<string> ks = jsonArrayToVector(kernels[p]);
+      for (auto &k : ks) {
+        kernelSet.emplace(k);
+      }
+    }    
+
+    return kernelSet;
+  }
+
 }

@@ -12,6 +12,7 @@
 using namespace std;
 using namespace SpiceQL;
 
+
 class TempTestingFiles : public ::testing::Test {
   protected:
     fs::path tempDir;
@@ -20,6 +21,19 @@ class TempTestingFiles : public ::testing::Test {
     void TearDown() override;
 };
 
+class IsisDataDirectory : public TempTestingFiles {
+  protected: 
+    
+    string base;
+    vector<string> files; 
+
+    unordered_map<string, set<string>> missionMap;
+    unordered_map<string, set<string>> kernelTypeMap;
+    
+    void SetUp() override;
+    void TearDown() override; 
+
+};
 
 class KernelDataDirectories : public ::testing::Test {
   protected:
