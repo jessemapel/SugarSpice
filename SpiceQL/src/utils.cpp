@@ -526,6 +526,22 @@ namespace SpiceQL {
   }
 
 
+  json getInstrumentConfig(string instrument) {
+    vector<string> paths = getAvailableConfigFiles();
+    json conf;
+
+    for(const fs::path &p : paths) {
+      ifstream i(p);
+      i >> conf;
+      if (conf.contains(instrument)) {
+        return conf[instrument];
+      }
+    }
+
+    throw invalid_argument(fmt::format("Config file for \"{}\" not found", instrument));
+  }
+
+
   string getKernelType(string kernelPath) {
     SpiceChar type[6];
     SpiceChar source[6];

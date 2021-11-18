@@ -258,6 +258,20 @@ namespace SpiceQL {
    nlohmann::json getMissionConfig(std::string mission);
 
 
+   /**
+    * @brief Returns the Instrument specific Spice config.
+    *
+    * Given an instrument, search a prioritized list of directories for
+    * the json config file that contains that instrument. See getAvailableConfigs
+    * for the search hierarchy
+    *
+    * @param instrument The name of the instrument to find a config for
+    *
+    * @returns The config file parsed into a JSON object
+   **/
+   nlohmann::json getInstrumentConfig(std::string instrument);
+
+
   /**
     * @brief Returns std::vector<string> interpretation of a json array.
     *

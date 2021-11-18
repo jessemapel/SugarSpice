@@ -49,3 +49,10 @@ TEST(UtilTests, findKeyInJson) {
   EXPECT_EQ(res.at(1).to_string(), "/l1a/me");
   EXPECT_EQ(res.at(2).to_string(), "/me");
 }
+
+TEST(UtilTests, getInstrumentConfig) {
+  nlohmann::json lrocConfig = getInstrumentConfig("lroc");
+  nlohmann::json lroConfig = getMissionConfig("lro");
+
+  EXPECT_EQ(lrocConfig, lroConfig["lroc"]);
+}
