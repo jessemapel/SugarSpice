@@ -53,6 +53,19 @@ namespace SpiceQL {
 
 
   /**
+   * @brief Merge two json configs
+   *
+   * When arrays are merged, the values from the base config will appear
+   * first in the merged config.
+   *
+   * @param baseConfig First json config
+   * @param mergingConfig Second json config
+   * @return nlohmann::json
+   */
+  nlohmann::json mergeConfigs(nlohmann::json baseConfig, nlohmann::json mergingConfig);
+
+
+  /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
     * Iterates the input path and returning a list of files. Optionally, recursively.

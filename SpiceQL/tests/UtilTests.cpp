@@ -50,9 +50,97 @@ TEST(UtilTests, findKeyInJson) {
   EXPECT_EQ(res.at(2).to_string(), "/me");
 }
 
+
 TEST(UtilTests, getInstrumentConfig) {
   nlohmann::json lrocConfig = getInstrumentConfig("lroc");
   nlohmann::json lroConfig = getMissionConfig("lro");
+  nlohmann::json expectedConfig = mergeConfigs(lroConfig["lroc"], lroConfig["moc"]);
+  expectedConfig.erase("deps");
 
-  EXPECT_EQ(lrocConfig, lroConfig["lroc"]);
+  EXPECT_EQ(lrocConfig, expectedConfig);
+}
+
+
+TEST(UtilTests, mergeConfigs) {
+  nlohmann::json baseConfig = R"({
+    "ck" : {
+      "predict" : {
+        "kernels" : "predict_ck_1.bc"
+      },
+      "reconstructed" : {
+        "kernels" : "recon_ck_3.bs"
+      },
+      "smithed" : {
+        "kernels" : ["smithed_ck_2.bs", "smithed_ck_3.bs"]
+      }
+    },
+    "ik" : {
+      "kernels" : "ik_1.ti"
+    }
+  })"_json;
+
+  nlohmann::json mergeConfig = R"({
+    "ck" : {
+      "reconstructed" : {
+        "kernels" : ["recon_ck_1.bc", "recon_ck_2.bc"]
+      },
+      "smithed" : {
+        "kernels" : "smithed_ck_1.bs"
+      }
+    },
+    "spk" : {
+      "predict" : {
+        "kernels" : "predict_spk_1.bsp"
+      }
+    },
+    "sclk" : {
+      "kernels" : "sclk_1.tsc"
+    },
+    "fk" : {
+      "kernels" : "fk_1.tsc"
+    }
+  })"_json;
+
+  nlohmann::json mergedConfig = mergeConfigs(baseConfig, mergeConfig);
+
+  nlohmann::json expectedConfig = R"({
+    "ck" : {
+      "predict" : {
+        "kernels" : "predict_ck_1.bc"
+      },
+      "reconstructed" : {
+        "kernels" : ["recon_ck_3.bs", "recon_ck_1.bc", "recon_ck_2.bc"]
+      },
+      "smithed" : {
+        "kernels" : ["smithed_ck_2.bs", "smithed_ck_3.bs", "smithed_ck_1.bs"]
+      }
+    },
+    "spk" : {
+      "predict" : {
+        "kernels" : "predict_spk_1.bsp"
+      }
+    },
+    "sclk" : {
+      "kernels" : "sclk_1.tsc"
+    },
+    "fk" : {
+      "kernels" : "fk_1.tsc"
+    },
+    "ik" : {
+      "kernels" : "ik_1.ti"
+    }
+  })"_json;
+
+  EXPECT_EQ(mergedConfig, expectedConfig);
+
+  nlohmann::json objectConfig = R"({
+    "testkey" : {}
+  })"_json;
+
+  nlohmann::json valueConfig = R"({
+    "testkey" : "testvalue"
+  })"_json;
+
+  EXPECT_THROW(mergeConfigs(objectConfig, valueConfig), std::invalid_argument);
+  EXPECT_THROW(mergeConfigs(valueConfig, objectConfig), std::invalid_argument);
 }

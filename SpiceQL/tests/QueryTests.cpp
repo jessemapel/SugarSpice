@@ -250,27 +250,22 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo17) {
   ASSERT_EQ(res["APOLLO_PAN"]["iak"]["kernels"].size(), 2);
 }
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsLRO) {
-  fs::path dbPath = getMissionConfigFile("lro");
-
-  ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsLROC) {
+  nlohmann::json conf = getInstrumentConfig("lroc");
 
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(paths);
 
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
-  EXPECT_EQ(res["lroc"]["ck"]["reconstructed"]["kernels"].size(), 8);
-  EXPECT_EQ(res["lroc"]["ck"]["deps"]["objs"].size(), 3);
-  EXPECT_EQ(res["lroc"]["spk"]["reconstructed"]["kernels"].size(), 8);
-  EXPECT_EQ(res["lroc"]["spk"]["smithed"]["kernels"].size(), 14);
-  EXPECT_EQ(res["lroc"]["iak"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["ik"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["pck"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["fk"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["tspk"]["kernels"].size(), 2);
+  EXPECT_EQ(res["ck"]["reconstructed"]["kernels"].size(), 16);
+  EXPECT_EQ(res["spk"]["reconstructed"]["kernels"].size(), 8);
+  EXPECT_EQ(res["spk"]["smithed"]["kernels"].size(), 14);
+  EXPECT_EQ(res["iak"]["kernels"].size(), 2);
+  EXPECT_EQ(res["ik"]["kernels"].size(), 2);
+  EXPECT_EQ(res["pck"]["kernels"].size(), 2);
+  EXPECT_EQ(res["fk"]["kernels"].size(), 2);
+  EXPECT_EQ(res["tspk"]["kernels"].size(), 2);
 }
 
 
