@@ -32,5 +32,6 @@ else()
 endif()
 
 # Install the Python wrapper
+set_target_properties(pyspiceql PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 install(TARGETS pyspiceql DESTINATION ${Python3_SITEARCH})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyspiceql.py DESTINATION ${Python3_SITEARCH})
