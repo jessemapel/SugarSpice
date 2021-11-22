@@ -10,10 +10,15 @@ list(APPEND CMAKE_SWIG_FLAGS "-py3;-DPY3")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 # Setup for wrapper library
-set_source_files_properties(utils.i PROPERTIES CPLUSPLUS ON)
+set(PYSPICEQL_SOURCES pyspiceql.i
+                      io.i
+                      query.i
+                      spice_types.i
+                      utils.i)
+set_source_files_properties(${PYSPICEQL_SOURCES} PROPERTIES CPLUSPLUS ON)
 swig_add_library(pyspiceql
                  LANGUAGE python
-                 SOURCES utils.i)
+                 SOURCES ${PYSPICEQL_SOURCES})
 swig_link_libraries(pyspiceql SpiceQL Python3::Module)
 set_property(TARGET pyspiceql PROPERTY SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 

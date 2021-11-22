@@ -48,12 +48,6 @@ namespace SpiceQL {
                  std::optional<std::vector<std::vector<double>>> stateVelocities,
                  std::optional<std::string> segmentComment);
 
-      /**
-       * Combine the state positions and velocities into a single vector
-       *
-       * @return Single vector with {X1, Y1, Z1, dX1, dY1, dZ1, X2, Y2, Z2, dX2, dY2, dZ2, ...}
-       */
-      static std::vector<std::vector<double>> concatStates (std::vector<std::vector<double>> statePositions, std::vector<std::vector<double>> stateVelocities);
       //! @cond Doxygen_Suppress
       std::vector<double> stateTimes;
       int bodyCode;
@@ -106,6 +100,15 @@ namespace SpiceQL {
         std::optional<std::string> comment = std::nullopt;
         //! @endcond
     };
+
+
+    /**
+      * Combine the state positions and velocities into a single vector
+      *
+      * @return Single vector with {X1, Y1, Z1, dX1, dY1, dZ1, X2, Y2, Z2, dX2, dY2, dZ2, ...}
+      */
+    std::vector<std::vector<double>> concatStates (std::vector<std::vector<double>> statePositions,
+                                                   std::vector<std::vector<double>> stateVelocities);
 
 
     /**
