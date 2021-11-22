@@ -26,6 +26,8 @@
   $result = PyObject_CallMethodObjArgs(module, jsonLoads, pythonJsonString, NULL);
 }
 
+%template(_string_list) std::vector< std::string >;
+
 %include "io.i"
 %include "query.i"
 %include "spice_types.i"
