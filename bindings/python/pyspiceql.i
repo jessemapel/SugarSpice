@@ -18,9 +18,13 @@
   }
 }
 
-// %typemap(out) nlohmann::json {
-
-// }
+%typemap(out) nlohmann::json {
+  PyObject* module = PyImport_ImportModule("json");
+  PyObject* jsonLoads = PyUnicode_FromString("loads");
+  std::string jsonString = ($1).dump();
+  PyObject* pythonJsonString = PyUnicode_DecodeUTF8(jsonString.c_str(), jsonString.size(), NULL);
+  $result = PyObject_CallMethodObjArgs(module, jsonLoads, pythonJsonString, NULL);
+}
 
 %include "io.i"
 %include "query.i"
