@@ -76,6 +76,7 @@ jobs:
             test -e lib/libSpiceQL.so
           fi
           test -e include/SpiceQL/sugar_spice.h
+          rm -rf ${{github.workspace}}/build
           python -c "import pyspiceql"
 
   build-docs:
