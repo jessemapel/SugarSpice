@@ -84,6 +84,7 @@ jobs:
       run: |
         for file in *.json;
             do
+            pwd
             jsonschema --instance "$file" spiceMissionSchmea.schema.json -o pretty
         done;
 
