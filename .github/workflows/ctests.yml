@@ -82,7 +82,6 @@ jobs:
     - name: check json files
       working-directory: ${{github.workspace}}/install/etc/SpiceQL/db
       run: |
-      pwd
         for file in *.json;
             do
             jsonschema --instance "$file" spiceMissionSchmea.schema.json -o pretty
