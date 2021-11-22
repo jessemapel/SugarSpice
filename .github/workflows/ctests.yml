@@ -78,6 +78,16 @@ jobs:
           test -e include/SpiceQL/sugar_spice.h
           python -c "import pyspiceql"
 
+    # compair all json files against the schema 
+    - name: check json files
+      working-directory: ${{github.workspace}}/install/etc/SpiceQL/db
+      run: |
+        cd ../../SpiceQL/db/
+        for file in *.json;
+            do
+            jsonschema --instance "$file" spiceMissionSchmea.schema.json -o pretty
+        done;
+
   build-docs:
 
     runs-on: ubuntu-latest

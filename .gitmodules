@@ -10,3 +10,7 @@
 [submodule "submodules/hippomocks"]
 	path = submodules/hippomocks
 	url = https://github.com/dascandy/hippomocks.git
+[submodule "extern/pybind11"]
+	path = extern/pybind11
+	url = ../../pybind/pybind11
+	branch = stable
