@@ -457,6 +457,7 @@ namespace SpiceQL {
       fs::path aleDataDir = ptr == NULL ? "" : ptr;
 
       ptr = getenv("SPICEROOT");
+      cout << ptr << std::endl;
       fs::path spiceDataDir = ptr == NULL ? "" : ptr;
 
       if (fs::is_directory(spiceDataDir)) {

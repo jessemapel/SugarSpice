@@ -49,6 +49,12 @@ void TempTestingFiles::TearDown() {
 
 
 void KernelDataDirectories::SetUp() {
+  TempTestingFiles::SetUp();
+  
+  cout << "setting " << tempDir << endl;
+  // set SPICEROOT 
+  setenv("SPICEROOT", tempDir.c_str(), true);
+
   // combine multiple path lists here as we add more.
   paths = base_paths;
   paths.insert(paths.end(), mess_paths.begin(), mess_paths.end());

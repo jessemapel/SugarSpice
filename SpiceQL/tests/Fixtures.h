@@ -35,7 +35,7 @@ class IsisDataDirectory : public TempTestingFiles {
 
 };
 
-class KernelDataDirectories : public ::testing::Test {
+class KernelDataDirectories : public TempTestingFiles {
   protected:
 
     vector<string> paths;

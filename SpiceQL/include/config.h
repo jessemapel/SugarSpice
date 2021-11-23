@@ -14,6 +14,13 @@
  */
 namespace SpiceQL {
 
+  /**
+   * @brief Object for interacting with SpiceQL target configs
+   * 
+   * The config class can wrap multiple config files and give an interface for interacting 
+   * with the configs and obtaining kernel lists. 
+   * 
+   */
   class Config {
     public:
 
@@ -43,23 +50,21 @@ namespace SpiceQL {
 
 
       /**
-       * @brief Given a conf json object, expands the regexes to paths 
+       * @brief 
        * 
-       * @param eval_json Json to expand
-       * @param merge if true, merges with the internal 
-       * @return nlohmann::json 
+       * @return unsigned int 
        */
-      nlohmann::json evaluateJson(nlohmann::json eval_json, bool merge=false);
+      unsigned int size();
 
 
       /**
        * @brief Given a conf json object, expands the regeexes to paths 
        * 
-       * @param eval_json Json to expand
+       * @param pointer Json key or pointer to expand
        * @param merge if true, merges with the internal 
        * @return nlohmann::json 
        */
-      nlohmann::json evaluateJson(std::string pointer, bool merge=false);
+      nlohmann::json getJson(std::string pointer, bool merge=false);
 
 
       /**
@@ -85,7 +90,7 @@ namespace SpiceQL {
        * @param recursive if true, searches recursively for all matches
        * @return std::vector<nlohmann::json::json_pointer> vector of pointers to where the key was found
        */
-      std::vector<nlohmann::json::json_pointer> findKey(std::string key, bool recursive);
+      std::vector<std::string> findKey(std::string key, bool recursive);
 
 
     private:
@@ -95,6 +100,17 @@ namespace SpiceQL {
        * @param json json object representing a target config
        */
       Config(nlohmann::json json);
+
+
+      /**
+       * @brief Given a conf json object, expands the regexes to paths 
+       * 
+       * @param eval_json Json to expand
+       * @param merge if true, merges with the internal 
+       * @return nlohmann::json 
+       */
+      nlohmann::json evaluateJson(nlohmann::json eval_json, bool merge=false);
+
 
       //! internal json config
       nlohmann::json config;

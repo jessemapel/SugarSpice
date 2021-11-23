@@ -36,8 +36,12 @@ namespace SpiceQL {
 
 
   Config Config::operator[](string pointer) {
-    json::json_pointer p(pointer);
+    if (pointer.at(0) != '/') {
+      pointer = "/"+pointer; 
+    }
 
+    json::json_pointer p(pointer);
+    
     Config conf(config[p]);
     return conf;
   }
@@ -60,7 +64,12 @@ namespace SpiceQL {
   }
 
 
-  json Config::evaluateJson(string pointer, bool merge) {
+  unsigned int Config::size() {
+    return config.size();
+  }
+
+
+  json Config::getJson(string pointer, bool merge) {
     json eval_json;
     json::json_pointer p(pointer);
 
@@ -80,7 +89,13 @@ namespace SpiceQL {
   }
 
 
-  vector<nlohmann::json::json_pointer> Config::findKey(string key, bool recursive) {
-    return SpiceQL::findKeyInJson(config, key, recursive);
+  vector<string> Config::findKey(string key, bool recursive) {
+    vector<string> pointers;
+
+    for(auto &e : SpiceQL::findKeyInJson(config, key, recursive)) {
+      pointers.push_back(e.to_string());
+    }
+
+    return pointers; 
   }
 }
