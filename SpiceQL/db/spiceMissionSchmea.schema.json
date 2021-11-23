@@ -1,0 +1,125 @@
+{
+    "type": "object",
+    "properties": {
+      "/": {
+        "ck": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "predicted": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "reconstructed": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "smithed": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "NA": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "spk": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "tspk": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "fk": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "lsk": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "ik": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "iak": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        },
+        "pck": {
+          "type": "object",
+          "properties": {
+            "kernels": {
+              "type": [
+                "string",
+                "array"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "patternProperties": {
+      "^([a-z])+([A-Z])([0-9])$": {
+        "type": "object"
+      }
+    },
+    "additionalProperties": true
+  }
