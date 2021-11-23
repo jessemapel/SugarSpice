@@ -10,38 +10,38 @@ using json = nlohmann::json;
 namespace SpiceQL {
 
   Config::Config() {
-    // If running tests or debugging locally
-    char* condaPrefix = std::getenv("CONDA_PREFIX");
-
-    fs::path debugDbPath = fs::absolute(_SOURCE_PREFIX) / "SpiceQL" / "db";
-    fs::path installDbPath = fs::absolute(condaPrefix) / "etc" / "SpiceQL" / "db";
-
-    // Use installDbPath unless $SSPICE_DEBUG is set
-    fs::path dbPath = std::getenv("SSPICE_DEBUG") ? debugDbPath : installDbPath;
-
-    if (!fs::is_directory(dbPath)) {
-      throw runtime_error("Config Directory Not Found.");
-    }
-
+    string dbPath = getConfigDirectory(); 
     vector<string> json_paths = glob(dbPath, basic_regex("json"));
 
     for(const fs::path &p : json_paths) {
       ifstream i(p);
-      json conf;
-      i >> conf;
-      for (auto it = conf.begin(); it != conf.end(); ++it) {
-        megaJson[it.key()] = it.value();
+      json j;
+      i >> j;
+      for (auto it = j.begin(); it != j.end(); ++it) {
+        config[it.key()] = it.value();
       }
     }
   }
 
-  json Config::operator[](json::json_pointer pointer) {
-    return megaJson[pointer];
+
+  Config::Config(string j) {
+    std::ifstream ifs(j);
+    config = json::parse(ifs);
   }
 
-  json Config::operator[](string pointer) {
-    return megaJson[pointer];
+  
+  Config::Config(json j) {
+    config = j;
   }
+
+
+  Config Config::operator[](string pointer) {
+    json::json_pointer p(pointer);
+
+    Config conf(config[p]);
+    return conf;
+  }
+
 
   json Config::evaluateJson(json eval_json, bool merge) {
 
@@ -53,28 +53,34 @@ namespace SpiceQL {
     }
 
     if (merge) {
-      megaJson.merge_patch(eval_json);
+      config.merge_patch(eval_json);
     }
 
     return eval_json;
   }
 
-  json Config::evaluateJson(json::json_pointer pointer, bool merge) {
+
+  json Config::evaluateJson(string pointer, bool merge) {
     json eval_json;
-    eval_json[pointer] = megaJson[pointer];
+    json::json_pointer p(pointer);
+
+    eval_json[p] = config[p];
 
     return evaluateJson(eval_json, merge);
   }
 
-  json Config::evaluateJson() {
-    return evaluateJson(megaJson, true);
+
+  json Config::getJson() {
+    return evaluateJson(config, true);
   }
 
-  json Config::getGlobalJson() {
-    return megaJson;
+
+  json Config::getRawConfig() {
+    return config;
   }
 
-  vector<json::json_pointer> Config::findKeyInJson(string key, bool recursive) {
-    return SpiceQL::findKeyInJson(megaJson, key, recursive);
+
+  vector<nlohmann::json::json_pointer> Config::findKey(string key, bool recursive) {
+    return SpiceQL::findKeyInJson(config, key, recursive);
   }
 }
