@@ -349,6 +349,7 @@ TEST_F(IsisDataDirectory, MroConfTest) {
   }
 }
 
+//test's for viking1 config 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsViking1) {
   fs::path dbPath = getMissionConfigFile("viking1");
 
@@ -365,7 +366,29 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsViking1) {
   EXPECT_EQ(res["viking1"]["ck"]["reconstructed"]["kernels"].size(), 1);
   EXPECT_EQ(res["viking1"]["ck"]["smithed"]["kernels"].size(), 1);
   EXPECT_EQ(res["viking1"]["fk"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking1"]["iak"]["kernels"].size(), 1);
+  EXPECT_EQ(res["viking1"]["iak"]["kernels"].size(), 2);
   EXPECT_EQ(res["viking1"]["sclk"]["kernels"].size(), 2);
-  EXPECT_EQ(res["viking1"]["spk"]["reconstructed"]["kernels"].size(), 2);
+  EXPECT_EQ(res["viking1"]["spk"]["reconstructed"]["kernels"].size(), 3);
+}
+
+// test's for viking2 config
+TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsViking2) {
+  fs::path dbPath = getMissionConfigFile("viking2");
+
+  ifstream i(dbPath);
+  nlohmann::json conf;
+  i >> conf;
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(paths);
+
+  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+
+  cout << res <<endl;
+  EXPECT_EQ(res["viking2"]["ck"]["reconstructed"]["kernels"].size(), 1);
+  EXPECT_EQ(res["viking2"]["ck"]["smithed"]["kernels"].size(), 1);
+  EXPECT_EQ(res["viking2"]["fk"]["kernels"].size(), 1);
+  EXPECT_EQ(res["viking2"]["iak"]["kernels"].size(), 2);
+  EXPECT_EQ(res["viking2"]["sclk"]["kernels"].size(), 2);
+  EXPECT_EQ(res["viking2"]["spk"]["reconstructed"]["kernels"].size(), 3);
 }
