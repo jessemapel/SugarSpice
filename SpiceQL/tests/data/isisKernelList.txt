@@ -1,7 +1,5 @@
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/jup310.bsp
-/usgs/cpkgs/isis3/isis_data/base/kernels/spk/SAVEde421.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/nep090.bsp
-/usgs/cpkgs/isis3/isis_data/base/kernels/spk/SAVEde421.bsp.log
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/sat393.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/ura111.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/mar080.bsp
@@ -12,7 +10,6 @@
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/SAVEde414.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/nep081.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/de245.bsp
-/usgs/cpkgs/isis3/isis_data/base/kernels/spk/SAVEde414.bsp.log
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/de118.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/ura112.bsp
 /usgs/cpkgs/isis3/isis_data/base/kernels/spk/ura115.bsp
@@ -14726,7 +14723,6 @@
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/spk/em16_tgo_fsp_120_01_20191211_20200523_v01.bsp
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/spk/em16_tgo_fsp_074_01_20190119_20190712_v01.bsp
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/spk/em16_tgo_fsp_043_01_20160314_20181127_v01.bsp
-/usgs/cpkgs/isis3/isis_data/tgo/kernels/tspk/de432s.bsp
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/tspk/mar085.bsp
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/tspk/mar097.bsp
 /usgs/cpkgs/isis3/isis_data/tgo/kernels/tspk/de430.bsp

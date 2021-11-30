@@ -190,14 +190,8 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsCassini) {
 
   ASSERT_EQ(res["cassini"]["ck"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["cassini"]["ck"]["smithed"]["kernels"].size(), 3);
-
-
-
   ASSERT_EQ(res["cassini"]["fk"]["kernels"].size(), 2);
-
   ASSERT_EQ(res["cassini"]["iak"]["kernels"].size(), 3);
-
-  
   ASSERT_EQ(res["cassini"]["pck"]["deps"].size(), 1);
   ASSERT_EQ(res["cassini"]["pck"]["kernels"].size(), 3);
   ASSERT_EQ(res["cassini"]["pck"]["smithed"]["kernels"].size(), 1);
@@ -253,72 +247,59 @@ TEST_F(IsisDataDirectory, FunctionalTestApollo17Conf) {
 
 
 TEST_F(IsisDataDirectory, FunctionalTestLroConf) {
-  fs::path dbPath = getMissionConfigFile("lro");
+  compareKernelSets("lro");
 
-  ifstream i(dbPath);
-  nlohmann::json conf = nlohmann::json::parse(i);
-
+  nlohmann::json conf = getMissionConfig("lro");
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(files);
   
   nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  set<string> kernels = getKernelSet(res);
-  set<string> expectedKernels = missionMap.at("lro");
-  set<string> diff; 
+  // check a kernel from each regex exists in their quality groups
+  vector<string> kernelToCheck =  jsonArrayToVector(res.at("moc").at("ck").at("reconstructed").at("kernels"));
+  vector<string> expected = {"moc42r_2016305_2016336_v01.bc"};
   
-  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    if (it == kernelToCheck.end()) {
+      FAIL() << e << " was not found in the kernel results";
+    }
+  }
   
-  if (diff.size() != 0) {
-    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  kernelToCheck = getKernelList(res.at("lroc").at("spk").at("reconstructed")); 
+  expected = {"fdf29r_2018305_2018335_v01.bsp", "fdf29_2021327_2021328_b01.bsp"};
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    if (it == kernelToCheck.end()) {
+      FAIL() << e << " was not found in the kernel results";
+    }
+  }
+
+
+  kernelToCheck = getKernelList(res.at("moc").at("spk").at("smithed")); 
+  expected = {"LRO_ES_05_201308_GRGM660PRIMAT270.bsp", "LRO_ES_16_201406_GRGM900C_L600.BSP"};
+  for (auto &e : expected) { 
+    auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
+    if (it == kernelToCheck.end()) {
+      FAIL() << e << " was not found in the kernel results";
+    }
   }
 }
 
 
 TEST_F(IsisDataDirectory, FunctionalTestJunoConf) {
-  fs::path dbPath = getMissionConfigFile("jno");
-
-  ifstream i(dbPath);
-  nlohmann::json conf = nlohmann::json::parse(i);
-
-  MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(files);
-  
-  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
-
-  set<string> kernels = getKernelSet(res);
-  set<string> expectedKernels = missionMap.at("juno");
-  set<string> diff; 
-  
-  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
-  
-  if (diff.size() != 0) {
-    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
-  }
-
+  compareKernelSets("juno");
 } 
 
 
 TEST_F(IsisDataDirectory, FunctionalTestMroConf) {
-  fs::path dbPath = getMissionConfigFile("mro");
-  
-  ifstream i(dbPath);
-  nlohmann::json conf = nlohmann::json::parse(i);
+  compareKernelSets("mro");
 
+  nlohmann::json conf = getMissionConfig("mro");
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(files);
-
+  
   nlohmann::json res = searchMissionKernels("doesn't matter", conf);
-
-  set<string> kernels = getKernelSet(res);
-  set<string> expectedKernels = missionMap.at("mro");
-  set<string> diff; 
-  
-  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
-  
-  if (diff.size() != 0) {
-    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
-  }
 
   // check a kernel from each regex exists in there quality groups
   vector<string> kernelToCheck =  jsonArrayToVector(res.at("mro").at("spk").at("reconstructed").at("kernels"));
@@ -346,50 +327,11 @@ TEST_F(IsisDataDirectory, FunctionalTestMroConf) {
 
 
 TEST_F(IsisDataDirectory, FunctionalTestViking1Conf) {
-  fs::path dbPath = getMissionConfigFile("viking1");
-
-  ifstream i(dbPath);
-  nlohmann::json conf = nlohmann::json::parse(i);
-
-  MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(files);
-  
-  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
-
-  set<string> kernels = getKernelSet(res);
-  set<string> expectedKernels = missionMap.at("viking1");
-  set<string> diff; 
-  
-  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
-  
-  if (diff.size() != 0) {
-    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
-  }
-
+  compareKernelSets("viking1");
   // skip specific tests since viking images are mostly literals and without mixed qualities
 }
 
 
 TEST_F(IsisDataDirectory, FunctionalTestViking2Conf) {
-  fs::path dbPath = getMissionConfigFile("viking2");
-
-  ifstream i(dbPath);
-  nlohmann::json conf = nlohmann::json::parse(i);
-
-  MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(files);
-  
-  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
-
-  set<string> kernels = getKernelSet(res);
-  set<string> expectedKernels = missionMap.at("viking2");
-  set<string> diff; 
-  
-  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
-  
-  if (diff.size() != 0) {
-    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
-  }
-
-  // skip specific tests since viking images are mostly literals and without mixed qualities
+  compareKernelSets("viking2");
 }

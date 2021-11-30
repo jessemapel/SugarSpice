@@ -28,7 +28,7 @@ class IsisDataDirectory : public TempTestingFiles {
     
     void SetUp() override;
     void TearDown() override; 
-
+    void compareKernelSets(string name);
 };
 
 class KernelDataDirectories : public ::testing::Test {
