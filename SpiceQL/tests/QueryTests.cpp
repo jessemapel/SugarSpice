@@ -266,7 +266,7 @@ TEST_F(IsisDataDirectory, FunctionalTestLroConf) {
     }
   }
   
-  kernelToCheck = getKernelList(res.at("lroc").at("spk").at("reconstructed")); 
+  kernelToCheck = getKernelList(res.at("moc").at("spk").at("reconstructed")); 
   expected = {"fdf29r_2018305_2018335_v01.bsp", "fdf29_2021327_2021328_b01.bsp"};
   for (auto &e : expected) { 
     auto it = find(kernelToCheck.begin(), kernelToCheck.end(), e);
