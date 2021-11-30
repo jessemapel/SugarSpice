@@ -52,12 +52,12 @@ namespace SpiceQL {
       /**
        * used for converting string and int kernal quality
        */
-      const static std::vector<std::string> QUALITIES;
+      static const std::vector<std::string> QUALITIES;
       
       /**
        * used for converting between string and int kernal types
        */
-      const static std::vector<std::string> TYPES;
+      static const std::vector<std::string> TYPES;
 
 
       /**

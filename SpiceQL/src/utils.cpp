@@ -77,12 +77,41 @@ namespace SpiceQL {
   }
 
 
-  vector<string> getPathsFromRegex (string root, json r) {
-      vector<string> regexes = jsonArrayToVector(r);
-      regex reg(fmt::format("({})", fmt::join(regexes, "|")));
-      vector<string> paths = glob(root, reg, true);
+  json mergeConfigs(json baseConfig, json mergingConfig) {
+    for (json::iterator it = mergingConfig.begin(); it != mergingConfig.end(); ++it) {
+      if (baseConfig.contains(it.key())) {
+        if (baseConfig[it.key()].is_object()) {
+          if (it.value().is_object()) {
+            baseConfig[it.key()] = mergeConfigs(baseConfig[it.key()], it.value());
+          }
+          else {
+            throw invalid_argument("Invalid merge. Cannot merge an object with a non-object.");
+          }
+        }
+        else {
+          if (it.value().is_object()) {
+            throw invalid_argument("Invalid merge. Cannot merge an object with a non-object.");
+          }
 
-      return paths;
+          // Ensure that we are going to append to an array
+          if (!baseConfig[it.key()].is_array()) {
+            baseConfig[it.key()] = json::array({baseConfig[it.key()]});
+          }
+
+          if (it.value().is_array()) {
+            baseConfig[it.key()].insert(baseConfig[it.key()].end(), it.value().begin(), it.value().end());
+          }
+          else {
+            baseConfig[it.key()] += it.value();
+          }
+        }
+      }
+
+      else {
+        baseConfig[it.key()] = it.value();
+      }
+    }
+    return baseConfig;
   }
 
 
@@ -533,6 +562,28 @@ namespace SpiceQL {
     json conf;
     i >> conf;
     return conf;
+  }
+
+
+  json getInstrumentConfig(string instrument) {
+    vector<string> paths = getAvailableConfigFiles();
+    json conf;
+
+    for(const fs::path &p : paths) {
+      ifstream i(p);
+      i >> conf;
+      if (conf.contains(instrument)) {
+        if (conf[instrument].contains("deps")) {
+          for(auto & dep: jsonArrayToVector(conf[instrument]["deps"])) {
+            conf[instrument] = mergeConfigs(conf[instrument], conf[dep]);
+          }
+          conf[instrument].erase("deps");
+        }
+        return conf[instrument];
+      }
+    }
+
+    throw invalid_argument(fmt::format("Config file for \"{}\" not found", instrument));
   }
 
 

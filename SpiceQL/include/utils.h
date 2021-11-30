@@ -53,17 +53,16 @@ namespace SpiceQL {
 
 
   /**
-    * @brief glob, but with json
-    *
-    * Lambda for globbing files from a regular expression stored
-    * in json. As they can be a single expression or a
-    * list, we need to massage the json a little.
-    *
-    * @param root root path to search
-    * @param r json list of regexes
-    * @returns vector of paths
-   **/
-  std::vector<std::string> getPathsFromRegex (std::string root, nlohmann::json r);
+   * @brief Merge two json configs
+   *
+   * When arrays are merged, the values from the base config will appear
+   * first in the merged config.
+   *
+   * @param baseConfig First json config
+   * @param mergingConfig Second json config
+   * @return nlohmann::json
+   */
+  nlohmann::json mergeConfigs(nlohmann::json baseConfig, nlohmann::json mergingConfig);
 
 
   /**
@@ -270,6 +269,20 @@ namespace SpiceQL {
     * @returns path object of the config file
    **/
    nlohmann::json getMissionConfig(std::string mission);
+
+
+   /**
+    * @brief Returns the Instrument specific Spice config.
+    *
+    * Given an instrument, search a prioritized list of directories for
+    * the json config file that contains that instrument. See getAvailableConfigs
+    * for the search hierarchy
+    *
+    * @param instrument The name of the instrument to find a config for
+    *
+    * @returns The config file parsed into a JSON object
+   **/
+   nlohmann::json getInstrumentConfig(std::string instrument);
 
 
   /**

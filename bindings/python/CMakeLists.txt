@@ -10,10 +10,15 @@ list(APPEND CMAKE_SWIG_FLAGS "-py3;-DPY3")
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 # Setup for wrapper library
-set_source_files_properties(utils.i PROPERTIES CPLUSPLUS ON)
+set(PYSPICEQL_SOURCES pyspiceql.i
+                      io.i
+                      query.i
+                      spice_types.i
+                      utils.i)
+set_source_files_properties(${PYSPICEQL_SOURCES} PROPERTIES CPLUSPLUS ON)
 swig_add_library(pyspiceql
                  LANGUAGE python
-                 SOURCES utils.i)
+                 SOURCES ${PYSPICEQL_SOURCES})
 swig_link_libraries(pyspiceql SpiceQL Python3::Module)
 set_property(TARGET pyspiceql PROPERTY SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 
@@ -26,16 +31,7 @@ else()
     message(STATUS "Skipping Python Bindings Tests")
 endif()
 
-# Configure Python install files
-set(PYTHON_INSTALL_FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/pyspiceql.py
-        ${CMAKE_CURRENT_BINARY_DIR}/_pyspiceql.so)
-set(SETUP_PY_IN ${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in)
-set(SETUP_PY_OUT ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
-configure_file(${SETUP_PY_IN} ${SETUP_PY_OUT})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in ${CMAKE_CURRENT_BINARY_DIR}/__init__.py)
-
-# Custom Python installation target
-add_custom_target(install-python
-        DEPENDS pyspiceql
-        COMMAND python ${SETUP_PY_OUT} install)
+# Install the Python wrapper
+set_target_properties(pyspiceql PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+install(TARGETS pyspiceql DESTINATION ${Python3_SITEARCH})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyspiceql.py DESTINATION ${Python3_SITEARCH})

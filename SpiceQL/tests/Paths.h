@@ -258,3 +258,16 @@ std::vector<std::string> viking1_paths = {
     "/isis_data/viking1/kernels/sclk/vo1_fsc.tsc",
     "isis_data/viking1/kernels/spk/v01_sedr.bsp"
 };
+
+// paths for viking2
+std::vector<std::string> viking2_paths = {
+    "/isis_data/viking2/kernels/ck/vo2_sedr_kck2.bc",
+    "/isis_data/viking2/kernels/ck/vo2bType3Csmithed.bc",
+    "/isis_data/viking2/kernels/fk/vo2_v31.tf",
+    "/isis_data/viking2/kernels/iak/vikingAddendum123.ti",
+    "/isis_data/viking2/kernels/sclk/vo2_fict.tsc",
+    "/isis_data/viking2/kernels/sclk/vo2_fsc.tsc",
+    "isis_data/viking2/kernels/spk/viking2a.bsp",
+    "isis_data/viking2/kernels/spk/vo2_recon.bsp",
+    "isis_data/viking2/kernels/spk/vo2_sedr.bsp",
+};
