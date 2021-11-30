@@ -53,6 +53,19 @@ namespace SpiceQL {
 
 
   /**
+   * @brief Merge two json configs
+   *
+   * When arrays are merged, the values from the base config will appear
+   * first in the merged config.
+   *
+   * @param baseConfig First json config
+   * @param mergingConfig Second json config
+   * @return nlohmann::json
+   */
+  nlohmann::json mergeConfigs(nlohmann::json baseConfig, nlohmann::json mergingConfig);
+
+
+  /**
     * @brief ls, like in unix, kinda. Also it's a function.
     *
     * Iterates the input path and returning a list of files. Optionally, recursively.
@@ -256,6 +269,20 @@ namespace SpiceQL {
     * @returns path object of the config file
    **/
    nlohmann::json getMissionConfig(std::string mission);
+
+
+   /**
+    * @brief Returns the Instrument specific Spice config.
+    *
+    * Given an instrument, search a prioritized list of directories for
+    * the json config file that contains that instrument. See getAvailableConfigs
+    * for the search hierarchy
+    *
+    * @param instrument The name of the instrument to find a config for
+    *
+    * @returns The config file parsed into a JSON object
+   **/
+   nlohmann::json getInstrumentConfig(std::string instrument);
 
 
   /**
