@@ -203,36 +203,6 @@ namespace SpiceQL {
 
 
   json searchMissionKernels(json kernels, std::vector<double> times, bool isContiguous)  {
-    auto loadTimeKernels = [&](json j) -> vector<shared_ptr<Kernel>> {
-      vector<json::json_pointer> p = findKeyInJson(j, "sclk", true);
-      vector<string> sclks;
-
-      if (!p.empty()) {
-        sclks = jsonArrayToVector(j[p.at(0)]);
-        sort(sclks.begin(), sclks.end(), greater<string>());
-      }
-
-
-      json baseConf = getMissionConfig("base");
-      string dataDir = getDataDirectory();
-      baseConf = searchMissionKernels(dataDir, baseConf);
-      p = findKeyInJson(baseConf, "lsk", true);
-
-      vector<string> lsks = jsonArrayToVector(baseConf.at(p.at(0))["kernels"]);
-      sort(lsks.begin(), lsks.end(), greater<string>());
-
-      vector<shared_ptr<Kernel>> timeKernels(2);
-
-      if(lsks.size()) {
-        timeKernels.emplace_back(new Kernel(lsks.at(0)));
-      }
-      if (sclks.size()) {
-        timeKernels.emplace_back(new Kernel(sclks.at(0)));
-      }
-      return timeKernels;
-    };
-
-
     json reducedKernels;
 
     vector<json::json_pointer> ckpointers = findKeyInJson(kernels, "ck", true);
