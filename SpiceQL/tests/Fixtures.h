@@ -13,7 +13,7 @@ using namespace std;
 using namespace SpiceQL;
 
 
-class TempTestingFiles : public ::testing::Test {
+class TempTestingFiles : public ::testing::Environment {
   protected:
     fs::path tempDir;
 
@@ -21,7 +21,7 @@ class TempTestingFiles : public ::testing::Test {
     void TearDown() override;
 };
 
-class IsisDataDirectory : public TempTestingFiles {
+class IsisDataDirectory : public ::testing::Test {
   protected: 
     
     string base;
@@ -35,7 +35,7 @@ class IsisDataDirectory : public TempTestingFiles {
 
 };
 
-class KernelDataDirectories : public TempTestingFiles {
+class KernelDataDirectories : public ::testing::Test  {
   protected:
 
     vector<string> paths;
@@ -45,11 +45,11 @@ class KernelDataDirectories : public TempTestingFiles {
 };
 
 
-class LroKernelSet : public TempTestingFiles {
+class LroKernelSet : public ::testing::Test  {
   protected:
     KernelPool &pool = KernelPool::getInstance();
-
-    string root;
+    
+    fs::path root;
     string lskPath;
     string sclkPath;
     string ckPath1;
