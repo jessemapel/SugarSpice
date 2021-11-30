@@ -229,27 +229,26 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
 
 
 // test for apollo 17 kernels 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo17) {
+TEST_F(IsisDataDirectory, FunctionalTestApollo17Conf) {
   fs::path dbPath = getMissionConfigFile("apollo17");
 
-
   ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+  nlohmann::json conf = nlohmann::json::parse(i);
 
   MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(paths);
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-
-
-  ASSERT_EQ(res["apollo17"]["ck"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["apollo17"]["sclk"]["kernels"].size(), 1);
-  ASSERT_EQ(res["apollo17"]["fk"]["kernels"].size(), 2);
-  ASSERT_EQ(res["apollo17"]["spk"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["METRIC"]["iak"]["kernels"].size(), 1);
-  ASSERT_EQ(res["PANORAMIC"]["ik"]["kernels"].size(), 3);
-  ASSERT_EQ(res["APOLLO_PAN"]["iak"]["kernels"].size(), 2);
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at("apollo17");
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
 }
 
 
