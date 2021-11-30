@@ -25,7 +25,7 @@ void TempTestingFiles::SetUp() {
 
   while (true) {
     stringstream ss;
-    ss << "SSTESTS" << hex << rand(prng);
+    ss << "SQTESTS" << hex << rand(prng);
     tpath = tmp_dir / ss.str();
 
     // true if the directory was created.

@@ -205,6 +205,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsCassini) {
   ASSERT_EQ(res["cassini"]["spk"]["kernels"].size(), 3);
 }
 
+
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
   fs::path dbPath = getMissionConfigFile("apollo16");
     ifstream i(dbPath);
@@ -225,6 +226,7 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo16) {
   ASSERT_EQ(res["panoramic"]["ik"]["kernels"].size(), 1);
   ASSERT_EQ(res["apollo_pan"]["iak"]["kernels"].size(), 2);
 }
+
 
 // test for apollo 17 kernels 
 TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo17) {
@@ -250,66 +252,55 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsApollo17) {
   ASSERT_EQ(res["APOLLO_PAN"]["iak"]["kernels"].size(), 2);
 }
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsLRO) {
+
+TEST_F(IsisDataDirectory, FunctionalTestLroConf) {
   fs::path dbPath = getMissionConfigFile("lro");
 
   ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+  nlohmann::json conf = nlohmann::json::parse(i);
 
   MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(paths);
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
-
-  EXPECT_EQ(res["lroc"]["ck"]["reconstructed"]["kernels"].size(), 8);
-  EXPECT_EQ(res["lroc"]["ck"]["deps"]["objs"].size(), 3);
-  EXPECT_EQ(res["lroc"]["spk"]["reconstructed"]["kernels"].size(), 8);
-  EXPECT_EQ(res["lroc"]["spk"]["smithed"]["kernels"].size(), 14);
-  EXPECT_EQ(res["lroc"]["iak"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["ik"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["pck"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["fk"]["kernels"].size(), 2);
-  EXPECT_EQ(res["lroc"]["tspk"]["kernels"].size(), 2);
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at("lro");
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
 }
 
 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsJuno) {
+TEST_F(IsisDataDirectory, FunctionalTestJunoConf) {
   fs::path dbPath = getMissionConfigFile("jno");
 
-  string base = "/isis_data/juno";
-  regex base_reg(fmt::format("({})", fmt::join(base, "")));
-  vector<string> paths_with_base;
-
-  for (auto path: paths) {
-    if (regex_search(path, base_reg)) {
-      paths_with_base.push_back(path);
-    }
-  }
-
   ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+  nlohmann::json conf = nlohmann::json::parse(i);
 
   MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(paths_with_base);
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  nlohmann::json res = searchMissionKernels(base, conf);
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at("juno");
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
 
-  ASSERT_EQ(res["juno"]["ck"]["reconstructed"]["kernels"].size(), 4); 
-  ASSERT_EQ(res["juno"]["ck"]["deps"]["objs"].size(), 2); 
-  ASSERT_EQ(res["juno"]["spk"]["reconstructed"]["kernels"].size(), 2); 
-  ASSERT_EQ(res["juno"]["spk"]["deps"]["objs"].size(), 1); 
-  ASSERT_EQ(res["juno"]["sclk"]["kernels"].size(), 1);  
-  ASSERT_EQ(res["juno"]["tspk"]["kernels"].size(), 3);  
-  ASSERT_EQ(res["juno"]["fk"]["kernels"].size(), 1); 
-  ASSERT_EQ(res["juno"]["ik"]["kernels"].size(), 1);  
-  ASSERT_EQ(res["juno"]["iak"]["kernels"].size(), 1);  
-  ASSERT_EQ(res["juno"]["pck"]["na"]["kernels"].size(), 1); 
 } 
 
 
-TEST_F(IsisDataDirectory, MroConfTest) {
+TEST_F(IsisDataDirectory, FunctionalTestMroConf) {
   fs::path dbPath = getMissionConfigFile("mro");
   
   ifstream i(dbPath);
@@ -321,10 +312,15 @@ TEST_F(IsisDataDirectory, MroConfTest) {
   nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
   set<string> kernels = getKernelSet(res);
-  set<string> mission = missionMap.at("mro");
+  set<string> expectedKernels = missionMap.at("mro");
+  set<string> diff; 
   
-  EXPECT_EQ(kernels, mission); 
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
   
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
+
   // check a kernel from each regex exists in there quality groups
   vector<string> kernelToCheck =  jsonArrayToVector(res.at("mro").at("spk").at("reconstructed").at("kernels"));
   vector<string> expected = {"mro_cruise.bsp", "mro_ab.bsp", "mro_psp_rec.bsp", 
@@ -349,46 +345,52 @@ TEST_F(IsisDataDirectory, MroConfTest) {
   }
 }
 
-//test's for viking1 config 
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsViking1) {
+
+TEST_F(IsisDataDirectory, FunctionalTestViking1Conf) {
   fs::path dbPath = getMissionConfigFile("viking1");
 
   ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+  nlohmann::json conf = nlohmann::json::parse(i);
 
   MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(paths);
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at("viking1");
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
 
-  cout << res <<endl;
-  EXPECT_EQ(res["viking1"]["ck"]["reconstructed"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking1"]["ck"]["smithed"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking1"]["fk"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking1"]["iak"]["kernels"].size(), 2);
-  EXPECT_EQ(res["viking1"]["sclk"]["kernels"].size(), 2);
-  EXPECT_EQ(res["viking1"]["spk"]["reconstructed"]["kernels"].size(), 3);
+  // skip specific tests since viking images are mostly literals and without mixed qualities
 }
 
-// test's for viking2 config
-TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsViking2) {
+
+TEST_F(IsisDataDirectory, FunctionalTestViking2Conf) {
   fs::path dbPath = getMissionConfigFile("viking2");
 
   ifstream i(dbPath);
-  nlohmann::json conf;
-  i >> conf;
+  nlohmann::json conf = nlohmann::json::parse(i);
 
   MockRepository mocks;
-  mocks.OnCallFunc(ls).Return(paths);
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
-  nlohmann::json res = searchMissionKernels("/isis_data/", conf);
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at("viking2");
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
 
-  cout << res <<endl;
-  EXPECT_EQ(res["viking2"]["ck"]["reconstructed"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking2"]["ck"]["smithed"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking2"]["fk"]["kernels"].size(), 1);
-  EXPECT_EQ(res["viking2"]["iak"]["kernels"].size(), 2);
-  EXPECT_EQ(res["viking2"]["sclk"]["kernels"].size(), 2);
-  EXPECT_EQ(res["viking2"]["spk"]["reconstructed"]["kernels"].size(), 3);
+  // skip specific tests since viking images are mostly literals and without mixed qualities
 }
