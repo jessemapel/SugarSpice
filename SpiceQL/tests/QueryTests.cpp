@@ -231,7 +231,6 @@ TEST_F(IsisDataDirectory, FunctionalTestApollo17Conf) {
 
   MockRepository mocks;
   mocks.OnCallFunc(ls).Return(files);
-  
   nlohmann::json res = searchMissionKernels("doesn't matter", conf);
 
   set<string> kernels = getKernelSet(res);
