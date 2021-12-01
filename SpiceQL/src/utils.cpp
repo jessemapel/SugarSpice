@@ -590,19 +590,6 @@ namespace SpiceQL {
     }
   }
 
-  // json resolveConfigDependencies(json config, string instrument) {
-  //   if (config[instrument].contains("deps")) {
-  //     for(auto & dep: jsonArrayToVector(config[instrument]["deps"])) {
-  //       json::json_pointer depPtr(dep);
-  //       json::json_pointer confPtr;
-  //       confPtr.push_back(instrument);
-  //       mergeConfigs(config[confPtr], config[depPtr]);
-  //     }
-  //     config[instrument].erase("deps");
-  //   }
-  //   return config[instrument];
-  // }
-
 
   size_t eraseAtPointer(json &j, json::json_pointer ptr) {
     vector<string> path;
