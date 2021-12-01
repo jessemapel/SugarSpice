@@ -582,7 +582,8 @@ namespace SpiceQL {
       if (conf.contains(instrument)) {
         if (conf[instrument].contains("deps")) {
           for(auto & dep: jsonArrayToVector(conf[instrument]["deps"])) {
-            conf[instrument] = mergeConfigs(conf[instrument], conf[dep]);
+            json::json_pointer depPtr(dep);
+            conf[instrument] = mergeConfigs(conf[instrument], conf[depPtr]);
           }
           conf[instrument].erase("deps");
         }
