@@ -1,6 +1,8 @@
 #include "Fixtures.h"
 #include "Paths.h"
 
+#include <HippoMocks/hippomocks.h>
+
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -15,7 +17,6 @@ using namespace std;
 using namespace SpiceQL;
 
 
-
 void TempTestingFiles::SetUp() {
   int max_tries = 10;
   auto tmp_dir = fs::temp_directory_path();
@@ -27,7 +28,7 @@ void TempTestingFiles::SetUp() {
 
   while (true) {
     stringstream ss;
-    ss << "SSTESTS" << hex << rand(prng);
+    ss << "SQTESTS" << hex << rand(prng);
     tpath = tmp_dir / ss.str();
 
     // true if the directory was created.
@@ -105,11 +106,39 @@ void IsisDataDirectory::SetUp() {
       kernelTypeMap[kernelType].emplace(p.filename());
     }
   }
-
 }
 
 
 void IsisDataDirectory::TearDown() {}
+
+
+void IsisDataDirectory::compareKernelSets(string name) {
+  fs::path dbPath = getMissionConfigFile(name);
+
+  ifstream i(dbPath);
+  nlohmann::json conf = nlohmann::json::parse(i);
+
+  MockRepository mocks;
+  mocks.OnCallFunc(ls).Return(files);
+  
+  nlohmann::json res = searchMissionKernels("doesn't matter", conf);
+
+  set<string> kernels = getKernelSet(res);
+  set<string> expectedKernels = missionMap.at(name);
+  set<string> diff; 
+  
+  set_difference(expectedKernels.begin(), expectedKernels.end(), kernels.begin(), kernels.end(), inserter(diff, diff.begin()));
+  
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
+  
+  set_difference(kernels.begin(), kernels.end(), expectedKernels.begin(), expectedKernels.end(), inserter(diff, diff.begin()));
+  if (diff.size() != 0) {
+    FAIL() << "Kernel sets are not equal, diff: " << fmt::format("{}", fmt::join(diff, " ")) << endl;
+  }
+
+}
 
 
 void LroKernelSet::SetUp() {
