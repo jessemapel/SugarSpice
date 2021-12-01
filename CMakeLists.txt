@@ -55,7 +55,7 @@ if(SPICEQL_BUILD_LIB)
                               ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/galileo.json
                               ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/lro.json
                               ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/mess.json
-                              ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/jno.json)
+                              ${CMAKE_CURRENT_SOURCE_DIR}/SpiceQL/db/juno.json)
 
   add_library(SpiceQL SHARED ${SPICEQL_SRC_FILES})
 
