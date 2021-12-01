@@ -9,18 +9,11 @@
       },
       "smithed" : {
         "kernels" : "clem_ulcn2005_6hr.bc"
-      },
-      "deps" : {
-        "objs" : ["/base/lsk", "/clem1/sclk"]
       }
     },
     "spk" : {
       "reconstructed" : {
-        "kernels" :  "clem.*\\.bsp",
-        "deps": {}
-      },
-      "deps" : {
-        "objs" : ["/base/lsk", "/clem1/sclk"]
+        "kernels" :  "clem.*\\.bsp"
       }
     },
     "fk" : {
