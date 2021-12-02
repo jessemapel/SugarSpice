@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <optional>
 
 #include "SpiceUsr.h"
 

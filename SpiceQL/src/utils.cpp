@@ -6,7 +6,6 @@
 
 #include <exception>
 #include <fstream>
-#include <optional>
 
 #include <SpiceUsr.h>
 #include <SpiceZfc.h>
