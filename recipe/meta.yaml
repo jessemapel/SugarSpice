@@ -5,7 +5,7 @@ package:
 source:
   git_url: https://github.com/USGS-Astrogeology/SpiceQL.git
 build:
-  string: {{ environ.get("GIT_DESCRIBE_HASH", "") }}
+  string: {{ environ.get("GIT_DESCRIBE_HASH", "dev") }}
 
 requirements:
   build:
@@ -25,8 +25,13 @@ requirements:
     - cspice-cmake
 
 test:
+  imports:
+    - pyspiceql
   commands:
-    - ctest -j8  # [linux]
+    - test -e $PREFIX/lib/libSpiceQL${SHLIB_EXT}  # [unix]
+    - test -e $PREFIX/include/SpideQL/sugar_spice.h  # [unix]
+    - if not exist %LIBRARY_BIN%\SpiceQL.dll exit 1  # [win]
+    - if not exist %LIBRARY_LIB%\SpiceQL.lib exit 1  # [win]
 
 about:
   home: https://sugar-spice.readthedocs.io/en/latest/#docs
