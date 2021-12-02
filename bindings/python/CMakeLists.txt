@@ -32,7 +32,14 @@ else()
     message(STATUS "Skipping Python Bindings Tests")
 endif()
 
-# Install the Python wrapper
-set_target_properties(pyspiceql PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-install(TARGETS pyspiceql DESTINATION ${Python3_SITEARCH})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pyspiceql.py DESTINATION ${Python3_SITEARCH})
+# Create the files to install the Python wrapper
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
+               ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
+               ${CMAKE_CURRENT_BINARY_DIR}/__init__.py
+               COPYONLY)
+
+# Custom Python installation target
+add_custom_target(install-python
+        DEPENDS pyspiceql
+        COMMAND python ${SETUP_PY_OUT} install)
