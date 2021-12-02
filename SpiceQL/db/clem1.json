@@ -26,11 +26,13 @@
     },
     "iak" : {
       "kernels" : "uvvisAddendum[0-9]{3}.ti"
-    }
+    },
+    "deps" : ["/clem1"]
   },
   "nir" : {
     "iak" : {
       "kernels" : "nirAddendum[0-9]{3}.ti"
-    }
+    },
+    "deps" : ["/clem1"]
   }
 }

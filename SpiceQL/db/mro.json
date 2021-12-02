@@ -29,7 +29,8 @@
         },
         "iak" : {
             "kernels" : ["marciAddendum[0-9]{3}.ti"]
-        }
+        },
+        "deps" : ["/mro"]
     },
     "hirise" : {
         "ik" : {
@@ -37,7 +38,8 @@
         },
         "iak" : {
             "kernels" : ["hiriseAddendum[0-9]{3}.ti"]
-        }
+        },
+        "deps" : ["/mro"]
     },
     "crism" : {
         "ik" : {
@@ -45,7 +47,8 @@
         },
         "iak" : {
             "kernels" : ["crismAddendum[0-9]{3}.ti"]
-        }
+        },
+        "deps" : ["/mro"]
     } ,
     "ctx" : {
         "ik" : {
@@ -53,6 +56,7 @@
         },
         "iak" : {
             "kernels" : ["mroctxAddendum[0-9]{3}.ti"]
-        }
+        },
+        "deps" : ["/mro"]
     }
   }
