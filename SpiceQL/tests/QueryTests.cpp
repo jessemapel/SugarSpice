@@ -107,7 +107,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
 
   ASSERT_EQ(res["mdis"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["mdis"]["ck"]["smithed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["mdis"]["ck"]["deps"]["objs"].size(), 4);
   ASSERT_EQ(res["mdis"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["mdis"]["tspk"]["kernels"].size(), 1);
   ASSERT_EQ(res["mdis"]["fk"]["kernels"].size(), 2);
@@ -116,11 +115,9 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsAllMess) {
   ASSERT_EQ(res["mdis"]["pck"]["na"]["kernels"].size(), 2);
 
   ASSERT_EQ(res["mdis_att"]["ck"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["mdis_att"]["ck"]["deps"]["objs"].size(), 2);
 
   ASSERT_EQ(res["mess"]["ck"]["reconstructed"]["kernels"].size(), 5);
   ASSERT_EQ(res["mess"]["sclk"]["kernels"].size(), 2);
-  ASSERT_EQ(res["mess"]["ck"]["deps"]["objs"].size(), 2);
 }
 
 
@@ -138,7 +135,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsClem1) {
 
   ASSERT_EQ(res["clem1"]["ck"]["reconstructed"]["kernels"].size(), 4);
   ASSERT_EQ(res["clem1"]["ck"]["smithed"]["kernels"].size(), 1);
-  ASSERT_EQ(res["clem1"]["ck"]["deps"]["objs"].size(), 2);
   ASSERT_EQ(res["clem1"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["clem1"]["fk"]["kernels"].size(), 1);
   ASSERT_EQ(res["clem1"]["sclk"]["kernels"].size(), 2);
@@ -163,16 +159,11 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsGalileo) {
   nlohmann::json res = searchMissionKernels("/isis_data/", conf);
 
   ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["kernels"].size(), 4);
-  ASSERT_EQ(res["galileo"]["ck"]["reconstructed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["ck"]["smithed"]["kernels"].size(), 3);
-  ASSERT_EQ(res["galileo"]["ck"]["smithed"]["deps"]["objs"].size(), 1);
-  ASSERT_EQ(res["galileo"]["ck"]["deps"]["objs"].size(), 2);
   ASSERT_EQ(res["galileo"]["spk"]["reconstructed"]["kernels"].size(), 2);
   ASSERT_EQ(res["galileo"]["iak"]["kernels"].size(), 1);
   ASSERT_EQ(res["galileo"]["pck"]["smithed"]["kernels"].size(), 2);
-  ASSERT_EQ(res["galileo"]["pck"]["smithed"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["pck"]["na"]["kernels"].size(), 1);
-  ASSERT_EQ(res["galileo"]["pck"]["na"]["deps"].size(), 0);
   ASSERT_EQ(res["galileo"]["sclk"]["kernels"].size(), 1);
 }
 
@@ -192,7 +183,6 @@ TEST_F(KernelDataDirectories, FunctionalTestSearchMissionKernelsCassini) {
   ASSERT_EQ(res["cassini"]["ck"]["smithed"]["kernels"].size(), 3);
   ASSERT_EQ(res["cassini"]["fk"]["kernels"].size(), 2);
   ASSERT_EQ(res["cassini"]["iak"]["kernels"].size(), 3);
-  ASSERT_EQ(res["cassini"]["pck"]["deps"].size(), 1);
   ASSERT_EQ(res["cassini"]["pck"]["kernels"].size(), 3);
   ASSERT_EQ(res["cassini"]["pck"]["smithed"]["kernels"].size(), 1);
   ASSERT_EQ(res["cassini"]["sclk"]["kernels"].size(), 1);
