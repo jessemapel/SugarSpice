@@ -10,18 +10,19 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}  # [linux]
-    - cmake >=3.10
+    - cmake >=3.14
     - pip
-    - python
-    - cspice-cmake
+    - swig
   run:
     - cpp-filesystem
-    - fmt
-    - ninja
+    - fmt <8
+    - python>=3
+    - cspice-cmake
   host:
     - cpp-filesystem
-    - fmt
-    - ninja
+    - fmt <8
+    - python >=3
+    - cspice-cmake
 
 test:
   commands:
