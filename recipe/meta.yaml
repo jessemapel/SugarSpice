@@ -14,12 +14,11 @@ requirements:
     - pip
     - swig
     - fmt <8
-  run:
     - cpp-filesystem
+  run:ß
     - python>=3
     - cspice-cmake
   host:
-    - cpp-filesystem
     - python >=3
     - cspice-cmake
 
