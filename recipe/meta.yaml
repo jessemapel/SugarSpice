@@ -13,13 +13,12 @@ requirements:
     - cmake >=3.14
     - pip
     - swig
-  run:
-    - cpp-filesystem
     - fmt <8
+    - cpp-filesystem
+  run:
     - python>=3
     - cspice-cmake
   host:
-    - cpp-filesystem
     - python >=3
     - cspice-cmake
 
