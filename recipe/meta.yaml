@@ -15,7 +15,7 @@ requirements:
     - swig
     - fmt <8
     - cpp-filesystem
-  run:ß
+  run:
     - python>=3
     - cspice-cmake
   host:
