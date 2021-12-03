@@ -43,5 +43,5 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
                COPYONLY)
 
 # Setup to run setup tools on install
-install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install
+install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --single-version-externally-managed
                               WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})")
