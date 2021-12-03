@@ -13,6 +13,10 @@
 
 #include <ghc/fs_std.hpp>
 
+#include <fmt/chrono.h>
+#include <fmt/format.h>
+#include <fmt/compile.h>
+
 #include <nlohmann/json.hpp>
 
 #include "utils.h"

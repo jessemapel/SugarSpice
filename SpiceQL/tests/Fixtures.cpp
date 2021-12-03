@@ -3,6 +3,8 @@
 
 #include <HippoMocks/hippomocks.h>
 
+#include <fmt/format.h>
+
 #include <exception>
 #include <fstream>
 #include <iostream>

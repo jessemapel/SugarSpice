@@ -20,7 +20,6 @@ requirements:
     - cspice-cmake
   host:
     - cpp-filesystem
-    - fmt <8
     - python >=3
     - cspice-cmake
 
