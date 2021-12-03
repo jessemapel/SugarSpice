@@ -64,7 +64,6 @@ jobs:
       # Execute the install.  You can specify a specific target with "--target <NAME>"
       run: |
         cmake --install . --config $BUILD_TYPE
-        cmake --build . --target install-python
 
     - name: Check install
       working-directory: ${{github.workspace}}/install
