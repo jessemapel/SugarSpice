@@ -42,4 +42,4 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
 # Custom Python installation target
 add_custom_target(install-python
         DEPENDS pyspiceql
-        COMMAND python ${SETUP_PY_OUT} install)
+        COMMAND python ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)
