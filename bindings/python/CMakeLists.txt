@@ -20,7 +20,7 @@ set_source_files_properties(${PYSPICEQL_SOURCES} PROPERTIES CPLUSPLUS ON)
 swig_add_library(pyspiceql
                  LANGUAGE python
                  SOURCES ${PYSPICEQL_SOURCES}
-                 OUTPUT_DIR pyspiceql)
+                 OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pyspiceql)
 swig_link_libraries(pyspiceql SpiceQL Python3::Module)
 set_property(TARGET pyspiceql PROPERTY SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 
