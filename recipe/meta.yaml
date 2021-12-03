@@ -13,9 +13,9 @@ requirements:
     - cmake >=3.14
     - pip
     - swig
+    - fmt <8
   run:
     - cpp-filesystem
-    - fmt <8
     - python>=3
     - cspice-cmake
   host:
